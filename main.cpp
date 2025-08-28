@@ -16,6 +16,7 @@ using namespace std;
 #include "defines.h"
 #include "vertex_buffer.h"
 #include "shader.h"
+#include "index_buffer.h"
 #include "loop.cpp"
 
 int main(int argc, char** argv) {
@@ -48,14 +49,20 @@ int main(int argc, char** argv) {
         Vertex{-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
         Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
         Vertex{0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
-
         Vertex{0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
     };
     int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe, also anzahl an punkten der dreiecke
+
+    unsigned int indices[] = {//index für vertices
+        0, 1, 2,//dreieck 1
+        1, 2, 3//dreieck 2
+    };
+    int numIndices = sizeof(indices)/sizeof(indices[0]);
+
+    IndexBuffer indexBuffer(indices, numIndices, sizeof(indices[0]));//erstellt ein index buffer aufgrundlage der klasse in index_buffer.h
     VertexBuffer vertexBuffer(vertices, numVertices);//erstellt ein vertex buffer aufgrundlage der klasse in vertex_buffer.h
 
     Shader shader("/home/medusa/projekte/opengl/shaders/basic.vs", "/home/medusa/projekte/opengl/shaders/basic.fs");//erstellt ein shader objekt, das die vertex und fragment shader lädt und kompiliert
-    shader.bind();//bindet den shader, damit er benutzt werden kann
 
     //fps code
     double perfCounterFrequency = SDL_GetPerformanceFrequency();
@@ -64,7 +71,7 @@ int main(int argc, char** argv) {
 
     bool close = false;
     while(!close) {
-        loop(numVertices, window, vertices, &vertexBuffer);
+        loop(window, vertices, &vertexBuffer, numIndices, &shader, &indexBuffer);
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
