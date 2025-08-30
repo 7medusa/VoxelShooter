@@ -12,6 +12,7 @@ public:
 
     void bind();
     void unbind();
+    GLuint getShaderId() {return shaderId;}
 
 private:
     string parse(const char* filename);

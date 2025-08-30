@@ -19,6 +19,16 @@ using namespace std;
 #include "index_buffer.h"
 #include "loop.cpp"
 
+void openGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
+#ifdef Release
+    if(severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM) {
+        cout << "opengl error message: " << message << endl;
+    }
+#else
+    cout << "opengl debug message: " << message << endl;
+#endif
+}
+
 int main(int argc, char** argv) {
     SDL_Window* window;
     SDL_Init(SDL_INIT_EVERYTHING);//init sdl
@@ -32,6 +42,7 @@ int main(int argc, char** argv) {
 #ifdef Release
     float flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;//legt fenster flag fest wie vollbild oder fullscreen
 #else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     float flags = SDL_WINDOW_OPENGL;
 #endif
 
@@ -44,6 +55,12 @@ int main(int argc, char** argv) {
         return -1;
     }
     cout << "opengl version: " << glGetString(GL_VERSION) << endl;
+
+#ifndef Release
+    glEnable(GL_DEBUG_OUTPUT);//aktiviert debug output
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);//aktiviert die sofortige benachrichtigung
+    glDebugMessageCallback(openGLDebugCallback, nullptr);//legt callback fest
+#endif
 
     Vertex vertices[] = {//dreieck koordinaten
         Vertex{-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
@@ -63,15 +80,40 @@ int main(int argc, char** argv) {
     VertexBuffer vertexBuffer(vertices, numVertices);//erstellt ein vertex buffer aufgrundlage der klasse in vertex_buffer.h
 
     Shader shader("/home/medusa/projekte/opengl/shaders/basic.vs", "/home/medusa/projekte/opengl/shaders/basic.fs");//erstellt ein shader objekt, das die vertex und fragment shader lädt und kompiliert
+    shader.bind();
+
+    int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_color");//holt die position der uniform variable im shader programm
+    if(colorUniformLocation != -1) {
+        glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    }
+    else {
+        cout << "uniform color not found" << endl;
+    }
 
     //fps code
     double perfCounterFrequency = SDL_GetPerformanceFrequency();
     double lastCounter = SDL_GetPerformanceCounter();
     float delta = 0.0f;
 
+
+    float time = 0.0f;
     bool close = false;
     while(!close) {
-        loop(window, vertices, &vertexBuffer, numIndices, &shader, &indexBuffer);
+        time += delta;
+
+        //loop
+        glUniform4f(colorUniformLocation, sinf(time)*sinf(time), cosf(time)*cosf(time), tanf(time)*tanf(time), 1.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
+        glClear(GL_COLOR_BUFFER_BIT);//cleart in der gesetzen farbe
+        vertexBuffer.bind();//zum zeichnen bindet es den vao
+        vertexBuffer.bindVbo();//zum neu beschreiben des buffers
+        indexBuffer.bind();
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+        SDL_GL_SwapWindow(window);//switcht die buffer
+        vertexBuffer.unbindVbo();
+        vertexBuffer.unbind();
+        //loop
+
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {

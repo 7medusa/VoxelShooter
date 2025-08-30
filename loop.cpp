@@ -19,11 +19,10 @@
 #include "index_buffer.h"
 
 void loop(SDL_Window* window, Vertex* vertices, VertexBuffer* vertexBuffer, int numIndices, Shader* shader, IndexBuffer* indexBuffer) {
-    glClearColor(0.5f, 0.0f, 1.0f, 1.0f);//setzt die clear farbe
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
     glClear(GL_COLOR_BUFFER_BIT);//cleart in der gesetzen farbe
     vertexBuffer->bind();//zum zeichnen bindet es den vao
     vertexBuffer->bindVbo();//zum neu beschreiben des buffers
-    shader->bind();
     indexBuffer->bind();
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
     SDL_GL_SwapWindow(window);//switcht die buffer
