@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
     while(!close) {
         time += delta;
 
-        //loop
+        //*loop*//
         glUniform4f(colorUniformLocation, sinf(time)*sinf(time), cosf(time)*cosf(time), tanf(time)*tanf(time), 1.0f);
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
         glClear(GL_COLOR_BUFFER_BIT);//cleart in der gesetzen farbe
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
         SDL_GL_SwapWindow(window);//switcht die buffer
         vertexBuffer.unbindVbo();
         vertexBuffer.unbind();
-        //loop
+        //*loop*//
 
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
