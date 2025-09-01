@@ -8,4 +8,5 @@ uniform vec4 u_color;//color input
 
 void main() {
     main_color = u_color;
+    //main_color = out_color;
 }

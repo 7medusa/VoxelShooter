@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     float flags = SDL_WINDOW_OPENGL;
 #endif
 
-    window = SDL_CreateWindow("fenster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);//setzt die werte für das fenster wie name, position, größe und funktion
+    window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);//setzt die werte für das fenster wie name, position, größe und funktion
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt context für das fenster, damit sdl mit opengl kommunizieren kann, eine art schnittstelle
 
     GLenum glewError = glewInit();//initalisiert glew, für mehr opengl funktionen und legt es in eine variable ab
@@ -54,15 +54,14 @@ int main(int argc, char** argv) {
         cout << "GLEW error: " << glewGetErrorString(glewError) << endl;
         return -1;
     }
-    cout << "opengl version: " << glGetString(GL_VERSION) << endl;
-
 #ifndef Release
+    cout << "opengl version: " << glGetString(GL_VERSION) << endl;
     glEnable(GL_DEBUG_OUTPUT);//aktiviert debug output
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);//aktiviert die sofortige benachrichtigung
     glDebugMessageCallback(openGLDebugCallback, nullptr);//legt callback fest
 #endif
 
-    Vertex vertices[] = {//dreieck koordinaten
+    Vertex vertices[] = {//vertex koordinaten
         Vertex{-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
         Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
         Vertex{0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
@@ -84,7 +83,7 @@ int main(int argc, char** argv) {
 
     int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_color");//holt die position der uniform variable im shader programm
     if(colorUniformLocation != -1) {
-        glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+        glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     }
     else {
         cout << "uniform color not found" << endl;
@@ -110,8 +109,9 @@ int main(int argc, char** argv) {
         indexBuffer.bind();
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(window);//switcht die buffer
-        vertexBuffer.unbindVbo();
         vertexBuffer.unbind();
+        vertexBuffer.unbindVbo();
+        indexBuffer.unbind();
         //*loop*//
 
         SDL_Event event;
