@@ -3,10 +3,13 @@
 layout(location = 0) out vec4 main_color;
 
 in vec4 out_color;//für die vertex farben
+in vec2 out_textCoord;//für die texturkoordinaten
+
+uniform sampler2D u_texture;//textur input
 
 uniform vec4 u_color;//color input
 
 void main() {
-    main_color = u_color;
-    //main_color = out_color;
+    vec4 texColor = texture(u_texture, out_textCoord);//texturfarbe
+    main_color = texColor;
 }

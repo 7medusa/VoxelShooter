@@ -31,7 +31,9 @@ GLuint Shader::compile(string shaderSource, GLenum type) {
         cout << "shader compile error" << endl;
         return 0;
     }
+#ifndef Release
     cout << "shader compile success" << endl;
+#endif
     return id;
 }
 string Shader::parse(const char* filename) {//liest die file aus

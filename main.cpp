@@ -1,23 +1,6 @@
-#include <iostream>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <iterator>
-#ifdef _WIN32
-#include <SDL.h>
-#pragma comment( lib, "SDL2.lib" )
-#pragma comment( lib, "glew32s.lib" )
-#pragma comment( lib, "opengl32.lib" )
-#else
-#include <SDL2/SDL.h>
-#endif
+#include "includes.h"
 
 using namespace std;
-
-#include "defines.h"
-#include "vertex_buffer.h"
-#include "shader.h"
-#include "index_buffer.h"
-#include "loop.cpp"
 
 void openGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -62,16 +45,18 @@ int main(int argc, char** argv) {
 #endif
 
     Vertex vertices[] = {//vertex koordinaten
-        Vertex{-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-        Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-        Vertex{0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
-        Vertex{0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+        Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+        Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+        Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
+        Vertex{0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+        Vertex{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},//für mittleres dreieck
     };
     int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe, also anzahl an punkten der dreiecke
 
     unsigned int indices[] = {//index für vertices
-        0, 1, 2,//dreieck 1
-        1, 2, 3//dreieck 2
+        0, 2, 4//dreieck normal
+        //0, 1, 2,//dreieck 1
+        //1, 2, 3//dreieck 2
     };
     int numIndices = sizeof(indices)/sizeof(indices[0]);
 
@@ -81,12 +66,37 @@ int main(int argc, char** argv) {
     Shader shader("/home/medusa/projekte/opengl/shaders/basic.vs", "/home/medusa/projekte/opengl/shaders/basic.fs");//erstellt ein shader objekt, das die vertex und fragment shader lädt und kompiliert
     shader.bind();
 
+    int textureWidth;
+    int textureHeight;
+    int bitsPerPixel;
+    stbi_set_flip_vertically_on_load(true);//opengl hat anderes koordinatensystem, smomit müssen wir die x y achse flippe
+    auto textureBuffer = stbi_load(textureDir, &textureWidth, &textureHeight, &bitsPerPixel, 4);//lädt die textur
+    GLuint textureId;
+    GLCALL(glGenTextures(1, &textureId));//erstellt ein texture id mit 1 textur
+    GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
+    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));//filtert die größe der textur
+    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));//filtert die größe der textur
+    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));//am rand der textur wird abgeschnitten
+    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));//am rand der textur wird abgeschnitten
+    GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer));//bindet die textur
+    GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
+    if(textureBuffer) {
+        stbi_image_free(textureBuffer);
+    }
+
     int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_color");//holt die position der uniform variable im shader programm
     if(colorUniformLocation != -1) {
         glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     }
     else {
         cout << "uniform color not found" << endl;
+    }
+    int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_texture"));
+    if(textureUniformLocation != -1) {
+        GLCALL(glUniform1d(textureUniformLocation, 0));
+    }
+    else {
+        cout << "uniform texture not found" << endl;
     }
 
     //fps code
@@ -98,8 +108,6 @@ int main(int argc, char** argv) {
     float time = 0.0f;
     bool close = false;
     while(!close) {
-        time += delta;
-
         //*loop*//
         glUniform4f(colorUniformLocation, sinf(time)*sinf(time), cosf(time)*cosf(time), tanf(time)*tanf(time), 1.0f);
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
@@ -107,11 +115,14 @@ int main(int argc, char** argv) {
         vertexBuffer.bind();//zum zeichnen bindet es den vao
         vertexBuffer.bindVbo();//zum neu beschreiben des buffers
         indexBuffer.bind();
+        GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
+        GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(window);//switcht die buffer
         vertexBuffer.unbind();
         vertexBuffer.unbindVbo();
         indexBuffer.unbind();
+        time += delta;
         //*loop*//
 
         SDL_Event event;
