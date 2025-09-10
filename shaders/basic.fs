@@ -7,9 +7,11 @@ in vec2 out_textCoord;//für die texturkoordinaten
 
 uniform sampler2D u_texture;//textur input
 
-uniform vec4 u_color;//color input
+uniform vec4 u_in_color;//color input
 
 void main() {
     vec4 texColor = texture(u_texture, out_textCoord);//texturfarbe
     main_color = texColor;
+    //main_color = out_color;
+    //main_color = u_in_color;
 }

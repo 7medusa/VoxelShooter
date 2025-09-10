@@ -84,7 +84,10 @@ int main(int argc, char** argv) {
         stbi_image_free(textureBuffer);
     }
 
-    int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_color");//holt die position der uniform variable im shader programm
+    glm::mat4 model = glm::mat4(1.0f);//matrix zum verschieben vom model, durch das multiplizieren mit der matrix
+    model = glm::scale(model, glm::vec3(1.6f));
+
+    int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");//holt die position der uniform variable im shader programm
     if(colorUniformLocation != -1) {
         glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     }
@@ -98,6 +101,13 @@ int main(int argc, char** argv) {
     else {
         cout << "uniform texture not found" << endl;
     }
+    int modelMatrixLocation = glGetUniformLocation(shader.getShaderId(), "in_model");//holt die position der uniform variable im shader programm
+    if(modelMatrixLocation != -1) {
+        GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]));//überträgt die matrix an die uniform variable im shader programm
+    }
+    else {
+        cout << "uniform matrix not found" << endl;
+    }
 
     //fps code
     double perfCounterFrequency = SDL_GetPerformanceFrequency();
@@ -110,6 +120,7 @@ int main(int argc, char** argv) {
     while(!close) {
         //*loop*//
         glUniform4f(colorUniformLocation, sinf(time)*sinf(time), cosf(time)*cosf(time), tanf(time)*tanf(time), 1.0f);
+        GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]));
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
         glClear(GL_COLOR_BUFFER_BIT);//cleart in der gesetzen farbe
         vertexBuffer.bind();//zum zeichnen bindet es den vao
@@ -117,8 +128,11 @@ int main(int argc, char** argv) {
         indexBuffer.bind();
         GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
         GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
+
+        model = glm::rotate(model, delta, glm::vec3(0.0f, 1.0f, 0.0f));
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(window);//switcht die buffer
+
         vertexBuffer.unbind();
         vertexBuffer.unbindVbo();
         indexBuffer.unbind();
