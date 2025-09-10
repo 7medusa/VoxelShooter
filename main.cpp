@@ -54,9 +54,9 @@ int main(int argc, char** argv) {
     int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe, also anzahl an punkten der dreiecke
 
     unsigned int indices[] = {//index für vertices
-        0, 2, 4//dreieck normal
-        //0, 1, 2,//dreieck 1
-        //1, 2, 3//dreieck 2
+        //0, 2, 4//dreieck normal
+        0, 1, 2,//dreieck 1
+        1, 2, 3//dreieck 2
     };
     int numIndices = sizeof(indices)/sizeof(indices[0]);
 
@@ -85,7 +85,11 @@ int main(int argc, char** argv) {
     }
 
     glm::mat4 model = glm::mat4(1.0f);//matrix zum verschieben vom model, durch das multiplizieren mit der matrix
-    model = glm::scale(model, glm::vec3(1.6f));
+    model = glm::scale(model, glm::vec3(2.0f));
+    glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 100.0f);//matrix für die perspektive
+    projection = glm:: perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);//perspektive wird überschrieben
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -6.0f));//tanslate ist eine verschiebung um die kamera zu verschieben
+    glm::mat4 modelViewProj = projection * view * model;//gesamte matrix für position und perspektive
 
     int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");//holt die position der uniform variable im shader programm
     if(colorUniformLocation != -1) {
@@ -94,33 +98,31 @@ int main(int argc, char** argv) {
     else {
         cout << "uniform color not found" << endl;
     }
-    int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_texture"));
+    int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
     if(textureUniformLocation != -1) {
         GLCALL(glUniform1d(textureUniformLocation, 0));
     }
     else {
         cout << "uniform texture not found" << endl;
     }
-    int modelMatrixLocation = glGetUniformLocation(shader.getShaderId(), "in_model");//holt die position der uniform variable im shader programm
-    if(modelMatrixLocation != -1) {
-        GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]));//überträgt die matrix an die uniform variable im shader programm
+    int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");//holt die position der uniform variable im shader programm
+    if(modelViewProjLocation != -1) {
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
     }
     else {
-        cout << "uniform matrix not found" << endl;
+        cout << "uniform modelviewproj not found" << endl;
     }
 
-    //fps code
     double perfCounterFrequency = SDL_GetPerformanceFrequency();
     double lastCounter = SDL_GetPerformanceCounter();
     float delta = 0.0f;
-
-
     float time = 0.0f;
+
     bool close = false;
     while(!close) {
         //*loop*//
         glUniform4f(colorUniformLocation, sinf(time)*sinf(time), cosf(time)*cosf(time), tanf(time)*tanf(time), 1.0f);
-        GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);//setzt die clear farbe
         glClear(GL_COLOR_BUFFER_BIT);//cleart in der gesetzen farbe
         vertexBuffer.bind();//zum zeichnen bindet es den vao
@@ -129,32 +131,32 @@ int main(int argc, char** argv) {
         GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
         GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
 
+        time += delta;
         model = glm::rotate(model, delta, glm::vec3(0.0f, 1.0f, 0.0f));
+        modelViewProj = projection * view * model;
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         vertexBuffer.unbind();
         vertexBuffer.unbindVbo();
         indexBuffer.unbind();
-        time += delta;
+        GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
         //*loop*//
 
+        double endCounter = SDL_GetPerformanceCounter();
+        double counterElapsed = endCounter - lastCounter;
+        delta = ((float)counterElapsed) / (float)perfCounterFrequency;
+        float fps = (float)perfCounterFrequency / (float)counterElapsed;
+#ifdef Fps
+        cout << "fps: " << (int)fps << endl;
+#endif
+        lastCounter = endCounter;
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 close = true;
             }
         }
-
-        //fps berechnung
-        double endCounter = SDL_GetPerformanceCounter();
-        double counterElapsed = endCounter - lastCounter;
-        delta = ((float)counterElapsed) / (float)perfCounterFrequency;
-        float fps = (float)perfCounterFrequency / (float)counterElapsed;
-        #ifdef Fps
-        cout << "fps: " << (int)fps << endl;
-        #endif
-        lastCounter = endCounter;
     }
     return 0;
 }

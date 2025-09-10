@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -18,3 +20,4 @@
 #include "libs/stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
