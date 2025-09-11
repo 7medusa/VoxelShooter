@@ -11,18 +11,20 @@ public:
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
-        glGenBuffers(1, &bufferId);//generiert den vertex buffer, der die punkte des dreiecks enthält und erzeugt ein index
-        glBindBuffer(GL_ARRAY_BUFFER, bufferId);//bindet den vertex buffer an die aktuelle opengl kontext, damit er benutzt werden kann
-        glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), data, GL_STATIC_DRAW);//numVertices als anzahl der punkte und Vertex als speicherplatz der punkte
-        glEnableVertexAttribArray(0);//aktiviert den ersten attributen im vertex shader, in dem fall die position
+        glGenBuffers(1, &bufferId);//generiert ein buffer der die vertices enthält
+        glBindBuffer(GL_ARRAY_BUFFER, bufferId);
+        glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), data, GL_STATIC_DRAW);//räumt speicher für die vertices frei
+        glEnableVertexAttribArray(0);//aktiviert den ersten attribut
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);//legt fest, wie die punkte des dreiecks im vertex buffer gespeichert sind, damit opengl sie richtig interpretieren kann
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(struct Vertex, u));
-        glEnableVertexAttribArray(2);//aktiviert den zweiten attributen im vertex shader, in dem fall die farbe
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(struct Vertex, r));//legt fest, wie die punkte des dreiecks im vertex buffer gespeichert sind, damit opengl sie richtig interpretieren kann
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(struct Vertex, r));
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);//unbinded alle buffer
-        glBindVertexArray(0);//unbinded alle vao
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+        //buffer speichert
+        //vao speichert wie die daten gelesen werden und an den shader übergeben werden
     }
     virtual ~VertexBuffer() {
         glDeleteBuffers(1, &bufferId);
