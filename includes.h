@@ -1,4 +1,3 @@
-// includes.h
 #pragma once
 
 #include <iostream>
@@ -20,8 +19,7 @@
 #include "shader.h"
 #include "index_buffer.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "libs/stb_image.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <string>
+#include <GL/gl.h>

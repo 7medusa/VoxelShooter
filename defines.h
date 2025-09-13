@@ -3,6 +3,8 @@
 //#define Release
 //#define Fps
 
+using namespace std;
+
 #define windowWidth 800
 #define windowHeight 600
 

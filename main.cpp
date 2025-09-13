@@ -1,6 +1,6 @@
 #include "includes.h"
-
-using namespace std;
+#define STB_IMAGE_IMPLEMENTATION
+#include "libs/stb_image.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -12,28 +12,24 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 #endif
 }
 
-void uniforms(Shader shader, glm::mat4 modelViewProj) {
-    int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
-    if(colorUniformLocation != -1) {
-        glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
-    }
-    else {
+void debug(int n) {
+#ifndef Release
+    if(n == 1) {
         cout << "uniform color not found" << endl;
     }
-    int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
-    if(textureUniformLocation != -1) {
-        GLCALL(glUniform1d(textureUniformLocation, 0));
-    }
-    else {
+    else if(n == 2) {
         cout << "uniform texture not found" << endl;
     }
-    int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
-    if(modelViewProjLocation != -1) {
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
-    }
-    else {
+    else if(n == 3) {
         cout << "uniform modelviewproj not found" << endl;
     }
+    else if(n == 4) {
+        cout << "ortho" << endl;
+    }
+    else if(n == 5) {
+        cout << "perspective" << endl;
+    }
+#endif
 }
 
 int main(int argc, char** argv) {
@@ -51,6 +47,7 @@ int main(int argc, char** argv) {
     //fenster flag für eigenschaften wie fullscreen
 #ifdef Release
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+    SDL_GL_SetSwapInterval(1);//vsync
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     int flags = SDL_WINDOW_OPENGL;
@@ -87,9 +84,9 @@ int main(int argc, char** argv) {
     int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe
 
     unsigned int indices[] = {
-        //0, 2, 4//dreieck normal
-        0, 1, 2,//dreieck 1
-        1, 2, 3//dreieck 2
+        0, 2, 4//dreieck normal
+        //0, 1, 2,//dreieck 1
+        //1, 2, 3//dreieck 2
     };
     int numIndices = sizeof(indices)/sizeof(indices[0]);//array größe
 
@@ -118,10 +115,13 @@ int main(int argc, char** argv) {
     }
 
     //matrizen
+    bool perspectiveBool = false;
     glm::mat4 model = glm::mat4(1.0f);//matrix zur positionierung der vertices
-    model = glm::scale(model, glm::vec3(2.0f));
-    glm::mat4 projection = glm:: perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);//matrix zur perspektive
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -6.0f));//matrix um die kamera zu verschieben
+    model = glm::scale(model, glm::vec3(1.0f));
+    glm::mat4 perspective = glm:: perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);//besser für 3d grafik
+    glm::mat4 ortho = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 100.0f);//besser für 2d grafik
+    glm::mat4 projection = ortho;
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));//matrix um die kamera zu verschieben
     glm::mat4 modelViewProj = projection * view * model;//gesamte matrix zur vereinfachung als uniform
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
@@ -130,21 +130,21 @@ int main(int argc, char** argv) {
         glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     }
     else {
-        cout << "uniform color not found" << endl;
+        debug(1);
     }
     int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
     if(textureUniformLocation != -1) {
         GLCALL(glUniform1d(textureUniformLocation, 0));
     }
     else {
-        cout << "uniform texture not found" << endl;
+        debug(2);
     }
     int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
     if(modelViewProjLocation != -1) {
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
     }
     else {
-        cout << "uniform modelviewproj not found" << endl;
+        debug(3);
     }
 
     //FPS
@@ -157,8 +157,29 @@ int main(int argc, char** argv) {
     bool close = false;
     while(!close) {
         //*loop*//
+        SDL_Event event;
+        while(SDL_PollEvent(&event)) {
+            if(event.type == SDL_QUIT) {
+                close = true;
+            }
+            else if(event.type == SDL_KEYDOWN) {
+                if(event.key.keysym.sym == SDLK_p) {
+                    if(perspectiveBool) {
+                        projection = ortho;
+                        debug(4);
+                        perspectiveBool = false;
+                    }
+                    else {
+                        projection = perspective;
+                        debug(5);
+                        perspectiveBool = true;
+                    }
+                }
+            }
+        }
+
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation
-        glClearColor(0.5f, 0.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         vertexBuffer.bind();//hat die vertex daten gespeichert
         vertexBuffer.bindVbo();//zum neu beschreiben des buffers, zB. wenn man in der laufzeit die vertices ändert
@@ -187,13 +208,6 @@ int main(int argc, char** argv) {
         cout << "fps: " << (int)fps << endl;
 #endif
         lastCounter = endCounter;
-
-        SDL_Event event;
-        while(SDL_PollEvent(&event)) {
-            if(event.type == SDL_QUIT) {
-                close = true;
-            }
-        }
     }
     return 0;
 }

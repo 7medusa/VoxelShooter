@@ -1,8 +1,4 @@
-#include "shader.h"
-#include <fstream>
-#include <iostream>
-
-using namespace std;
+#include "includes.h"
 
 Shader::Shader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
     shaderId = createShader(vertexShaderFilename, fragmentShaderFilename);
@@ -69,8 +65,6 @@ GLuint Shader::createShader(const char* vertexShaderFilename, const char* fragme
     glDeleteShader(fs);
     return program;
 }
-
-GLuint shaderId;
 
 /*
 Shader-Quelltext einlesen: Der GLSL-Code des Shaders (Vertex- oder Fragment-Shader) wird als Text in dein Programm geladen.

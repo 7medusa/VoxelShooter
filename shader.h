@@ -1,7 +1,5 @@
 #pragma once
-#include "defines.h"
-#include <GL/glew.h>
-#include <string>
+#include "includes.h"
 
 using namespace std;
 
