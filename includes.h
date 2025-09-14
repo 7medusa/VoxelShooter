@@ -18,8 +18,10 @@
 #include "vertex_buffer.h"
 #include "shader.h"
 #include "index_buffer.h"
+#include "camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <string>
 #include <GL/gl.h>

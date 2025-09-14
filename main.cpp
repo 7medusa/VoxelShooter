@@ -23,12 +23,6 @@ void debug(int n) {
     else if(n == 3) {
         cout << "uniform modelviewproj not found" << endl;
     }
-    else if(n == 4) {
-        cout << "ortho" << endl;
-    }
-    else if(n == 5) {
-        cout << "perspective" << endl;
-    }
 #endif
 }
 
@@ -94,6 +88,12 @@ int main(int argc, char** argv) {
     VertexBuffer vertexBuffer(vertices, numVertices);
     Shader shader(vertexShaderDir, fragmentShaderDir);
 
+    //kamera
+    Camera camera(90.0f, windowWidth, windowHeight);
+    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera.update();
+    glm::mat4 projection = camera.getViewProjection();
+
     //textur
     int textureWidth;
     int textureHeight;
@@ -114,12 +114,8 @@ int main(int argc, char** argv) {
     }
 
     //matrizen
-    bool perspectiveBool = false;
     glm::mat4 model = glm::mat4(1.0f);//matrix zur positionierung der vertices
     model = glm::scale(model, glm::vec3(1.0f));
-    glm::mat4 perspective = glm:: perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);//besser für 3d grafik
-    glm::mat4 ortho = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 100.0f);//besser für 2d grafik
-    glm::mat4 projection = ortho;
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));//matrix um die kamera zu verschieben
     glm::mat4 modelViewProj = projection * view * model;//gesamte matrix zur vereinfachung als uniform
 
@@ -155,26 +151,71 @@ int main(int argc, char** argv) {
     shader.bind();
     bool close = false;
     while(!close) {
+        //tasten
+        bool wBool = false;
+        bool sBool = false;
+        bool aBool = false;
+        bool dBool = false;
+
         //*loop*//
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 close = true;
             }
-            else if(event.type == SDL_KEYDOWN) {
-                if(event.key.keysym.sym == SDLK_p) {
-                    if(perspectiveBool) {
-                        projection = ortho;
-                        debug(4);
-                        perspectiveBool = false;
+            else {
+                //tasteneingaben
+                if(event.type == SDL_KEYDOWN) {
+                    if(event.key.keysym.sym == SDLK_w) {
+                        wBool = true;
                     }
-                    else {
-                        projection = perspective;
-                        debug(5);
-                        perspectiveBool = true;
+                    else if(event.key.keysym.sym == SDLK_s) {
+                        sBool = true;
+                    }
+                    else if(event.key.keysym.sym == SDLK_a) {
+                        aBool = true;
+                    }
+                    else if(event.key.keysym.sym == SDLK_d) {
+                        dBool = true;
+                    }
+                }
+                else if(event.type == SDL_KEYUP) {
+                    if(event.key.keysym.sym == SDLK_w) {
+                        wBool = false;
+                    }
+                    else if(event.key.keysym.sym == SDLK_s) {
+                        sBool = false;
+                    }
+                    else if(event.key.keysym.sym == SDLK_a) {
+                        aBool = false;
+                    }
+                    else if(event.key.keysym.sym == SDLK_d) {
+                        dBool = false;
                     }
                 }
             }
+        }
+
+        //kamerasteuerung
+        if(wBool) {
+            camera.translate(glm::vec3(0.0f, 0.0f, -0.1f));
+            camera.update();
+            projection = camera.getViewProjection();
+        }
+        if(sBool) {
+            camera.translate(glm::vec3(0.0f, 0.0f, 0.1f));
+            camera.update();
+            projection = camera.getViewProjection();
+        }
+        if(aBool) {
+            camera.translate(glm::vec3(0.1f, 0.0f, 0.0f));
+            camera.update();
+            projection = camera.getViewProjection();
+        }
+        if(dBool) {
+            camera.translate(glm::vec3(-0.1f, 0.0f, 0.0f));
+            camera.update();
+            projection = camera.getViewProjection();
         }
 
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation

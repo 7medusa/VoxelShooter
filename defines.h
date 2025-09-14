@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#define windowWidth 800
-#define windowHeight 600
+#define windowWidth 800.0f
+#define windowHeight 600.0f
 
 #define GLCALL(call) call;
 
