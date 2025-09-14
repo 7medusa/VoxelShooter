@@ -10,7 +10,9 @@ using namespace std;
 
 #define GLCALL(call) call;
 
-#define textureDir "/home/medusa/projekte/opengl/main.png"
+#define textureDir "../main.png"
+#define vertexShaderDir "../shaders/basic.vs"
+#define fragmentShaderDir "../shaders/basic.fs"
 
 struct Vertex {
     //koordinaten

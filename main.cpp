@@ -54,8 +54,7 @@ int main(int argc, char** argv) {
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
-    SDL_Window* window;
-    window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
+    SDL_Window* window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
 
     //initialisiert glew für mehr funktionen
@@ -84,16 +83,16 @@ int main(int argc, char** argv) {
     int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe
 
     unsigned int indices[] = {
-        0, 2, 4//dreieck normal
-        //0, 1, 2,//dreieck 1
-        //1, 2, 3//dreieck 2
+        //0, 2, 4,//dreieck normal
+        0, 1, 2,//dreieck 1
+        1, 2, 3//dreieck 2
     };
     int numIndices = sizeof(indices)/sizeof(indices[0]);//array größe
 
     //erstellt indexbuffer, vertexbuffer und erstellt die shader programme für die gpu
     IndexBuffer indexBuffer(indices, numIndices, sizeof(indices[0]));
     VertexBuffer vertexBuffer(vertices, numVertices);
-    Shader shader("/home/medusa/projekte/opengl/shaders/basic.vs", "/home/medusa/projekte/opengl/shaders/basic.fs");
+    Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //textur
     int textureWidth;
@@ -148,8 +147,8 @@ int main(int argc, char** argv) {
     }
 
     //FPS
-    double perfCounterFrequency = SDL_GetPerformanceFrequency();
-    double lastCounter = SDL_GetPerformanceCounter();
+    double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
+    double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
 
@@ -190,7 +189,7 @@ int main(int argc, char** argv) {
         time += delta;
         model = glm::rotate(model, delta, glm::vec3(0.0f, 1.0f, 0.0f));
         modelViewProj = projection * view * model;
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         vertexBuffer.unbind();
@@ -200,10 +199,10 @@ int main(int argc, char** argv) {
         //*loop*//
 
         //fps
-        double endCounter = SDL_GetPerformanceCounter();
+        double endCounter = static_cast<double>(SDL_GetPerformanceCounter());
         double counterElapsed = endCounter - lastCounter;
-        delta = ((float)counterElapsed) / (float)perfCounterFrequency;
-        float fps = (float)perfCounterFrequency / (float)counterElapsed;
+        delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);
+        float fps = static_cast<float>(perfCounterFrequency) / static_cast<float>(counterElapsed);
 #ifdef Fps
         cout << "fps: " << (int)fps << endl;
 #endif
