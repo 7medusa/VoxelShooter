@@ -68,8 +68,8 @@ int main(int argc, char** argv) {
 
     //koordinaten
     Vertex vertices[] = {
-        Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-        Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+        Vertex{-5.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+        Vertex{-5.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
         Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
         Vertex{0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
         Vertex{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},//für mittleres dreieck
@@ -149,14 +149,16 @@ int main(int argc, char** argv) {
     float time = 0.0f;
 
     shader.bind();
-    bool close = false;
-    while(!close) {
-        //tasten
-        bool wBool = false;
-        bool sBool = false;
-        bool aBool = false;
-        bool dBool = false;
 
+    bool close = false;
+
+    //tasten
+    bool wBool = false;
+    bool sBool = false;
+    bool aBool = false;
+    bool dBool = false;
+
+    while(!close) {
         //*loop*//
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
@@ -198,22 +200,22 @@ int main(int argc, char** argv) {
 
         //kamerasteuerung
         if(wBool) {
-            camera.translate(glm::vec3(0.0f, 0.0f, -0.1f));
+            camera.translate(glm::vec3(0.0f, 0.0f, -0.05f));
             camera.update();
             projection = camera.getViewProjection();
         }
         if(sBool) {
-            camera.translate(glm::vec3(0.0f, 0.0f, 0.1f));
+            camera.translate(glm::vec3(0.0f, 0.0f, 0.05f));
             camera.update();
             projection = camera.getViewProjection();
         }
         if(aBool) {
-            camera.translate(glm::vec3(0.1f, 0.0f, 0.0f));
+            camera.translate(glm::vec3(-0.05f, 0.0f, 0.0f));
             camera.update();
             projection = camera.getViewProjection();
         }
         if(dBool) {
-            camera.translate(glm::vec3(-0.1f, 0.0f, 0.0f));
+            camera.translate(glm::vec3(0.05f, 0.0f, 0.0f));
             camera.update();
             projection = camera.getViewProjection();
         }

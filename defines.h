@@ -2,6 +2,7 @@
 
 //#define Release
 //#define Fps
+//#define orthoMode
 
 using namespace std;
 

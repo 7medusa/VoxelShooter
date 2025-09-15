@@ -6,8 +6,11 @@
 class Camera {
 public:
     Camera(float fov, float width, float height) {
-        //projection = glm::ortho(-width/2.0f, width/2.0f, -height/2.0f, height/2.0f);//ortho
+#ifdef orthoMode
+        projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);//ortho
+#else
         projection = glm::perspective(fov/2.0f, width/height, 0.1f, 1000.0f);//perspektive
+#endif
         view = glm::mat4(1.0f);
         update();
     }
