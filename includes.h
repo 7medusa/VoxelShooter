@@ -18,6 +18,7 @@
 #include "vertex_buffer.h"
 #include "shader.h"
 #include "index_buffer.h"
+#include "fps_camera.h"
 #include "camera.h"
 
 #include <glm/glm.hpp>

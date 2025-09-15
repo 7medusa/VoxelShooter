@@ -68,8 +68,8 @@ int main(int argc, char** argv) {
 
     //koordinaten
     Vertex vertices[] = {
-        Vertex{-5.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-        Vertex{-5.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+        Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+        Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
         Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
         Vertex{0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
         Vertex{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},//für mittleres dreieck
@@ -89,7 +89,11 @@ int main(int argc, char** argv) {
     Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //kamera
+#ifndef fpsMode
     Camera camera(90.0f, windowWidth, windowHeight);
+#else
+    FPSCamera camera(90.0f, windowWidth, windowHeight);
+#endif
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
     glm::mat4 projection = camera.getViewProjection();
@@ -198,27 +202,45 @@ int main(int argc, char** argv) {
             }
         }
 
+#ifndef fpsMode
         //kamerasteuerung
         if(wBool) {
             camera.translate(glm::vec3(0.0f, 0.0f, -0.05f));
-            camera.update();
-            projection = camera.getViewProjection();
         }
         if(sBool) {
             camera.translate(glm::vec3(0.0f, 0.0f, 0.05f));
-            camera.update();
-            projection = camera.getViewProjection();
         }
         if(aBool) {
             camera.translate(glm::vec3(-0.05f, 0.0f, 0.0f));
-            camera.update();
-            projection = camera.getViewProjection();
         }
         if(dBool) {
             camera.translate(glm::vec3(0.05f, 0.0f, 0.0f));
-            camera.update();
-            projection = camera.getViewProjection();
         }
+#else
+        //kamerasteuerung
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+        if(wBool) {
+            camera.moveFront(delta * cameraSpeed);
+        }
+        if(sBool) {
+            camera.moveFront(-delta * cameraSpeed);
+        }
+        if(aBool) {
+            camera.moveSideways(-delta * cameraSpeed);
+        }
+        if(dBool) {
+            camera.moveSideways(delta * cameraSpeed);
+        }
+        if(event.type == SDL_MOUSEMOTION) {
+            if(SDL_GetRelativeMouseMode()) {
+                event.motion.xrel *= 0.9f;
+                event.motion.yrel *= 0.9f;
+                camera.onMouseMove(event.motion.xrel, event.motion.yrel);
+            }
+        }
+#endif
+        camera.update();
+        projection = camera.getViewProjection();
 
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

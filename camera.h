@@ -1,7 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext/matrix_transform.hpp>
 
 class Camera {
 public:
@@ -12,20 +11,23 @@ public:
         projection = glm::perspective(fov/2.0f, width/height, 0.1f, 1000.0f);//perspektive
 #endif
         view = glm::mat4(1.0f);
+        position = glm::vec3(0.0f, 0.0f, 0.0f);
         update();
     }
 
     glm::mat4 getViewProjection() {
         return viewProj;
     }
-    void update() {//updatet die kamera
+    virtual void update() {//updatet die kamera
         viewProj = projection * view;
     }
-    void translate(glm::vec3 v) {//bewegt die kamera
+    virtual void translate(glm::vec3 v) {//bewegt die kamera
+        position += v;
         view = glm::translate(view, v*-1.0f);
     }
-private:
+protected:
     glm::mat4 projection;
     glm::mat4 view;
     glm::mat4 viewProj;
+    glm::vec3 position;
 };
