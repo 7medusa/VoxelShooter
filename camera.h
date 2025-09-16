@@ -15,19 +15,22 @@ public:
         update();
     }
 
-    glm::mat4 getViewProjection() {
-        return viewProj;
-    }
     virtual void update() {//updatet die kamera
         viewProj = projection * view;
     }
     virtual void translate(glm::vec3 v) {//bewegt die kamera
         position += v;
-        view = glm::translate(view, v*-1.0f);
+        view = glm::translate(view, v * -1.0f);
+    }
+    glm::mat4 getViewProjection() {
+        return viewProj;
+    }
+    glm::vec3 getPosition() {
+        return position;
     }
 protected:
-    glm::mat4 projection;
-    glm::mat4 view;
-    glm::mat4 viewProj;
-    glm::vec3 position;
+    glm::mat4 projection;//matrix zur abbildung der objekte
+    glm::mat4 view;//position der kamera
+    glm::mat4 viewProj;//kombinierte matrix
+    glm::vec3 position;//position der kamera
 };

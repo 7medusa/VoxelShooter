@@ -4,11 +4,11 @@
 //#define Release
 //#define Fps
 //#define orthoMode
-#define fpsMode
+//#define fpsMode
 
 
 #ifdef fpsMode
-    #define Release2
+    #define Release
 #endif
 
 

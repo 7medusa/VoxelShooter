@@ -94,9 +94,8 @@ int main(int argc, char** argv) {
 #else
     FPSCamera camera(90.0f, windowWidth, windowHeight);
 #endif
-    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera.translate(glm::vec3(0.0f, 0.0f, 2.5f));
     camera.update();
-    glm::mat4 projection = camera.getViewProjection();
 
     //textur
     int textureWidth;
@@ -118,10 +117,10 @@ int main(int argc, char** argv) {
     }
 
     //matrizen
+    glm::mat4 projection;
     glm::mat4 model = glm::mat4(1.0f);//matrix zur positionierung der vertices
     model = glm::scale(model, glm::vec3(1.0f));
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));//matrix um die kamera zu verschieben
-    glm::mat4 modelViewProj = projection * view * model;//gesamte matrix zur vereinfachung als uniform
+    glm::mat4 modelViewProj = projection * model;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
     int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
@@ -161,7 +160,6 @@ int main(int argc, char** argv) {
     bool sBool = false;
     bool aBool = false;
     bool dBool = false;
-
     while(!close) {
         //*loop*//
         SDL_Event event;
@@ -211,10 +209,10 @@ int main(int argc, char** argv) {
             camera.translate(glm::vec3(0.0f, 0.0f, 0.05f));
         }
         if(aBool) {
-            camera.translate(glm::vec3(-0.05f, 0.0f, 0.0f));
+            camera.translate(glm::vec3(-0.03f, 0.0f, 0.0f));
         }
         if(dBool) {
-            camera.translate(glm::vec3(0.05f, 0.0f, 0.0f));
+            camera.translate(glm::vec3(0.03f, 0.0f, 0.0f));
         }
 #else
         //kamerasteuerung
@@ -242,8 +240,8 @@ int main(int argc, char** argv) {
         camera.update();
         projection = camera.getViewProjection();
 
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
+        glClearColor(0.5f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         vertexBuffer.bind();//hat die vertex daten gespeichert
         vertexBuffer.bindVbo();//zum neu beschreiben des buffers, zB. wenn man in der laufzeit die vertices ändert
@@ -252,8 +250,8 @@ int main(int argc, char** argv) {
         GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
 
         time += delta;
-        model = glm::rotate(model, delta, glm::vec3(0.0f, 1.0f, 0.0f));
-        modelViewProj = projection * view * model;
+        model = glm::rotate(model, delta, glm::vec3(1.0f, 1.0f, 1.0f));
+        modelViewProj = projection * model;
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
