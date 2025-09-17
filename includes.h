@@ -20,6 +20,7 @@
 #include "index_buffer.h"
 #include "fps_camera.h"
 #include "camera.h"
+#include "dir.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

@@ -22,7 +22,7 @@ using namespace std;
 
 #define GLCALL(call) call;
 
-#define textureDir "../main.png"
+//shader
 #define vertexShaderDir "../shaders/basic.vs"
 #define fragmentShaderDir "../shaders/basic.fs"
 

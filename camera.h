@@ -22,10 +22,10 @@ public:
         position += v;
         view = glm::translate(view, v * -1.0f);
     }
-    glm::mat4 getViewProjection() {
+    glm::mat4 getViewProjection() const {
         return viewProj;
     }
-    glm::vec3 getPosition() {
+    glm::vec3 getPosition() const {
         return position;
     }
 protected:

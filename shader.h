@@ -1,5 +1,4 @@
 #pragma once
-#include "includes.h"
 
 using namespace std;
 
@@ -10,7 +9,7 @@ public:
 
     void bind();
     void unbind();
-    GLuint getShaderId() {return shaderId;}
+    GLuint getShaderId() const {return shaderId;}
 
 private:
     string parse(const char* filename);

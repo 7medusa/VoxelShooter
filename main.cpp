@@ -240,7 +240,6 @@ int main(int argc, char** argv) {
         camera.update();
         projection = camera.getViewProjection();
 
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
         glClearColor(0.5f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         vertexBuffer.bind();//hat die vertex daten gespeichert
@@ -252,6 +251,7 @@ int main(int argc, char** argv) {
         time += delta;
         model = glm::rotate(model, delta, glm::vec3(1.0f, 1.0f, 1.0f));
         modelViewProj = projection * model;
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
