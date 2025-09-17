@@ -12,8 +12,10 @@ public:
 #endif
         view = glm::mat4(1.0f);
         position = glm::vec3(0.0f, 0.0f, 0.0f);
-        update();
+        viewProj = projection * view;
     }
+
+    virtual ~Camera() = default;
 
     virtual void update() {//updatet die kamera
         viewProj = projection * view;
@@ -29,8 +31,8 @@ public:
         return position;
     }
 protected:
-    glm::mat4 projection;//matrix zur abbildung der objekte
-    glm::mat4 view;//position der kamera
-    glm::mat4 viewProj;//kombinierte matrix
-    glm::vec3 position;//position der kamera
+    glm::mat4 projection{};//matrix zur abbildung der objekte
+    glm::mat4 view{};//position der kamera
+    glm::mat4 viewProj{};//kombinierte matrix
+    glm::vec3 position{};//position der kamera
 };

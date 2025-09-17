@@ -1,13 +1,18 @@
+#ifndef FPSCamera_h
+#define FPSCamera_h
+#endif
+
 #include "camera.h"
 #include "defines.h"
 
-class FPSCamera : public Camera {
+class FPSCamera final : public Camera {
 public:
     FPSCamera(float fov, float width, float height) : Camera(fov, width, height) {
         yaw = -90.0f;
         pitch = 0.0f;
         onMouseMove(0.0f, 0.0f);
-        update();
+        view = glm::lookAt(position, position+lookAt, up);
+        Camera::update();
     }
 
     //funktion für maus bewegung
@@ -33,7 +38,7 @@ public:
     }
 
     void moveFront(float amount) {
-        translate((glm::vec3(1.3f, 0.0f, 1.3f) * lookAt) * amount);//vec damit man beim oben schauen und vorwärts gehen nicht nach oben geht
+        translate(glm::vec3(1.3f, 0.0f, 1.3f) * lookAt * amount);//vec damit man beim oben schauen und vorwärts gehen nicht nach oben geht
         update();
     }
 
@@ -42,7 +47,7 @@ public:
         update();
     }
 protected:
-    glm::vec3 lookAt;
+    glm::vec3 lookAt{};
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     float yaw;//rotation um y achse

@@ -26,7 +26,7 @@ void debug(int n) {
 #endif
 }
 
-int main(int argc, char** argv) {
+int main() {
     //initialisiert eine schnittstelle zwischen window manager sdl und opengl
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     SDL_GL_SetSwapInterval(1);//vsync
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
-    int flags = SDL_WINDOW_OPENGL;
+    static int flags = SDL_WINDOW_OPENGL;
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
 
     //initialisiert glew für mehr funktionen
-    GLenum glewError = glewInit();
+    const GLenum glewError = glewInit();
     if (glewError != GLEW_OK) {
         cout << "GLEW error: " << glewGetErrorString(glewError) << endl;
         return -1;
@@ -74,19 +74,19 @@ int main(int argc, char** argv) {
         Vertex{0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
         Vertex{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},//für mittleres dreieck
     };
-    int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe
+    constexpr int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe
 
     unsigned int indices[] = {
         //0, 2, 4,//dreieck normal
         0, 1, 2,//dreieck 1
         1, 2, 3//dreieck 2
     };
-    int numIndices = sizeof(indices)/sizeof(indices[0]);//array größe
+    constexpr int numIndices = sizeof(indices)/sizeof(indices[0]);//array größe
 
     //erstellt indexbuffer, vertexbuffer und erstellt die shader programme für die gpu
-    IndexBuffer indexBuffer(indices, numIndices, sizeof(indices[0]));
-    VertexBuffer vertexBuffer(vertices, numVertices);
-    Shader shader(vertexShaderDir, fragmentShaderDir);
+    const IndexBuffer indexBuffer(indices, numIndices, sizeof(indices[0]));
+    const VertexBuffer vertexBuffer(vertices, numVertices);
+    const Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //kamera
 #ifndef fpsMode
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
     int textureHeight;
     int bitsPerPixel;
     stbi_set_flip_vertically_on_load(true);//flippt das koordinatensystem da opengl ein anderes system nutzt
-    auto textureBuffer = stbi_load(textureDir, &textureWidth, &textureHeight, &bitsPerPixel, 4);//lädt die textur
+    const auto textureBuffer = stbi_load(textureDir, &textureWidth, &textureHeight, &bitsPerPixel, 4);//lädt die textur
     GLuint textureId;
     GLCALL(glGenTextures(1, &textureId));//erstellt ein texture id mit 1 textur
     GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));
@@ -123,21 +123,21 @@ int main(int argc, char** argv) {
     glm::mat4 modelViewProj = projection * model;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
-    int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
+    const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
     if(colorUniformLocation != -1) {
         glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     }
     else {
         debug(1);
     }
-    int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
+    const int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
     if(textureUniformLocation != -1) {
         GLCALL(glUniform1d(textureUniformLocation, 0));
     }
     else {
         debug(2);
     }
-    int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
+    const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
     if(modelViewProjLocation != -1) {
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
     }
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
     }
 
     //FPS
-    double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
+    const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
@@ -255,19 +255,19 @@ int main(int argc, char** argv) {
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
-        vertexBuffer.unbind();
-        vertexBuffer.unbindVbo();
-        indexBuffer.unbind();
+        VertexBuffer::unbind();
+        VertexBuffer::unbindVbo();
+        IndexBuffer::unbind();
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
         //*loop*//
 
         //fps
-        double endCounter = static_cast<double>(SDL_GetPerformanceCounter());
-        double counterElapsed = endCounter - lastCounter;
+        const double endCounter = static_cast<double>(SDL_GetPerformanceCounter());
+        const double counterElapsed = endCounter - lastCounter;
         delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);
-        float fps = static_cast<float>(perfCounterFrequency) / static_cast<float>(counterElapsed);
 #ifdef Fps
-        cout << "fps: " << (int)fps << endl;
+        const float fps = static_cast<float>(perfCounterFrequency) / static_cast<float>(counterElapsed);
+        cout << "fps: " << static_cast<int>(fps) << endl;
 #endif
         lastCounter = endCounter;
     }

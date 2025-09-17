@@ -2,19 +2,19 @@
 
 using namespace std;
 
-class Shader {
+class Shader final {
 public:
     Shader(const char* vertexShaderFilename, const char* fragmentShaderFilename);
-    virtual ~Shader();
+    ~Shader();
 
-    void bind();
-    void unbind();
+    void bind() const;
+    static void unbind();
     GLuint getShaderId() const {return shaderId;}
 
 private:
-    string parse(const char* filename);
-    GLuint createShader(const char* vertexShaderFilename, const char* fragmentShaderFilename);
-    GLuint compile(string shaderSource, GLenum type);
+    static string parse(const char* filename);
+    static GLuint createShader(const char* vertexShaderFilename, const char* fragmentShaderFilename);
+    static GLuint compile(const string& shaderSource, GLenum type);
 
     GLuint shaderId;
 };

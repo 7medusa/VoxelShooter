@@ -4,7 +4,6 @@
 #include <assimp/postprocess.h>
 #include <vector>
 #include <cassert>
-#include "../defines.h"
 
 using namespace std;
 
@@ -15,9 +14,9 @@ struct Position {
 vector<Position> positions;
 vector<float> indices;
 
-void processMesh(aiMesh* mesh, const aiScene* scene) {
-    for(int i = 0; i < mesh->mNumVertices; i++) {
-        Position vertex;
+void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht entfernen
+    for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
+        Position vertex{};
         vertex.x = mesh->mVertices[i].x;
         vertex.y = mesh->mVertices[i].y;
         vertex.z = mesh->mVertices[i].z;
@@ -26,18 +25,18 @@ void processMesh(aiMesh* mesh, const aiScene* scene) {
     for(int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         assert(face.mNumIndices == 3);
-        for(int j = 0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]);
+        for(unsigned int j = 0; j < face.mNumIndices; j++) {
+            indices.push_back(face.mIndices[j]); // NOLINT(*-narrowing-conversions)
         }
     }
 }
 
-void processNode(aiNode* node, const aiScene* scene) {
-    for(int i = 0; i < node->mNumMeshes; i++) {
+void processNode(const aiNode* node, const aiScene* scene) {//const vielleicht entfernen
+    for(unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         processMesh(mesh, scene);
     }
-    for(int i = 0; i < node->mNumChildren; i++) {
+    for(unsigned int i = 0; i < node->mNumChildren; i++) {
         processNode(node->mChildren[i], scene);
     }
 }
@@ -51,7 +50,7 @@ int main(int argc, char** argv) {
     if(argc <= 0) {
         return -1;
     }
-    else if(argc < 2) {
+    if(argc < 2) {
         cout << "usage: " << argv[0] << " modelfilename" << endl;
         return -1;
     }

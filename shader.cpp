@@ -7,17 +7,17 @@ Shader::~Shader() {
     glDeleteProgram(shaderId);
 }
 
-void Shader::bind() {
+void Shader::bind() const {
     glUseProgram(shaderId);
 }
 void Shader::unbind() {
     glUseProgram(0);
 }
 
-GLuint Shader::compile(string shaderSource, GLenum type) {
-    GLuint id = glCreateShader(type);
+GLuint Shader::compile(const string& shaderSource, GLenum type) {
+    const GLuint id = glCreateShader(type);
     const char* src = shaderSource.c_str();
-    glShaderSource(id, 1, &src, 0);
+    glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
 
     //fehlerbehandlung des shaders
@@ -33,15 +33,14 @@ GLuint Shader::compile(string shaderSource, GLenum type) {
     return id;
 }
 string Shader::parse(const char* filename) {//liest die file aus
-    FILE* file;
     string contents;
-    file = fopen(filename, "rb");
+    FILE* file = fopen(filename, "rb");
     if(file == nullptr) {
         cout << "error opening shader file: " << filename << endl;
         return "";//gibt einen leeren shader zurück, wenn die datei nicht geöffnet werden kann
     }
     fseek(file, 0, SEEK_END);
-    size_t filesize = ftell(file);
+    const size_t filesize = ftell(file);
     rewind(file);
     contents.resize(filesize);
     fread(&contents[0], 1, filesize, file);
@@ -49,12 +48,12 @@ string Shader::parse(const char* filename) {//liest die file aus
     return contents;
 }
 GLuint Shader::createShader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
-    string vertexShaderSource = parse(vertexShaderFilename);
-    string fragmentShaderSource = parse(fragmentShaderFilename);
+    const string vertexShaderSource = parse(vertexShaderFilename);
+    const string fragmentShaderSource = parse(fragmentShaderFilename);
 
-    GLuint program = glCreateProgram();
-    GLuint vs = compile(vertexShaderSource, GL_VERTEX_SHADER);
-    GLuint fs = compile(fragmentShaderSource, GL_FRAGMENT_SHADER);
+    const GLuint program = glCreateProgram();
+    const GLuint vs = compile(vertexShaderSource, GL_VERTEX_SHADER);
+    const GLuint fs = compile(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
     glAttachShader(program, vs);
     glAttachShader(program, fs);
