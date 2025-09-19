@@ -3,6 +3,9 @@
 //texturen
 #define textureDir "../texture/debug.png"
 
+//shader
+#define vertexShaderDir "../shaders/basic.vs"
+#define fragmentShaderDir "../shaders/basic.fs"
+
 //3d models
-#define debugModelDir "../3d_models/debug.obj"
-#define debugComplexModelDir "../3d_models/debug_complex.obj"
+#define modelDir "../3d_models/mds/cube.mds"

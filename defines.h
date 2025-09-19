@@ -16,13 +16,6 @@ using namespace std;
 
 #define GLCALL(call) call;
 
-//shader
-#define vertexShaderDir "../shaders/basic.vs"
-#define fragmentShaderDir "../shaders/basic.fs"
-
-//models
-#define modelDir "../3d_models/mds/cube.mds"
-
 struct Vertex {
     //koordinaten
     float x;

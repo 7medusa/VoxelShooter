@@ -74,9 +74,9 @@ int main() {
 
     //koordinaten
     vector<Vertex> vertices;
-    uint64_t numVertices = 0;
+    uint64_t numVertices;
     vector<uint32_t> indices;
-    int64_t numIndices = 0;
+    int64_t numIndices;
     ifstream input = ifstream(modelDir, ios::in | ios::binary);
     if(!input.is_open()) {
         debug(4);
@@ -97,7 +97,6 @@ int main() {
         vertex.a = 1.0f;
         vertices.push_back(vertex);
     }
-
     for(uint64_t i = 0; i < numIndices; i++) {
         uint32_t index;
         input.read((char*)&index, sizeof(uint32_t));
@@ -105,8 +104,8 @@ int main() {
     }
 
     //erstellt indexbuffer, vertexbuffer und erstellt die shader programme für die gpu
-    const IndexBuffer indexBuffer(indices.data(), numIndices, sizeof(indices[0]));
     const VertexBuffer vertexBuffer(vertices.data(), numVertices);
+    const IndexBuffer indexBuffer(indices.data(), numIndices, sizeof(indices[0]));
     const Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //kamera
@@ -115,7 +114,7 @@ int main() {
 #else
     FPSCamera camera(90.0f, windowWidth, windowHeight);
 #endif
-    camera.translate(glm::vec3(0.0f, 0.0f, 2.5f));
+    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
     //textur
@@ -261,19 +260,20 @@ int main() {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         vertexBuffer.bind();//hat die vertex daten gespeichert
         vertexBuffer.bindVbo();//zum neu beschreiben des buffers, zB. wenn man in der laufzeit die vertices ändert
         indexBuffer.bind();//hat den index der vertices gespeichert
         GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
         GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
+        glUniform4f(colorUniformLocation, 0.5f, 0.0f, 1.0f, 1.0f);
 
         time += delta;
         model = glm::rotate(model, delta, glm::vec3(1.0f, 1.0f, 1.0f));
         modelViewProj = projection * model;
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         VertexBuffer::unbind();
