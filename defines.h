@@ -1,6 +1,6 @@
 #pragma once
 
-//defines zu bearbeiten
+//defines
 //#define Release
 //#define Fps
 //#define orthoMode
