@@ -6,12 +6,6 @@
 //#define orthoMode
 //#define fpsMode
 
-
-#ifdef fpsMode
-    #define Release
-#endif
-
-
 using namespace std;
 
 #define windowWidth 800.0f
@@ -25,6 +19,9 @@ using namespace std;
 //shader
 #define vertexShaderDir "../shaders/basic.vs"
 #define fragmentShaderDir "../shaders/basic.fs"
+
+//models
+#define modelDir "../3d_models/mds/cube.mds"
 
 struct Vertex {
     //koordinaten

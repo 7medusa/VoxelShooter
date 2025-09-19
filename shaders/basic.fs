@@ -11,6 +11,7 @@ uniform vec4 u_in_color;//color input
 
 void main() {
     vec4 texColor = texture(u_in_texture, out_textCoord);//texturfarbe
-    main_color = texColor;
+    //main_color = texColor;
     //main_color = u_in_color;
+    main_color = out_color;
 }

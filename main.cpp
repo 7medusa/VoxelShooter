@@ -1,6 +1,9 @@
 #include "includes.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb_image.h"
+#include <vector>
+#include <fstream>
+#include <iostream>
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -22,6 +25,9 @@ void debug(int n) {
     }
     else if(n == 3) {
         cout << "uniform modelviewproj not found" << endl;
+    }
+    else if(n == 4) {
+        cout << "error reading model file .mds" << endl;
     }
 #endif
 }
@@ -67,25 +73,40 @@ int main() {
 #endif
 
     //koordinaten
-    Vertex vertices[] = {
-        Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-        Vertex{-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-        Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f},
-        Vertex{0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-        Vertex{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},//für mittleres dreieck
-    };
-    constexpr int numVertices = sizeof(vertices)/sizeof(vertices[0]);//array größe
+    vector<Vertex> vertices;
+    uint64_t numVertices = 0;
+    vector<uint32_t> indices;
+    int64_t numIndices = 0;
+    ifstream input = ifstream(modelDir, ios::in | ios::binary);
+    if(!input.is_open()) {
+        debug(4);
+    }
+    input.read((char*)&numVertices, sizeof(uint64_t));
+    input.read((char*)&numIndices, sizeof(uint64_t));
 
-    unsigned int indices[] = {
-        //0, 2, 4,//dreieck normal
-        0, 1, 2,//dreieck 1
-        1, 2, 3//dreieck 2
-    };
-    constexpr int numIndices = sizeof(indices)/sizeof(indices[0]);//array größe
+    for(uint64_t i = 0; i < numVertices; i++) {
+        Vertex vertex{};
+        input.read((char*)&vertex.x, sizeof(float));
+        input.read((char*)&vertex.y, sizeof(float));
+        input.read((char*)&vertex.z, sizeof(float));
+        vertex.u = 1.0f;
+        vertex.v = 1.0f;
+        vertex.r = 1.0f;
+        vertex.g = 1.0f;
+        vertex.b = 1.0f;
+        vertex.a = 1.0f;
+        vertices.push_back(vertex);
+    }
+
+    for(uint64_t i = 0; i < numIndices; i++) {
+        uint32_t index;
+        input.read((char*)&index, sizeof(uint32_t));
+        indices.push_back(index);
+    }
 
     //erstellt indexbuffer, vertexbuffer und erstellt die shader programme für die gpu
-    const IndexBuffer indexBuffer(indices, numIndices, sizeof(indices[0]));
-    const VertexBuffer vertexBuffer(vertices, numVertices);
+    const IndexBuffer indexBuffer(indices.data(), numIndices, sizeof(indices[0]));
+    const VertexBuffer vertexBuffer(vertices.data(), numVertices);
     const Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //kamera
@@ -117,7 +138,7 @@ int main() {
     }
 
     //matrizen
-    glm::mat4 projection;
+    glm::mat4 projection = camera.getViewProjection();
     glm::mat4 model = glm::mat4(1.0f);//matrix zur positionierung der vertices
     model = glm::scale(model, glm::vec3(1.0f));
     glm::mat4 modelViewProj = projection * model;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
@@ -240,7 +261,7 @@ int main() {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(0.5f, 0.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         vertexBuffer.bind();//hat die vertex daten gespeichert
         vertexBuffer.bindVbo();//zum neu beschreiben des buffers, zB. wenn man in der laufzeit die vertices ändert
@@ -252,7 +273,7 @@ int main() {
         model = glm::rotate(model, delta, glm::vec3(1.0f, 1.0f, 1.0f));
         modelViewProj = projection * model;
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         VertexBuffer::unbind();
