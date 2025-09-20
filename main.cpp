@@ -18,6 +18,20 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 #endif
 }
 
+void unbind() {
+    VertexBuffer::unbind();
+    IndexBuffer::unbind();
+}
+
+void draw(glm::mat4 modelViewProj, glm::mat4 projection, glm::mat4 model, const int modelViewProjLocation, int64_t numIndices, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer) {
+    vertexBuffer->bind();
+    indexBuffer->bind();
+    modelViewProj = projection * model;
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
+    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+    unbind();
+}
+
 int main() {
     //initialisiert eine schnittstelle zwischen window manager sdl und opengl
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -44,11 +58,7 @@ int main() {
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
 
     //initialisiert glew für mehr funktionen
-    const GLenum glewError = glewInit();
-    if (glewError != GLEW_OK) {
-        cout << "GLEW error: " << glewGetErrorString(glewError) << endl;
-        return -1;
-    }
+    glewInit();
 
     //debug modus
 #ifndef Release
@@ -59,11 +69,7 @@ int main() {
 #endif
 
     //kamera
-#ifndef fpsMode
     Camera camera(90.0f, windowWidth, windowHeight);
-#else
-    FPSCamera camera(90.0f, windowWidth, windowHeight);
-#endif
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
@@ -93,14 +99,14 @@ int main() {
     Model sphere(static_cast<string>(sphereModelDir), 0, 0, 1);
     glm::mat4 sphereModel = glm::mat4(1.0f);//matrix zur positionierung der vertices
     glm::mat4 sphereModelViewProj = projection * sphereModel;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
-    const VertexBuffer vertexBufferSphere(sphere.vertices.data(), sphere.numVertices);
-    const IndexBuffer indexBufferSphere(sphere.indices.data(), sphere.numIndices, sizeof(sphere.indices[0]));
+    VertexBuffer vertexBufferSphere(sphere.vertices.data(), sphere.numVertices);
+    IndexBuffer indexBufferSphere(sphere.indices.data(), sphere.numIndices, sizeof(sphere.indices[0]));
 
     Model monkey(static_cast<string>(monkeyModelDir), 0, 1, 0);
     glm::mat4 monkeyModel = glm::mat4(1.0f);
     glm::mat4 monkeyModelViewProj = projection * monkeyModel;
-    const VertexBuffer vertexBufferMonkey(monkey.vertices.data(), monkey.numVertices);
-    const IndexBuffer indexBufferMonkey(monkey.indices.data(), monkey.numIndices, sizeof(monkey.indices[0]));
+    VertexBuffer vertexBufferMonkey(monkey.vertices.data(), monkey.numVertices);
+    IndexBuffer indexBufferMonkey(monkey.indices.data(), monkey.numIndices, sizeof(monkey.indices[0]));
 
     Model character(static_cast<string>(characterModelDir), 1, 0, 0);
     glm::mat4 characterModel = glm::mat4(1.0f);
@@ -109,6 +115,7 @@ int main() {
     const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
 
     const Shader shader(vertexShaderDir, fragmentShaderDir);
+    shader.bind();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
     const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
@@ -120,13 +127,10 @@ int main() {
     GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));
     GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
 
-    //FPS
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
-
-    shader.bind();
 
     bool close = false;
 
@@ -211,7 +215,7 @@ int main() {
                     up = false;
                 }
             }
-            else if(!up) {
+            else {
                 if(characterPosition.y > 0.0f) {
                     characterModel = glm::translate(characterModel, glm::vec3(0.0f, -0.06f, 0.0f));
                 }
@@ -236,21 +240,8 @@ int main() {
 
         time += delta;
 
-        vertexBufferMonkey.bind();//hat die vertex daten gespeichert
-        indexBufferMonkey.bind();//hat den index der vertices gespeichert
-        monkeyModelViewProj = projection * monkeyModel;
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
-        glDrawElements(GL_TRIANGLES, monkey.numIndices, GL_UNSIGNED_INT, nullptr);
-        VertexBuffer::unbind();
-        IndexBuffer::unbind();
-
-        vertexBufferSphere.bind();
-        indexBufferSphere.bind();
-        sphereModelViewProj = projection * sphereModel;
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
-        glDrawElements(GL_TRIANGLES, sphere.numIndices, GL_UNSIGNED_INT, nullptr);
-        VertexBuffer::unbind();
-        IndexBuffer::unbind();
+        draw(monkeyModelViewProj, projection, monkeyModel, modelViewProjLocation, monkey.numIndices, &vertexBufferMonkey, &indexBufferMonkey);
+        draw(sphereModelViewProj, projection, sphereModel, modelViewProjLocation, sphere.numIndices, &vertexBufferSphere, &indexBufferSphere);
 
         vertexBufferCharacter.bind();
         indexBufferCharacter.bind();
@@ -260,10 +251,8 @@ int main() {
         characterModelViewProj = projection * characterModel;
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
         glDrawElements(GL_TRIANGLES, character.numIndices, GL_UNSIGNED_INT, nullptr);
-        VertexBuffer::unbind();
-        IndexBuffer::unbind();
+        unbind();
 
-        //cout << camera.getPosition().x << " " << camera.getPosition().y << " " << camera.getPosition().z << endl;
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
@@ -273,10 +262,6 @@ int main() {
         const double endCounter = static_cast<double>(SDL_GetPerformanceCounter());
         const double counterElapsed = endCounter - lastCounter;
         delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);
-#ifdef Fps
-        const float fps = static_cast<float>(perfCounterFrequency) / static_cast<float>(counterElapsed);
-        cout << "fps: " << static_cast<int>(fps) << endl;
-#endif
         lastCounter = endCounter;
     }
     return 0;
