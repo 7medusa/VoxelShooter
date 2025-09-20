@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include "model.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -72,42 +73,6 @@ int main() {
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
 #endif
 
-    //koordinaten
-    vector<Vertex> vertices;
-    uint64_t numVertices;
-    vector<uint32_t> indices;
-    int64_t numIndices;
-    ifstream input = ifstream(modelDir, ios::in | ios::binary);
-    if(!input.is_open()) {
-        debug(4);
-    }
-    input.read((char*)&numVertices, sizeof(uint64_t));
-    input.read((char*)&numIndices, sizeof(uint64_t));
-
-    for(uint64_t i = 0; i < numVertices; i++) {
-        Vertex vertex{};
-        input.read((char*)&vertex.x, sizeof(float));
-        input.read((char*)&vertex.y, sizeof(float));
-        input.read((char*)&vertex.z, sizeof(float));
-        vertex.u = 1.0f;
-        vertex.v = 1.0f;
-        vertex.r = 1.0f;
-        vertex.g = 1.0f;
-        vertex.b = 1.0f;
-        vertex.a = 1.0f;
-        vertices.push_back(vertex);
-    }
-    for(uint64_t i = 0; i < numIndices; i++) {
-        uint32_t index;
-        input.read((char*)&index, sizeof(uint32_t));
-        indices.push_back(index);
-    }
-
-    //erstellt indexbuffer, vertexbuffer und erstellt die shader programme für die gpu
-    const VertexBuffer vertexBuffer(vertices.data(), numVertices);
-    const IndexBuffer indexBuffer(indices.data(), numIndices, sizeof(indices[0]));
-    const Shader shader(vertexShaderDir, fragmentShaderDir);
-
     //kamera
 #ifndef fpsMode
     Camera camera(90.0f, windowWidth, windowHeight);
@@ -138,9 +103,27 @@ int main() {
 
     //matrizen
     glm::mat4 projection = camera.getViewProjection();
-    glm::mat4 model = glm::mat4(1.0f);//matrix zur positionierung der vertices
-    model = glm::scale(model, glm::vec3(1.0f));
-    glm::mat4 modelViewProj = projection * model;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
+
+    //koordinaten
+    Model sphere(static_cast<string>(sphereModelDir), 0, 0, 1);
+    glm::mat4 sphereModel = glm::mat4(1.0f);//matrix zur positionierung der vertices
+    glm::mat4 sphereModelViewProj = projection * sphereModel;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
+    const VertexBuffer vertexBufferSphere(sphere.vertices.data(), sphere.numVertices);
+    const IndexBuffer indexBufferSphere(sphere.indices.data(), sphere.numIndices, sizeof(sphere.indices[0]));
+
+    Model monkey(static_cast<string>(monkeyModelDir), 0, 1, 0);
+    glm::mat4 monkeyModel = glm::mat4(1.0f);
+    glm::mat4 monkeyModelViewProj = projection * monkeyModel;
+    const VertexBuffer vertexBufferMonkey(monkey.vertices.data(), monkey.numVertices);
+    const IndexBuffer indexBufferMonkey(monkey.indices.data(), monkey.numIndices, sizeof(monkey.indices[0]));
+
+    Model character(static_cast<string>(characterModelDir), 1, 0, 0);
+    glm::mat4 characterModel = glm::mat4(1.0f);
+    glm::mat4 characterModelViewProj = projection * characterModel;
+    const VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
+    const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
+
+    const Shader shader(vertexShaderDir, fragmentShaderDir);
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
     const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
@@ -159,7 +142,9 @@ int main() {
     }
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
     if(modelViewProjLocation != -1) {
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
     }
     else {
         debug(3);
@@ -216,6 +201,9 @@ int main() {
                     else if(event.key.keysym.sym == SDLK_d) {
                         dBool = false;
                     }
+                    else if(event.key.keysym.sym == SDLK_x) {
+                        camera.reset();
+                    }
                 }
             }
         }
@@ -223,10 +211,14 @@ int main() {
 #ifndef fpsMode
         //kamerasteuerung
         if(wBool) {
-            camera.translate(glm::vec3(0.0f, 0.0f, -0.05f));
+            if(camera.getPosition().z > 1.7f) {
+                camera.translate(glm::vec3(0.0f, 0.0f, -0.04f));
+            }
         }
         if(sBool) {
-            camera.translate(glm::vec3(0.0f, 0.0f, 0.05f));
+            if(camera.getPosition().z < 13.0f) {
+                camera.translate(glm::vec3(0.0f, 0.0f, 0.04f));
+            }
         }
         if(aBool) {
             camera.translate(glm::vec3(-0.03f, 0.0f, 0.0f));
@@ -262,23 +254,41 @@ int main() {
 
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
-        vertexBuffer.bind();//hat die vertex daten gespeichert
-        vertexBuffer.bindVbo();//zum neu beschreiben des buffers, zB. wenn man in der laufzeit die vertices ändert
-        indexBuffer.bind();//hat den index der vertices gespeichert
         GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
         GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
         glUniform4f(colorUniformLocation, 0.5f, 0.0f, 1.0f, 1.0f);
 
         time += delta;
-        model = glm::rotate(model, delta, glm::vec3(1.0f, 1.0f, 1.0f));
-        modelViewProj = projection * model;
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+
+        vertexBufferMonkey.bind();//hat die vertex daten gespeichert
+        indexBufferMonkey.bind();//hat den index der vertices gespeichert
+        monkeyModelViewProj = projection * monkeyModel;
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
+        glDrawElements(GL_TRIANGLES, monkey.numIndices, GL_UNSIGNED_INT, nullptr);
+        VertexBuffer::unbind();
+        IndexBuffer::unbind();
+
+        vertexBufferSphere.bind();
+        indexBufferSphere.bind();
+        sphereModelViewProj = projection * sphereModel;
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
+        glDrawElements(GL_TRIANGLES, sphere.numIndices, GL_UNSIGNED_INT, nullptr);
+        VertexBuffer::unbind();
+        IndexBuffer::unbind();
+
+        vertexBufferCharacter.bind();
+        indexBufferCharacter.bind();
+        characterModel = glm::mat4(1.0f);//zurücksetzen der matrix um mit translate nicht zu addieren
+        characterModel = glm::translate(characterModel, glm::vec3(camera.getPosition().x, camera.getPosition().y, 0.0f));
+        characterModelViewProj = projection * characterModel;
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
+        glDrawElements(GL_TRIANGLES, character.numIndices, GL_UNSIGNED_INT, nullptr);
+        VertexBuffer::unbind();
+        IndexBuffer::unbind();
+
+        cout << camera.getPosition().x << " " << camera.getPosition().y << " " << camera.getPosition().z << endl;
         SDL_GL_SwapWindow(window);//switcht die buffer
 
-        VertexBuffer::unbind();
-        VertexBuffer::unbindVbo();
-        IndexBuffer::unbind();
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
         //*loop*//
 

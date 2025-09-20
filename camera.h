@@ -30,6 +30,11 @@ public:
     glm::vec3 getPosition() const {
         return position;
     }
+    void reset() {
+        float difference = position.z - 5.0f;
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, difference));
+        position.z = 5.0f;
+    }
 protected:
     glm::mat4 projection{};//matrix zur abbildung der objekte
     glm::mat4 view{};//position der kamera
