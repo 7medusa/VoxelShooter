@@ -6,7 +6,6 @@
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
 
-#include "character.cpp"
 #include "model.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
@@ -16,23 +15,6 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
     }
 #else
     cout << "opengl debug message: " << message << endl;
-#endif
-}
-
-void debug(int n) {
-#ifndef Release
-    if(n == 1) {
-        cout << "uniform color not found" << endl;
-    }
-    else if(n == 2) {
-        cout << "uniform texture not found" << endl;
-    }
-    else if(n == 3) {
-        cout << "uniform modelviewproj not found" << endl;
-    }
-    else if(n == 4) {
-        cout << "error reading model file .mds" << endl;
-    }
 #endif
 }
 
@@ -130,28 +112,13 @@ int main() {
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
     const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
-    if(colorUniformLocation != -1) {
-        glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
-    }
-    else {
-        debug(1);
-    }
+    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     const int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
-    if(textureUniformLocation != -1) {
-        GLCALL(glUniform1d(textureUniformLocation, 0));
-    }
-    else {
-        debug(2);
-    }
+    GLCALL(glUniform1d(textureUniformLocation, 0));
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
-    if(modelViewProjLocation != -1) {
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
-    }
-    else {
-        debug(3);
-    }
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
 
     //FPS
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
@@ -217,7 +184,6 @@ int main() {
             }
         }
 
-#ifndef fpsMode
         //kamerasteuerung
         if(wBool) {
             if(camera.getPosition().z > 1.7f) {
@@ -258,29 +224,7 @@ int main() {
             }
             characterModelViewProj = projection * characterModel;
         }
-#else
-        //kamerasteuerung
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-        if(wBool) {
-            camera.moveFront(delta * cameraSpeed);
-        }
-        if(sBool) {
-            camera.moveFront(-delta * cameraSpeed);
-        }
-        if(aBool) {
-            camera.moveSideways(-delta * cameraSpeed);
-        }
-        if(dBool) {
-            camera.moveSideways(delta * cameraSpeed);
-        }
-        if(event.type == SDL_MOUSEMOTION) {
-            if(SDL_GetRelativeMouseMode()) {
-                event.motion.xrel *= 0.9f;
-                event.motion.yrel *= 0.9f;
-                camera.onMouseMove(event.motion.xrel, event.motion.yrel);
-            }
-        }
-#endif
+
         camera.update();
         projection = camera.getViewProjection();
 
