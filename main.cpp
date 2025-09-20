@@ -4,6 +4,9 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <bits/locale_facets_nonio.h>
+
+#include "character.cpp"
 #include "model.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
@@ -165,6 +168,9 @@ int main() {
     bool sBool = false;
     bool aBool = false;
     bool dBool = false;
+    bool jumpOnProgress = false;
+    bool up = true;
+
     while(!close) {
         //*loop*//
         SDL_Event event;
@@ -186,6 +192,9 @@ int main() {
                     }
                     else if(event.key.keysym.sym == SDLK_d) {
                         dBool = true;
+                    }
+                    else if(event.key.keysym.sym == SDLK_SPACE) {
+                        jumpOnProgress = true;
                     }
                 }
                 else if(event.type == SDL_KEYUP) {
@@ -225,6 +234,29 @@ int main() {
         }
         if(dBool) {
             camera.translate(glm::vec3(0.03f, 0.0f, 0.0f));
+        }
+        if(jumpOnProgress) {
+            glm::vec3 characterPosition= glm::vec3(characterModel[3]);
+            if(up) {
+                if(characterPosition.y < 1.0f) {
+                    characterModel = glm::translate(characterModel, glm::vec3(0.0f, 0.06f, 0.0f));
+                }
+                else {
+                    up = false;
+                }
+            }
+            else if(!up) {
+                if(characterPosition.y > 0.0f) {
+                    characterModel = glm::translate(characterModel, glm::vec3(0.0f, -0.06f, 0.0f));
+                }
+                else {
+                    characterModel = glm::mat4(1.0f);
+                    characterModel = glm::translate(characterModel, glm::vec3(characterPosition.x, 0.0f, characterPosition.x));//reseten der position auf genau 0
+                    up = true;
+                    jumpOnProgress = false;
+                }
+            }
+            characterModelViewProj = projection * characterModel;
         }
 #else
         //kamerasteuerung
@@ -278,15 +310,16 @@ int main() {
 
         vertexBufferCharacter.bind();
         indexBufferCharacter.bind();
+        float characterYCoordinate = glm::vec3(characterModel[3]).y;//zwischenspeichern für springen funktion
         characterModel = glm::mat4(1.0f);//zurücksetzen der matrix um mit translate nicht zu addieren
-        characterModel = glm::translate(characterModel, glm::vec3(camera.getPosition().x, camera.getPosition().y, 0.0f));
+        characterModel = glm::translate(characterModel, glm::vec3(camera.getPosition().x, characterYCoordinate, 0.0f));
         characterModelViewProj = projection * characterModel;
         GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
         glDrawElements(GL_TRIANGLES, character.numIndices, GL_UNSIGNED_INT, nullptr);
         VertexBuffer::unbind();
         IndexBuffer::unbind();
 
-        cout << camera.getPosition().x << " " << camera.getPosition().y << " " << camera.getPosition().z << endl;
+        //cout << camera.getPosition().x << " " << camera.getPosition().y << " " << camera.getPosition().z << endl;
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
