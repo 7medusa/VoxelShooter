@@ -6,7 +6,9 @@
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
 
+#include "control.cpp"
 #include "model.cpp"
+#include "draw.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -16,20 +18,6 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 #else
     cout << "opengl debug message: " << message << endl;
 #endif
-}
-
-void unbind() {
-    VertexBuffer::unbind();
-    IndexBuffer::unbind();
-}
-
-void draw(glm::mat4 modelViewProj, glm::mat4 projection, glm::mat4 model, const int modelViewProjLocation, int64_t numIndices, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer) {
-    vertexBuffer->bind();
-    indexBuffer->bind();
-    modelViewProj = projection * model;
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//ändert die daten in der modelViewPorjLocation im shader
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
-    unbind();
 }
 
 int main() {
@@ -133,14 +121,7 @@ int main() {
     float time = 0.0f;
 
     bool close = false;
-
-    //tasten
-    bool wBool = false;
-    bool sBool = false;
-    bool aBool = false;
-    bool dBool = false;
-    bool jumpOnProgress = false;
-    bool up = true;
+    Control control;
 
     while(!close) {
         //*loop*//
@@ -148,87 +129,12 @@ int main() {
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 close = true;
+                return 0;
             }
-            else {
-                //tasteneingaben
-                if(event.type == SDL_KEYDOWN) {
-                    if(event.key.keysym.sym == SDLK_w) {
-                        wBool = true;
-                    }
-                    else if(event.key.keysym.sym == SDLK_s) {
-                        sBool = true;
-                    }
-                    else if(event.key.keysym.sym == SDLK_a) {
-                        aBool = true;
-                    }
-                    else if(event.key.keysym.sym == SDLK_d) {
-                        dBool = true;
-                    }
-                    else if(event.key.keysym.sym == SDLK_SPACE) {
-                        jumpOnProgress = true;
-                    }
-                }
-                else if(event.type == SDL_KEYUP) {
-                    if(event.key.keysym.sym == SDLK_w) {
-                        wBool = false;
-                    }
-                    else if(event.key.keysym.sym == SDLK_s) {
-                        sBool = false;
-                    }
-                    else if(event.key.keysym.sym == SDLK_a) {
-                        aBool = false;
-                    }
-                    else if(event.key.keysym.sym == SDLK_d) {
-                        dBool = false;
-                    }
-                    else if(event.key.keysym.sym == SDLK_x) {
-                        camera.reset();
-                    }
-                }
-            }
+            control.handle(&event, &camera, &characterModel, &projection, &characterModelViewProj);
         }
 
-        //kamerasteuerung
-        if(wBool) {
-            if(camera.getPosition().z > 1.7f) {
-                camera.translate(glm::vec3(0.0f, 0.0f, -0.04f));
-            }
-        }
-        if(sBool) {
-            if(camera.getPosition().z < 13.0f) {
-                camera.translate(glm::vec3(0.0f, 0.0f, 0.04f));
-            }
-        }
-        if(aBool) {
-            camera.translate(glm::vec3(-0.03f, 0.0f, 0.0f));
-        }
-        if(dBool) {
-            camera.translate(glm::vec3(0.03f, 0.0f, 0.0f));
-        }
-        if(jumpOnProgress) {
-            glm::vec3 characterPosition= glm::vec3(characterModel[3]);
-            if(up) {
-                if(characterPosition.y < 1.0f) {
-                    characterModel = glm::translate(characterModel, glm::vec3(0.0f, 0.06f, 0.0f));
-                }
-                else {
-                    up = false;
-                }
-            }
-            else {
-                if(characterPosition.y > 0.0f) {
-                    characterModel = glm::translate(characterModel, glm::vec3(0.0f, -0.06f, 0.0f));
-                }
-                else {
-                    characterModel = glm::mat4(1.0f);
-                    characterModel = glm::translate(characterModel, glm::vec3(characterPosition.x, 0.0f, characterPosition.x));//reseten der position auf genau 0
-                    up = true;
-                    jumpOnProgress = false;
-                }
-            }
-            characterModelViewProj = projection * characterModel;
-        }
-
+        control.control(&event, &camera, &characterModel, &projection, &characterModelViewProj);
         camera.update();
         projection = camera.getViewProjection();
 
@@ -242,16 +148,7 @@ int main() {
 
         draw(monkeyModelViewProj, projection, monkeyModel, modelViewProjLocation, monkey.numIndices, &vertexBufferMonkey, &indexBufferMonkey);
         draw(sphereModelViewProj, projection, sphereModel, modelViewProjLocation, sphere.numIndices, &vertexBufferSphere, &indexBufferSphere);
-
-        vertexBufferCharacter.bind();
-        indexBufferCharacter.bind();
-        float characterYCoordinate = glm::vec3(characterModel[3]).y;//zwischenspeichern für springen funktion
-        characterModel = glm::mat4(1.0f);//zurücksetzen der matrix um mit translate nicht zu addieren
-        characterModel = glm::translate(characterModel, glm::vec3(camera.getPosition().x, characterYCoordinate, 0.0f));
-        characterModelViewProj = projection * characterModel;
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
-        glDrawElements(GL_TRIANGLES, character.numIndices, GL_UNSIGNED_INT, nullptr);
-        unbind();
+        drawCharacter(characterModelViewProj, projection, characterModel, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 
@@ -264,5 +161,4 @@ int main() {
         delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);
         lastCounter = endCounter;
     }
-    return 0;
 }
