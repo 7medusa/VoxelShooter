@@ -9,6 +9,7 @@
 #include "control.cpp"
 #include "model.cpp"
 #include "draw.cpp"
+#include "character.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -23,6 +24,7 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 int main() {
     //initialisiert eine schnittstelle zwischen window manager sdl und opengl
     SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Window* window;
 
     //buffergrößen
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -36,21 +38,22 @@ int main() {
 #ifdef Release
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_GL_SetSwapInterval(1);//vsync
+    SDL_ShowCursor(SDL_DISABLE);//versteckt den cursor
+    int windowWidth = 2560.0f;
+    int windowHeight = 1440.0f;
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     static int flags = SDL_WINDOW_OPENGL;
+    float windowWidth = 800.0f;
+    float windowHeight = 600.0f;
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
-    SDL_Window* window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
+    window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
-
-    //initialisiert glew für mehr funktionen
     glewInit();
 
-    //debug modus
 #ifndef Release
-    cout << "opengl version: " << glGetString(GL_VERSION) << endl;
     glEnable(GL_DEBUG_OUTPUT);//aktiviert debug output
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);//aktiviert die sofortige benachrichtigung
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
@@ -61,58 +64,34 @@ int main() {
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
-    //textur
-    int textureWidth;
-    int textureHeight;
-    int bitsPerPixel;
-    stbi_set_flip_vertically_on_load(true);//flippt das koordinatensystem da opengl ein anderes system nutzt
-    const auto textureBuffer = stbi_load(textureDir, &textureWidth, &textureHeight, &bitsPerPixel, 4);//lädt die textur
-    GLuint textureId;
-    GLCALL(glGenTextures(1, &textureId));//erstellt ein texture id mit 1 textur
-    GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));//filtert die größe der textur
-    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));//setzt die eigenschaft die am rand der textur passieren soll
-    GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer));//schreibt die textur in opengl
-    GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
-    if(textureBuffer) {
-        stbi_image_free(textureBuffer);//gibt den speicher wieder frei
-    }
-
-    //matrizen
+    //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    //koordinaten
-    Model sphere(static_cast<string>(sphereModelDir), 0, 0, 1);
+    Model sphere(static_cast<string>(sphereModelDir), 0, 1, 1);
     glm::mat4 sphereModel = glm::mat4(1.0f);//matrix zur positionierung der vertices
     glm::mat4 sphereModelViewProj = projection * sphereModel;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
     VertexBuffer vertexBufferSphere(sphere.vertices.data(), sphere.numVertices);
     IndexBuffer indexBufferSphere(sphere.indices.data(), sphere.numIndices, sizeof(sphere.indices[0]));
 
-    Model monkey(static_cast<string>(monkeyModelDir), 0, 1, 0);
-    glm::mat4 monkeyModel = glm::mat4(1.0f);
-    glm::mat4 monkeyModelViewProj = projection * monkeyModel;
-    VertexBuffer vertexBufferMonkey(monkey.vertices.data(), monkey.numVertices);
-    IndexBuffer indexBufferMonkey(monkey.indices.data(), monkey.numIndices, sizeof(monkey.indices[0]));
-
     Model character(static_cast<string>(characterModelDir), 1, 0, 0);
     glm::mat4 characterModel = glm::mat4(1.0f);
     glm::mat4 characterModelViewProj = projection * characterModel;
-    const VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
-    const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
+    VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
+    IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
 
+    //allgemeines
+    bool close = false;
+    Control control;
+    GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
+    GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden
     const Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
     const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
     glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
-    const int textureUniformLocation = GLCALL(glGetUniformLocation(shader.getShaderId(), "u_in_texture"));
-    GLCALL(glUniform1d(textureUniformLocation, 0));
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
     GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &monkeyModelViewProj[0][0]));
     GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
@@ -120,11 +99,10 @@ int main() {
     float delta = 0.0f;
     float time = 0.0f;
 
-    bool close = false;
-    Control control;
+    //objekte
+    Character player(3);
 
     while(!close) {
-        //*loop*//
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
@@ -138,22 +116,18 @@ int main() {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);//cleart den zu bearbeitenden buffer
-        GLCALL(glActiveTexture(GL_TEXTURE0));//aktiviert textur unit 0 um die textur zu binden
-        GLCALL(glBindTexture(GL_TEXTURE_2D, textureId));//bindet die textur
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
         glUniform4f(colorUniformLocation, 0.5f, 0.0f, 1.0f, 1.0f);
 
         time += delta;
 
-        draw(monkeyModelViewProj, projection, monkeyModel, modelViewProjLocation, monkey.numIndices, &vertexBufferMonkey, &indexBufferMonkey);
         draw(sphereModelViewProj, projection, sphereModel, modelViewProjLocation, sphere.numIndices, &vertexBufferSphere, &indexBufferSphere);
-        drawCharacter(characterModelViewProj, projection, characterModel, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
+        player.draw(characterModelViewProj, projection, characterModel, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
-        //*loop*//
 
         //fps
         const double endCounter = static_cast<double>(SDL_GetPerformanceCounter());

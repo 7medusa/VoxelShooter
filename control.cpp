@@ -14,13 +14,13 @@ public:
             if(event->key.keysym.sym == SDLK_w) {
                 wBool = true;
             }
-            else if(event->key.keysym.sym == SDLK_s) {
+            if(event->key.keysym.sym == SDLK_s) {
                 sBool = true;
             }
             if(event->key.keysym.sym == SDLK_a) {
                 aBool = true;
             }
-            else if(event->key.keysym.sym == SDLK_d) {
+            if(event->key.keysym.sym == SDLK_d) {
                 dBool = true;
             }
             if(event->key.keysym.sym == SDLK_SPACE) {
@@ -52,7 +52,7 @@ public:
                 camera->translate(glm::vec3(0.0f, 0.0f, -0.04f));
             }
         }
-        else if(sBool) {
+        if(sBool) {
             if(camera->getPosition().z < 13.0f) {
                 camera->translate(glm::vec3(0.0f, 0.0f, 0.04f));
             }
@@ -60,7 +60,7 @@ public:
         if(aBool) {
             camera->translate(glm::vec3(-0.03f, 0.0f, 0.0f));
         }
-        else if(dBool) {
+        if(dBool) {
             camera->translate(glm::vec3(0.03f, 0.0f, 0.0f));
         }
         if(jumpOnProgress) {

@@ -15,15 +15,12 @@ public:
 
         for(uint64_t i = 0; i < numVertices; i++) {
             Vertex vertex{};
-            input.read((char*)&vertex.x, sizeof(float));
-            input.read((char*)&vertex.y, sizeof(float));
-            input.read((char*)&vertex.z, sizeof(float));
-            vertex.u = u;
-            vertex.v = v;
-            vertex.r = r;
-            vertex.g = g;
-            vertex.b = b;
-            vertex.a = 1.0f;
+            input.read((char*)&vertex.position.x, sizeof(float));
+            input.read((char*)&vertex.position.y, sizeof(float));
+            input.read((char*)&vertex.position.z, sizeof(float));
+            input.read((char*)&vertex.normal.x, sizeof(float));
+            input.read((char*)&vertex.normal.y, sizeof(float));
+            input.read((char*)&vertex.normal.z, sizeof(float));
             vertices.push_back(vertex);
         }
         for(uint64_t i = 0; i < numIndices; i++) {

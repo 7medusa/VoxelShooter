@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/glm.hpp>
 
 //defines
 //#define Release
@@ -8,9 +9,6 @@
 
 using namespace std;
 
-#define windowWidth 800.0f
-#define windowHeight 600.0f
-
 #define cameraSpeed 6.0f
 #define mouseSens 0.4f
 
@@ -18,17 +16,9 @@ using namespace std;
 
 struct Vertex {
     //koordinaten
-    float x;
-    float y;
-    float z;
-    //texturkoordinaten
-    float u;
-    float v;
+    glm::vec3 position;
     //farben
-    float r;
-    float g;
-    float b;
-    float a;
+    glm::vec3 normal;
 };
 
 /*
