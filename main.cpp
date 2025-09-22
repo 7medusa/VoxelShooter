@@ -36,7 +36,8 @@ int main() {
 
     //fenster flag für eigenschaften wie fullscreen
 #ifdef Release
-    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+    static int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+    //flags = SDL_WINDOW_OPENGL;
     SDL_GL_SetSwapInterval(1);//vsync
     SDL_ShowCursor(SDL_DISABLE);//versteckt den cursor
     int windowWidth = 2560.0f;
@@ -67,32 +68,39 @@ int main() {
     //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    Model sphere(static_cast<string>(sphereModelDir), 0, 1, 1);
-    glm::mat4 sphereModel = glm::mat4(1.0f);//matrix zur positionierung der vertices
-    glm::mat4 sphereModelViewProj = projection * sphereModel;//gesamte matrix zur vereinfachung um es an den shader zu übergeben
-    VertexBuffer vertexBufferSphere(sphere.vertices.data(), sphere.numVertices);
-    IndexBuffer indexBufferSphere(sphere.indices.data(), sphere.numIndices, sizeof(sphere.indices[0]));
+    Model shop1(static_cast<string>(shop1ModelDir), &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    VertexBuffer vertexBufferShop1(shop1.vertices.data(), shop1.numVertices);
+    IndexBuffer indexBufferShop1(shop1.indices.data(), shop1.numIndices, sizeof(shop1.indices[0]));
 
-    Model character(static_cast<string>(characterModelDir), 1, 0, 0);
-    glm::mat4 characterModel = glm::mat4(1.0f);
-    glm::mat4 characterModelViewProj = projection * characterModel;
+    Model character(static_cast<string>(characterModelDir), &camera);
     VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
     IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
+
+    Model boden(static_cast<string>(bodenModelDir), &camera, 0, glm::vec3(0.0f, -3.0f, 0.0f));
+    VertexBuffer vertexBufferBoden(boden.vertices.data(), boden.numVertices);
+    IndexBuffer indexBufferBoden(boden.indices.data(), boden.numIndices, sizeof(boden.indices[0]));
 
     //allgemeines
     bool close = false;
     Control control;
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
-    GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden
+    GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
     const Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
-    const int colorUniformLocation = glGetUniformLocation(shader.getShaderId(), "u_in_color");
-    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 0.0f, 1.0f);
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &sphereModelViewProj[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &characterModelViewProj[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &shop1.modelViewProj[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &character.modelViewProj[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &boden.modelViewProj[0][0]));
+    const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
+    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &shop1.modelView[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &character.modelView[0][0]));
+    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &boden.modelView[0][0]));
+    const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
+    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &shop1.invModelView[0][0]));
+    GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &character.invModelView[0][0]));
+    GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &boden.invModelView[0][0]));
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -109,21 +117,21 @@ int main() {
                 close = true;
                 return 0;
             }
-            control.handle(&event, &camera, &characterModel, &projection, &characterModelViewProj);
+            control.handle(&event, &camera, &character.model, &projection, &character.modelViewProj);
         }
 
-        control.control(&event, &camera, &characterModel, &projection, &characterModelViewProj);
+        control.control(&event, &camera, &character.model, &projection, &character.modelViewProj);
         camera.update();
         projection = camera.getViewProjection();
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
-        glUniform4f(colorUniformLocation, 0.5f, 0.0f, 1.0f, 1.0f);
 
         time += delta;
 
-        draw(sphereModelViewProj, projection, sphereModel, modelViewProjLocation, sphere.numIndices, &vertexBufferSphere, &indexBufferSphere);
-        player.draw(characterModelViewProj, projection, characterModel, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
+        draw(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &vertexBufferShop1, &indexBufferShop1);
+        draw(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &vertexBufferBoden, &indexBufferBoden);
+        player.draw(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

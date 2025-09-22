@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 
 //defines
-//#define Release
+#define Release
 //#define Fps
 //#define orthoMode
 //#define fpsMode

@@ -8,6 +8,7 @@
 #define fragmentShaderDir "../shaders/basic.fs"
 
 //3d models
-#define monkeyModelDir "../3d_models/mds/monkey.mds"
-#define sphereModelDir "../3d_models/mds/sphere.mds"
-#define characterModelDir "../3d_models/mds/character.mds"
+#define gestapoShieldModelDir "../mds/gestapoShield.mds"
+#define shop1ModelDir "../mds/shop1.mds"
+#define characterModelDir "../mds/characterSample.mds"
+#define bodenModelDir "../mds/boden.mds"

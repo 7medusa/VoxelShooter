@@ -2,14 +2,18 @@
 
 layout(location = 0) out vec4 main_color;
 
-in vec4 out_color;//für die vertex farben
-
-uniform sampler2D u_in_texture;//textur input
-
-uniform vec4 u_in_color;//color input
+in vec3 out_normal;
+in vec3 out_position;
 
 void main() {
-    //main_color = texColor;
-    //main_color = u_in_color;
-    main_color = out_color;
+    vec3 color = vec3(1.0, 1.0, 1.0);
+    vec3 view = normalize(-out_position);
+    vec3 light = normalize(vec3(1.0, 1.0, 1.0));//lichtrichtung
+    vec3 normal = normalize(out_normal);
+    vec3 reflection = reflect(-light, normal);
+
+    vec3 ambient = color * 0.2;//ambient licht
+    vec3 diffuse = max(dot(normal, light), 0.0) * color;//diffuse licht
+    vec3 specular = pow(max(dot(reflection, view), 0.0), 4.0) * color;
+    main_color = vec4(ambient + diffuse + specular, 1.0);
 }

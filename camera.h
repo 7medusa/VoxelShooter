@@ -35,6 +35,9 @@ public:
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, difference));
         position.z = 5.0f;
     }
+    glm::mat4 getView() {
+        return view;
+    }
 protected:
     glm::mat4 projection{};//matrix zur abbildung der objekte
     glm::mat4 view{};//position der kamera
