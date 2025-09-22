@@ -8,7 +8,7 @@ in vec3 out_position;
 void main() {
     vec3 color = vec3(1.0, 1.0, 1.0);
     vec3 view = normalize(-out_position);
-    vec3 light = normalize(vec3(1.0, 1.0, 1.0));//lichtrichtung
+    vec3 light = normalize(vec3(-100.0, 100.0, 100.0));//lichtrichtung
     vec3 normal = normalize(out_normal);
     vec3 reflection = reflect(-light, normal);
 

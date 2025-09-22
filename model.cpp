@@ -5,7 +5,7 @@
 
 class Model {
 public:
-    Model(string modelDir, Camera* camera, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f)) {
+    Model(string modelDir, Camera* camera, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f)) {
         input = ifstream(modelDir, ios::in | ios::binary);
         if(!input.is_open()) {
             cout << "fatal error in model loading" << endl;
@@ -38,6 +38,10 @@ public:
 
         model = glm::rotate(model, rotate, glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::translate(model, set);
+
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &modelView[0][0]));
+        GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &invModelView[0][0]));
     }
 
     vector<Vertex> vertices{};

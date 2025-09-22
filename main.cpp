@@ -40,8 +40,8 @@ int main() {
     //flags = SDL_WINDOW_OPENGL;
     SDL_GL_SetSwapInterval(1);//vsync
     SDL_ShowCursor(SDL_DISABLE);//versteckt den cursor
-    int windowWidth = 2560.0f;
-    int windowHeight = 1440.0f;
+    constexpr int windowWidth = 2560.0f;
+    constexpr int windowHeight = 1440.0f;
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     static int flags = SDL_WINDOW_OPENGL;
@@ -60,26 +60,6 @@ int main() {
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
 #endif
 
-    //kamera
-    Camera camera(90.0f, windowWidth, windowHeight);
-    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
-    camera.update();
-
-    //modele
-    glm::mat4 projection = camera.getViewProjection();
-
-    Model shop1(static_cast<string>(shop1ModelDir), &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    VertexBuffer vertexBufferShop1(shop1.vertices.data(), shop1.numVertices);
-    IndexBuffer indexBufferShop1(shop1.indices.data(), shop1.numIndices, sizeof(shop1.indices[0]));
-
-    Model character(static_cast<string>(characterModelDir), &camera);
-    VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
-    IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
-
-    Model boden(static_cast<string>(bodenModelDir), &camera, 0, glm::vec3(0.0f, -3.0f, 0.0f));
-    VertexBuffer vertexBufferBoden(boden.vertices.data(), boden.numVertices);
-    IndexBuffer indexBufferBoden(boden.indices.data(), boden.numIndices, sizeof(boden.indices[0]));
-
     //allgemeines
     bool close = false;
     Control control;
@@ -88,19 +68,30 @@ int main() {
     const Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 
+    //kamera
+    Camera camera(90.0f, windowWidth, windowHeight);
+    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera.update();
+
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
-    const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &shop1.modelViewProj[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &character.modelViewProj[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &boden.modelViewProj[0][0]));
-    const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
-    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &shop1.modelView[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &character.modelView[0][0]));
-    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &boden.modelView[0][0]));
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
-    GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &shop1.invModelView[0][0]));
-    GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &character.invModelView[0][0]));
-    GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &boden.invModelView[0][0]));
+    const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
+    const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
+
+    //modele
+    glm::mat4 projection = camera.getViewProjection();
+
+    const Model shop1(static_cast<string>(shop1ModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    const VertexBuffer vertexBufferShop1(shop1.vertices.data(), shop1.numVertices);
+    const IndexBuffer indexBufferShop1(shop1.indices.data(), shop1.numIndices, sizeof(shop1.indices[0]));
+
+    Model character(static_cast<string>(characterModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation);
+    const VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
+    const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
+
+    const Model boden(static_cast<string>(bodenModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
+    const VertexBuffer vertexBufferBoden(boden.vertices.data(), boden.numVertices);
+    const IndexBuffer indexBufferBoden(boden.indices.data(), boden.numIndices, sizeof(boden.indices[0]));
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
