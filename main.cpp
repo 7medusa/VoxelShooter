@@ -10,6 +10,7 @@
 #include "model.cpp"
 #include "draw.cpp"
 #include "character.cpp"
+#include "mesh.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -65,7 +66,7 @@ int main() {
     Control control;
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
-    const Shader shader(vertexShaderDir, fragmentShaderDir);
+    Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 
     //kamera
@@ -80,16 +81,23 @@ int main() {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
+    Material material {};
+    material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+    material.specular = glm::vec3(0.0f, 0.0f, 0.0f);
+    material.shininess = 1.0f;
 
     const Model shop1(static_cast<string>(shop1ModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    Mesh shop1Mesh(shop1ModelDir, material, &shader);
     const VertexBuffer vertexBufferShop1(shop1.vertices.data(), shop1.numVertices);
     const IndexBuffer indexBufferShop1(shop1.indices.data(), shop1.numIndices, sizeof(shop1.indices[0]));
 
     Model character(static_cast<string>(characterModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation);
+    Mesh characterMesh(characterModelDir, material, &shader);
     const VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
     const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
 
     const Model boden(static_cast<string>(bodenModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
+    Mesh bodenMesh(bodenModelDir, material, &shader);
     const VertexBuffer vertexBufferBoden(boden.vertices.data(), boden.numVertices);
     const IndexBuffer indexBufferBoden(boden.indices.data(), boden.numIndices, sizeof(boden.indices[0]));
 
@@ -99,7 +107,7 @@ int main() {
     float time = 0.0f;
 
     //objekte
-    Character player(3);
+    Character player;
 
     while(!close) {
         SDL_Event event;
@@ -115,14 +123,15 @@ int main() {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
 
         time += delta;
 
-        draw(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &vertexBufferShop1, &indexBufferShop1);
-        draw(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &vertexBufferBoden, &indexBufferBoden);
-        player.draw(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera);
+        shop1Mesh.render();
+        draw(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &vertexBufferShop1, &indexBufferShop1, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+        characterMesh.render();
+        player.draw(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

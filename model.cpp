@@ -30,18 +30,17 @@ public:
             indices.push_back(index);
         }
 
-        projection = camera->getViewProjection();
         model = glm::mat4(1.0f);
+        model = glm::rotate(model, rotate, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::translate(model, set);
+        projection = camera->getViewProjection();
         modelViewProj = projection * model;
         modelView = camera->getView() * model;
         invModelView = glm::transpose(glm::inverse(modelView));
 
-        model = glm::rotate(model, rotate, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::translate(model, set);
-
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));
-        GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &modelView[0][0]));
-        GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &invModelView[0][0]));
+        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//nur für ersten frame, danach in draw.cpp aufgerufen
+        GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &modelView[0][0]));//für schatten
+        GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &invModelView[0][0]));//für schatten
     }
 
     vector<Vertex> vertices{};
