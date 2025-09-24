@@ -5,7 +5,7 @@
 
 class Model {
 public:
-    Model(string modelDir, Camera* camera, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f)) {
+    Model(string modelDir, Camera* camera, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f)) : vertexBuffer(vertices.data(), numVertices), indexBuffer(indices.data(), numIndices, sizeof(indices[0])) {
         input = ifstream(modelDir, ios::in | ios::binary);
         if(!input.is_open()) {
             cout << "fatal error in model loading" << endl;
@@ -37,10 +37,6 @@ public:
         modelViewProj = projection * model;
         modelView = camera->getView() * model;
         invModelView = glm::transpose(glm::inverse(modelView));
-
-        GLCALL(glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, &modelViewProj[0][0]));//nur für ersten frame, danach in draw.cpp aufgerufen
-        GLCALL(glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, &modelView[0][0]));//für schatten
-        GLCALL(glUniformMatrix4fv(invModelViewLocation, 1, GL_FALSE, &invModelView[0][0]));//für schatten
     }
 
     vector<Vertex> vertices{};
@@ -53,4 +49,6 @@ public:
     glm::mat4 modelView{};
     glm::mat4 invModelView{};
     glm::mat4 projection{};
+    const VertexBuffer vertexBuffer;
+    const IndexBuffer indexBuffer;
 };

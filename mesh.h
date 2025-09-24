@@ -1,5 +1,6 @@
 #pragma once
 #include "includes.h"
+#include "setVariables.cpp"
 #ifndef OPENGL_MESH_H
 #define OPENGL_MESH_H
 #endif
@@ -64,7 +65,7 @@ public:
         indexBuffer->bind();
     }
 
-    inline void render() {
+    void render() {
         shader->bind();
         vertexBuffer->bind();
         indexBuffer->bind();

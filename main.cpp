@@ -8,7 +8,6 @@
 
 #include "control.cpp"
 #include "model.cpp"
-#include "draw.cpp"
 #include "character.cpp"
 #include "mesh.h"
 
@@ -88,18 +87,12 @@ int main() {
 
     const Model shop1(static_cast<string>(shop1ModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
     Mesh shop1Mesh(shop1ModelDir, material, &shader);
-    const VertexBuffer vertexBufferShop1(shop1.vertices.data(), shop1.numVertices);
-    const IndexBuffer indexBufferShop1(shop1.indices.data(), shop1.numIndices, sizeof(shop1.indices[0]));
 
     Model character(static_cast<string>(characterModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation);
     Mesh characterMesh(characterModelDir, material, &shader);
-    const VertexBuffer vertexBufferCharacter(character.vertices.data(), character.numVertices);
-    const IndexBuffer indexBufferCharacter(character.indices.data(), character.numIndices, sizeof(character.indices[0]));
 
     const Model boden(static_cast<string>(bodenModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
     Mesh bodenMesh(bodenModelDir, material, &shader);
-    const VertexBuffer vertexBufferBoden(boden.vertices.data(), boden.numVertices);
-    const IndexBuffer indexBufferBoden(boden.indices.data(), boden.numIndices, sizeof(boden.indices[0]));
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -123,15 +116,17 @@ int main() {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
 
         time += delta;
 
+        setVariables(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &boden.vertexBuffer, &boden.indexBuffer, modelViewLocation, invModelViewLocation, boden.modelView, boden.invModelView, &camera);
+        bodenMesh.render();
+        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
         shop1Mesh.render();
-        draw(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &vertexBufferShop1, &indexBufferShop1, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+        player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
         characterMesh.render();
-        player.draw(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &vertexBufferCharacter, &indexBufferCharacter, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 
