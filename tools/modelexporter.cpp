@@ -6,6 +6,7 @@
 #include <cassert>
 #include <string>
 #include <fstream>
+#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -13,30 +14,46 @@ struct Position {
     float x, y, z;
 };
 
-vector<Position> positions;
-vector<Position> normals;
-vector<uint32_t> indices;
+struct Material {
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    glm::vec3 emissive;
+    float shininess;
+};
+
+struct Mesh {
+    vector<Position> positions;
+    vector<Position> normals;
+    vector<uint32_t> indices;
+    Material material;
+};
+
+vector<Mesh> meshes;
+vector<Material> materials;
 
 void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht entfernen
+    Mesh m;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
         Position position{};
         position.x = mesh->mVertices[i].x;
         position.y = mesh->mVertices[i].y;
         position.z = mesh->mVertices[i].z;
-        positions.push_back(position);
+        m.positions.push_back(position);
         Position normal;
         normal.x = mesh->mNormals[i].x;
         normal.y = mesh->mNormals[i].y;
         normal.z = mesh->mNormals[i].z;
-        normals.push_back(normal);
+        m.normals.push_back(normal);
     }
     for(int i = 0; i < mesh->mNumFaces; i++) {
         const aiFace face = mesh->mFaces[i];
         assert(face.mNumIndices == 3);
         for(unsigned int j = 0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]); // NOLINT(*-narrowing-conversions)
+            m.indices.push_back(face.mIndices[j]); // NOLINT(*-narrowing-conversions)
         }
     }
+    m.material = materials[mesh->mMaterialIndex];
+    meshes.push_back(m);
 }
 
 void processNode(const aiNode* node, const aiScene* scene) {//const vielleicht entfernen
@@ -58,6 +75,52 @@ char* getFilename(char* filename) {
         }
     }
     return lastSlash;
+}
+
+void processMaterials(const aiScene* scene) {
+    scene->mNumMaterials;
+    for(unsigned int i = 0; i < scene->mNumMaterials; i++) {
+        Material mat;
+        aiMaterial* material = scene->mMaterials[i];
+
+        //defaults
+        mat.diffuse  = glm::vec3(1.0f, 1.0f, 1.0f);
+        mat.specular = glm::vec3(0.0f, 0.0f, 0.0f);
+        mat.emissive = glm::vec3(0.0f, 0.0f, 0.0f);
+        mat.shininess = 0.0f;
+
+        aiColor3D diffuse(0.0f, 0.0f, 0.0f);
+        if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse)) {
+            //no diffuse
+        }
+        mat.diffuse = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
+
+        aiColor3D specular(0.0f, 0.0f, 0.0f);
+        if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_SPECULAR, specular)) {
+            //no specular
+        }
+        mat.specular = glm::vec3(specular.r, specular.g, specular.b);
+
+        aiColor3D emissive(0.0f, 0.0f, 0.0f);
+        if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive)) {
+            //no diffuse
+        }
+        mat.emissive = glm::vec3(emissive.r, emissive.g, emissive.b);
+
+        float shininess = 0.0f;
+        if(AI_SUCCESS != material->Get(AI_MATKEY_SHININESS, shininess)) {
+            //no diffuse
+        }
+        mat.shininess = shininess;
+
+        float shininessStrength = 0.0f;
+        if(AI_SUCCESS != material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength)) {
+            //no diffuse
+        }
+        mat.specular = glm::vec3(shininessStrength);
+
+        materials.push_back(mat);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -82,6 +145,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
+    processMaterials(scene);
     processNode(scene->mRootNode, scene);
 
     const string filename = string(getFilename(argv[argc - 1]));
@@ -90,20 +154,25 @@ int main(int argc, char** argv) {
 
     ofstream output(outputFilename, ios::out | ios::binary);
     cout << "writing data into mds file..." << endl;
-    uint64_t numVertices = positions.size();
-    uint64_t numIndices = indices.size();
-    output.write((char*)&numVertices, sizeof(numVertices));
-    output.write((char*)&numIndices, sizeof(numIndices));
-    for(uint64_t i = 0; i < numVertices; i++) {
-        output.write((char*)&positions[i].x, sizeof(float));
-        output.write((char*)&positions[i].y, sizeof(float));
-        output.write((char*)&positions[i].z, sizeof(float));
-        output.write((char*)&normals[i].x, sizeof(float));
-        output.write((char*)&normals[i].y, sizeof(float));
-        output.write((char*)&normals[i].z, sizeof(float));
-    }
-    for(uint64_t i = 0; i < numIndices; i++) {
-        output.write((char*)&indices[i], sizeof(uint32_t));
+    int numMeshes = meshes.size();
+    output.write((char*)&numMeshes, sizeof(numMeshes));
+    for(Mesh& mesh : meshes) {
+        uint64_t numVertices = mesh.positions.size();
+        uint64_t numIndices = mesh.indices.size();
+        output.write((char*)&mesh.material, sizeof(Material));
+        output.write((char*)&numVertices, sizeof(numVertices));
+        output.write((char*)&numIndices, sizeof(numIndices));
+        for(uint64_t i = 0; i < numVertices; i++) {
+            output.write((char*)&mesh.positions[i].x, sizeof(float));
+            output.write((char*)&mesh.positions[i].y, sizeof(float));
+            output.write((char*)&mesh.positions[i].z, sizeof(float));
+            output.write((char*)&mesh.normals[i].x, sizeof(float));
+            output.write((char*)&mesh.normals[i].y, sizeof(float));
+            output.write((char*)&mesh.normals[i].z, sizeof(float));
+        }
+        for(uint64_t i = 0; i < numIndices; i++) {
+            output.write((char*)&mesh.indices[i], sizeof(uint32_t));
+        }
     }
     output.close();
     cout << "done writing data" << endl;

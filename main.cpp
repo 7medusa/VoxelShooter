@@ -21,7 +21,7 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 #endif
 }
 
-int main() {
+int main(int argc, char** argv) {
     //initialisiert eine schnittstelle zwischen window manager sdl und opengl
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window;
@@ -80,19 +80,20 @@ int main() {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
-    Material material {};
-    material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
-    material.specular = glm::vec3(0.0f, 0.0f, 0.0f);
-    material.shininess = 1.0f;
 
-    const Model shop1(static_cast<string>(shop1ModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    Mesh shop1Mesh(shop1ModelDir, material, &shader);
+    Model character(characterModelDir, &camera);
+    ModelRead characterMesh;
+    characterMesh.init(characterModelDir, &shader);
 
-    Model character(static_cast<string>(characterModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation);
-    Mesh characterMesh(characterModelDir, material, &shader);
+    Model shop1(shop1ModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    ModelRead shop1Mesh;
+    shop1Mesh.init(shop1ModelDir, &shader);
 
-    const Model boden(static_cast<string>(bodenModelDir), &camera, modelViewProjLocation, modelViewLocation, invModelViewLocation, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
-    Mesh bodenMesh(bodenModelDir, material, &shader);
+
+    Model boden(bodenModelDir, &camera, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
+    ModelRead bodenMesh;
+    bodenMesh.init(bodenModelDir, &shader);
+
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -121,12 +122,12 @@ int main() {
 
         time += delta;
 
-        setVariables(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &boden.vertexBuffer, &boden.indexBuffer, modelViewLocation, invModelViewLocation, boden.modelView, boden.invModelView, &camera);
-        bodenMesh.render();
-        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
-        shop1Mesh.render();
         player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
         characterMesh.render();
+        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+        shop1Mesh.render();
+        setVariables(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &boden.vertexBuffer, &boden.indexBuffer, modelViewLocation, invModelViewLocation, boden.modelView, boden.invModelView, &camera);
+        bodenMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

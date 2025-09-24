@@ -8,7 +8,7 @@
 #define fragmentShaderDir "../shaders/basic.fs"
 
 //3d models
-#define gestapoShieldModelDir "../mds/gestapoShield.mds"
 #define shop1ModelDir "../mds/shop1.mds"
 #define characterModelDir "../mds/characterSample.mds"
 #define bodenModelDir "../mds/boden.mds"
+#define debugModelDir "../mds/debug.mds"
