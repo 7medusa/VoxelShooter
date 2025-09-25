@@ -62,7 +62,7 @@ public:
 
 class ModelRead {
 public:
-    void init(const char* filename, Shader* shader) {
+    ModelRead(const char* filename, Shader* shader) {
         ifstream input = ifstream(filename, ios::in | ios::binary);
         int numMeshes;
         input.read((char*)&numMeshes, sizeof(int));

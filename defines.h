@@ -3,9 +3,7 @@
 
 //defines
 //#define Release
-//#define Fps
 //#define orthoMode
-//#define fpsMode
 
 using namespace std;
 

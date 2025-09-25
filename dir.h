@@ -12,3 +12,4 @@
 #define characterModelDir "../mds/characterSample.mds"
 #define bodenModelDir "../mds/boden.mds"
 #define debugModelDir "../mds/debug.mds"
+#define levelModelDir "../mds/level.mds"

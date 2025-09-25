@@ -26,3 +26,14 @@ if(textureBuffer) {
     stbi_image_free(textureBuffer);//gibt den speicher wieder frei
 }
 */
+
+/*
+Model shop1(shop1ModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+ModelRead shop1Mesh(shop1ModelDir, &shader);
+Model boden(bodenModelDir, &camera, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
+ModelRead bodenMesh(bodenModelDir, &shader);
+setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+shop1Mesh.render();
+setVariables(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &boden.vertexBuffer, &boden.indexBuffer, modelViewLocation, invModelViewLocation, boden.modelView, boden.invModelView, &camera);
+bodenMesh.render();
+*/

@@ -37,7 +37,6 @@ int main(int argc, char** argv) {
     //fenster flag für eigenschaften wie fullscreen
 #ifdef Release
     static int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
-    //flags = SDL_WINDOW_OPENGL;
     SDL_GL_SetSwapInterval(1);//vsync
     SDL_ShowCursor(SDL_DISABLE);//versteckt den cursor
     constexpr int windowWidth = 2560.0f;
@@ -81,19 +80,11 @@ int main(int argc, char** argv) {
     //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    Model character(characterModelDir, &camera);
-    ModelRead characterMesh;
-    characterMesh.init(characterModelDir, &shader);
+    Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, 0.2f, 0.0f));
+    ModelRead characterMesh(characterModelDir, &shader);
 
-    Model shop1(shop1ModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    ModelRead shop1Mesh;
-    shop1Mesh.init(shop1ModelDir, &shader);
-
-
-    Model boden(bodenModelDir, &camera, 0.0f, glm::vec3(0.0f, -3.0f, 0.0f));
-    ModelRead bodenMesh;
-    bodenMesh.init(bodenModelDir, &shader);
-
+    Model level(levelModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    ModelRead levelMesh(levelModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -110,10 +101,10 @@ int main(int argc, char** argv) {
                 close = true;
                 return 0;
             }
-            control.handle(&event, &camera, &character.model, &projection, &character.modelViewProj);
+            control.handle(&event, &camera);
         }
 
-        control.control(&event, &camera, &character.model, &projection, &character.modelViewProj);
+        control.control(&event, &camera, &character.model, &projection, &character.modelViewProj, delta);
         camera.update();
         projection = camera.getViewProjection();
 
@@ -124,10 +115,8 @@ int main(int argc, char** argv) {
 
         player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
         characterMesh.render();
-        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
-        shop1Mesh.render();
-        setVariables(boden.modelViewProj, projection, boden.model, modelViewProjLocation, boden.numIndices, &boden.vertexBuffer, &boden.indexBuffer, modelViewLocation, invModelViewLocation, boden.modelView, boden.invModelView, &camera);
-        bodenMesh.render();
+        setVariables(level.modelViewProj, projection, level.model, modelViewProjLocation, level.numIndices, &level.vertexBuffer, &level.indexBuffer, modelViewLocation, invModelViewLocation, level.modelView, level.invModelView, &camera);
+        levelMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 
