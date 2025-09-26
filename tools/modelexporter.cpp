@@ -14,6 +14,10 @@ struct Position {
     float x, y, z;
 };
 
+struct Position2D {
+    float x, y;
+};
+
 struct Material {
     glm::vec3 diffuse;
     glm::vec3 specular;
@@ -24,6 +28,7 @@ struct Material {
 struct Mesh {
     vector<Position> positions;
     vector<Position> normals;
+    vector<Position2D> uvs;
     vector<uint32_t> indices;
     Material material;
 };

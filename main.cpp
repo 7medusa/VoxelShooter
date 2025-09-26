@@ -83,8 +83,8 @@ int main(int argc, char** argv) {
     Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, 0.2f, 0.0f));
     ModelRead characterMesh(characterModelDir, &shader);
 
-    Model level(levelModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    ModelRead levelMesh(levelModelDir, &shader);
+    Model level(debugModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    ModelRead levelMesh(debugModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
