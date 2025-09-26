@@ -23,6 +23,15 @@ struct Material {
     glm::vec3 specular;
     glm::vec3 emissive;
     float shininess;
+    aiString diffuseMapName;
+    aiString normalMapName;
+};
+
+struct MDSMaterial {
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    glm::vec3 emissive;
+    float shininess;
 };
 
 struct Mesh {
@@ -30,7 +39,7 @@ struct Mesh {
     vector<Position> normals;
     vector<Position2D> uvs;
     vector<uint32_t> indices;
-    Material material;
+    int materialIndex;
 };
 
 vector<Mesh> meshes;
@@ -39,7 +48,7 @@ vector<Material> materials;
 void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht entfernen
     Mesh m;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
-        Position position{};
+        Position position;
         position.x = mesh->mVertices[i].x;
         position.y = mesh->mVertices[i].y;
         position.z = mesh->mVertices[i].z;
@@ -49,6 +58,10 @@ void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht e
         normal.y = mesh->mNormals[i].y;
         normal.z = mesh->mNormals[i].z;
         m.normals.push_back(normal);
+        Position2D uv;
+        assert(mesh->mTextureCoords[0]);
+        uv.x = mesh->mTextureCoords[0][i].x;
+        uv.y = mesh->mTextureCoords[0][i].y;
     }
     for(int i = 0; i < mesh->mNumFaces; i++) {
         const aiFace face = mesh->mFaces[i];
@@ -57,7 +70,7 @@ void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht e
             m.indices.push_back(face.mIndices[j]); // NOLINT(*-narrowing-conversions)
         }
     }
-    m.material = materials[mesh->mMaterialIndex];
+    m.materialIndex = mesh->mMaterialIndex;
     meshes.push_back(m);
 }
 
@@ -85,7 +98,7 @@ char* getFilename(char* filename) {
 void processMaterials(const aiScene* scene) {
     scene->mNumMaterials;
     for(unsigned int i = 0; i < scene->mNumMaterials; i++) {
-        Material mat;
+        Material mat = {};
         aiMaterial* material = scene->mMaterials[i];
 
         //defaults
@@ -124,6 +137,13 @@ void processMaterials(const aiScene* scene) {
         }
         mat.specular = glm::vec3(shininessStrength);
 
+        uint32_t numDiffuseMaps = material->GetTextureCount(aiTextureType_DIFFUSE);
+        uint32_t numNormalMaps = material->GetTextureCount(aiTextureType_NORMALS);
+        assert(numDiffuseMaps > 0);
+        material->GetTexture(aiTextureType_DIFFUSE, 0, &mat.diffuseMapName);
+        assert(numNormalMaps > 0);
+        material->GetTexture(aiTextureType_NORMALS, 0, &mat.normalMapName);
+
         materials.push_back(mat);
     }
 }
@@ -159,12 +179,33 @@ int main(int argc, char** argv) {
 
     ofstream output(outputFilename, ios::out | ios::binary);
     cout << "writing data into mds file..." << endl;
+
+    //materials
+    uint64_t numMaterials = materials.size();
+    output.write((char*)&numMaterials, sizeof(numMaterials));
+    for(Material material : materials) {
+        output.write((char*)&material, sizeof(MDSMaterial));
+        const char* pathPrefix = "models/";//pfad der textur
+        //diffuse map
+        uint64_t diffuseMapLength = material.diffuseMapName.length + 7;//models+/länge für zahl
+        output.write((char*)&diffuseMapLength, sizeof(diffuseMapLength));
+        output.write(pathPrefix, 7);
+        output.write((char*)&material.diffuseMapName.data, material.diffuseMapName.length);
+
+        //normal map
+        uint64_t normalMapLength = material.normalMapName.length + 7;//models+/länge für zahl
+        output.write((char*)&normalMapLength, sizeof(normalMapLength));
+        output.write(pathPrefix, 7);
+        output.write((char*)&material.normalMapName.data, material.normalMapName.length);
+    }
+
+    //meshes
     int numMeshes = meshes.size();
     output.write((char*)&numMeshes, sizeof(numMeshes));
     for(Mesh& mesh : meshes) {
         uint64_t numVertices = mesh.positions.size();
         uint64_t numIndices = mesh.indices.size();
-        output.write((char*)&mesh.material, sizeof(Material));
+        //output.write((char*)&mesh.material, sizeof(Material));
         output.write((char*)&numVertices, sizeof(numVertices));
         output.write((char*)&numIndices, sizeof(numIndices));
         for(uint64_t i = 0; i < numVertices; i++) {
