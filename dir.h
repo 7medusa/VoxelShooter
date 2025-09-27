@@ -6,4 +6,4 @@
 
 //3d models
 #define characterModelDir "../mds/characterSample.mds"
-#define debugModelDir "../mds/debug.mds"
+#define debugModelDir "../mds/fern.mds"

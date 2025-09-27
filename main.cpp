@@ -1,6 +1,7 @@
 #include "includes.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb_image.h"
+#undef STB_IMAGE_IMPLEMENTATION
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -80,11 +81,14 @@ int main(int argc, char** argv) {
     //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, 0.2f, 0.0f));
+    Model debug(debugModelDir, &camera, 90.0f);
+    ModelRead debugMesh(debugModelDir, &shader);
+
+    Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
     ModelRead characterMesh(characterModelDir, &shader);
 
-    Model level(debugModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    ModelRead levelMesh(debugModelDir, &shader);
+    //Model level(debugModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
+    //ModelRead levelMesh(debugModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -113,10 +117,12 @@ int main(int argc, char** argv) {
 
         time += delta;
 
-        player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
-        characterMesh.render();
-        setVariables(level.modelViewProj, projection, level.model, modelViewProjLocation, level.numIndices, &level.vertexBuffer, &level.indexBuffer, modelViewLocation, invModelViewLocation, level.modelView, level.invModelView, &camera);
-        levelMesh.render();
+        //player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
+        //characterMesh.render();
+        setVariables(debug.modelViewProj, projection, debug.model, modelViewProjLocation, debug.numIndices, &debug.vertexBuffer, &debug.indexBuffer, modelViewLocation, invModelViewLocation, debug.modelView, debug.invModelView, &camera);
+        debugMesh.render();
+        //setVariables(level.modelViewProj, projection, level.model, modelViewProjLocation, level.numIndices, &level.vertexBuffer, &level.indexBuffer, modelViewLocation, invModelViewLocation, level.modelView, level.invModelView, &camera);
+        //levelMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

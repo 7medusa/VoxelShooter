@@ -17,6 +17,8 @@ struct Vertex {
     glm::vec3 position;
     //farben
     glm::vec3 normal;
+    //texturkoordinaten
+    glm::vec2 textureCoord;
 };
 
 /*

@@ -62,6 +62,7 @@ void processMesh(const aiMesh* mesh, const aiScene* scene) {//const vielleicht e
         assert(mesh->mTextureCoords[0]);
         uv.x = mesh->mTextureCoords[0][i].x;
         uv.y = mesh->mTextureCoords[0][i].y;
+        m.uvs.push_back(uv);
     }
     for(int i = 0; i < mesh->mNumFaces; i++) {
         const aiFace face = mesh->mFaces[i];
@@ -185,15 +186,16 @@ int main(int argc, char** argv) {
     output.write((char*)&numMaterials, sizeof(numMaterials));
     for(Material material : materials) {
         output.write((char*)&material, sizeof(MDSMaterial));
-        const char* pathPrefix = "models/";//pfad der textur
+        const char* pathPrefix = "../mds/";//pfad der textur
+        const uint64_t prefixLen = static_cast<uint64_t>(strlen(pathPrefix));
         //diffuse map
-        uint64_t diffuseMapLength = material.diffuseMapName.length + 7;//models+/länge für zahl
+        uint64_t diffuseMapLength = material.diffuseMapName.length + prefixLen;//models+/länge für zahl
         output.write((char*)&diffuseMapLength, sizeof(diffuseMapLength));
-        output.write(pathPrefix, 7);
+        output.write(pathPrefix, prefixLen);
         output.write((char*)&material.diffuseMapName.data, material.diffuseMapName.length);
 
         //normal map
-        uint64_t normalMapLength = material.normalMapName.length + 7;//models+/länge für zahl
+        uint64_t normalMapLength = material.normalMapName.length + prefixLen;//models+/länge für zahl
         output.write((char*)&normalMapLength, sizeof(normalMapLength));
         output.write(pathPrefix, 7);
         output.write((char*)&material.normalMapName.data, material.normalMapName.length);
@@ -205,9 +207,11 @@ int main(int argc, char** argv) {
     for(Mesh& mesh : meshes) {
         uint64_t numVertices = mesh.positions.size();
         uint64_t numIndices = mesh.indices.size();
+        uint64_t materialIndex = mesh.materialIndex;
         //output.write((char*)&mesh.material, sizeof(Material));
-        output.write((char*)&numVertices, sizeof(numVertices));
-        output.write((char*)&numIndices, sizeof(numIndices));
+        output.write((char*)&materialIndex, sizeof(uint64_t));
+        output.write((char*)&numVertices, sizeof(uint64_t));
+        output.write((char*)&numIndices, sizeof(uint64_t));
         for(uint64_t i = 0; i < numVertices; i++) {
             output.write((char*)&mesh.positions[i].x, sizeof(float));
             output.write((char*)&mesh.positions[i].y, sizeof(float));
@@ -215,6 +219,8 @@ int main(int argc, char** argv) {
             output.write((char*)&mesh.normals[i].x, sizeof(float));
             output.write((char*)&mesh.normals[i].y, sizeof(float));
             output.write((char*)&mesh.normals[i].z, sizeof(float));
+            output.write((char*)&mesh.uvs[i].x, sizeof(float));
+            output.write((char*)&mesh.uvs[i].y, sizeof(float));
         }
         for(uint64_t i = 0; i < numIndices; i++) {
             output.write((char*)&mesh.indices[i], sizeof(uint32_t));
