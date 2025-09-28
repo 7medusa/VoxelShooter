@@ -105,7 +105,6 @@ public:
 
             {
                 auto textureBuffer = stbi_load(diffuseMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-                cout << stbi_failure_reason() << "1" << endl;
                 //assert(textureBuffer);
                 assert(material.diffuseMap);
 
@@ -129,7 +128,6 @@ public:
 
             {
                 auto textureBuffer = stbi_load(normalMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-                cout << stbi_failure_reason() << "2" << endl;
                 //assert(textureBuffer);
                 //assert(material.normalMap);
 

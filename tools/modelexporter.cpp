@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
     output.write((char*)&numMaterials, sizeof(numMaterials));
     for(Material material : materials) {
         output.write((char*)&material, sizeof(MDSMaterial));
-        const char* pathPrefix = "../mds/debug/";//pfad der textur
+        const char* pathPrefix = "../texture/";//pfad der textur
         const uint64_t prefixLen = static_cast<uint64_t>(strlen(pathPrefix));
 
         //diffuse map

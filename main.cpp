@@ -81,12 +81,11 @@ int main(int argc, char** argv) {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
+    Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, -130.0f, 0.0f));
+    ModelRead characterMesh(characterModelDir, &shader);
 
-    Model character(debugModelDir, &camera, 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
-    ModelRead characterMesh(debugModelDir, &shader);
-
-    //Model shop1(characterModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, -1.0f, 2.8f));
-    //ModelRead shop1Mesh(characterModelDir, &shader);
+    Model shop1(shop1ModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, 1.5f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
+    ModelRead shop1Mesh(shop1ModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -117,8 +116,8 @@ int main(int argc, char** argv) {
 
         player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
         characterMesh.render();
-        //setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
-        //shop1Mesh.render();
+        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+        shop1Mesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

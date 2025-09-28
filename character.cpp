@@ -8,7 +8,9 @@ public:
         indexBuffer->bind();
         float characterYCoordinate = glm::vec3(model[3]).y;//zwischenspeichern für springen funktion
         model = glm::mat4(1.0f);//zurücksetzen der matrix um mit translate nicht zu addieren
-        model = glm::translate(model, glm::vec3(camera->getPosition().x, characterYCoordinate-1, 0.0f));
+        model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));//scale
+        model = glm::translate(model, glm::vec3(camera->getPosition().x*100, characterYCoordinate-1, 0.0f));
+        cout << "character: " << model[3].y << endl;
         model = glm::rotate(model, time, glm::vec3(0.0f, 1.0f, 0.0f));
         projection = camera->getViewProjection();
         modelViewProj = projection * model;
