@@ -186,13 +186,16 @@ int main(int argc, char** argv) {
     output.write((char*)&numMaterials, sizeof(numMaterials));
     for(Material material : materials) {
         output.write((char*)&material, sizeof(MDSMaterial));
-        const char* pathPrefix = "../mds/";//pfad der textur
+        const char* pathPrefix = "../mds/debug/";//pfad der textur
         const uint64_t prefixLen = static_cast<uint64_t>(strlen(pathPrefix));
+
         //diffuse map
         uint64_t diffuseMapLength = material.diffuseMapName.length + prefixLen;//models+/länge für zahl
         output.write((char*)&diffuseMapLength, sizeof(diffuseMapLength));
         output.write(pathPrefix, prefixLen);
         output.write((char*)&material.diffuseMapName.data, material.diffuseMapName.length);
+        cout << material.diffuseMapName.data << endl;
+        cout << material.diffuseMapName.length << endl;
 
         //normal map
         uint64_t normalMapLength = material.normalMapName.length + prefixLen;//models+/länge für zahl

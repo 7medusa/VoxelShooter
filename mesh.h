@@ -95,7 +95,7 @@ public:
             string normalMapName(normalMapLength, '\0');
             input.read((char*)&normalMapName[0], normalMapLength);
             assert(diffuseMapLength > 0);
-            assert(normalMapLength > 0);
+            //assert(normalMapLength > 0);
 
             int textureWidth = 0;
             int textureHeight = 0;

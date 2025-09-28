@@ -5,5 +5,4 @@
 #define fragmentShaderDir "../shaders/basic.fs"
 
 //3d models
-#define characterModelDir "../mds/characterSample.mds"
-#define debugModelDir "../mds/fern.mds"
+#define debugModelDir "../mds/debug.mds"
