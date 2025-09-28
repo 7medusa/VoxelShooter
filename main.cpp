@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
     Control control;
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
+    //GLCALL(glEnable(GL_FRAMEBUFFER_SRGB));//aktiviert srgb
     Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 

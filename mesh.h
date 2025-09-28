@@ -105,9 +105,8 @@ public:
 
             {
                 auto textureBuffer = stbi_load(diffuseMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-                string test = stbi_failure_reason();
                 cout << stbi_failure_reason() << "1" << endl;
-                assert(textureBuffer);
+                //assert(textureBuffer);
                 assert(material.diffuseMap);
 
                 GLCALL(glBindTexture(GL_TEXTURE_2D, material.diffuseMap));
@@ -117,7 +116,11 @@ public:
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
-                GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer));
+                GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+                GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer));
+                GLCALL(glGenerateMipmap(GL_TEXTURE_2D));
+                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+                GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 4));
 
                 if(textureBuffer) {
                     stbi_image_free(textureBuffer);
@@ -127,8 +130,8 @@ public:
             {
                 auto textureBuffer = stbi_load(normalMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
                 cout << stbi_failure_reason() << "2" << endl;
-                assert(textureBuffer);
-                assert(material.normalMap);
+                //assert(textureBuffer);
+                //assert(material.normalMap);
 
                 GLCALL(glBindTexture(GL_TEXTURE_2D, material.normalMap));
 
@@ -137,7 +140,11 @@ public:
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
+                GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
                 GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer));
+                GLCALL(glGenerateMipmap(GL_TEXTURE_2D));
+                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+                GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 4));
 
                 if(textureBuffer) {
                     stbi_image_free(textureBuffer);

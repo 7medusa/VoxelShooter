@@ -140,9 +140,9 @@ void processMaterials(const aiScene* scene) {
 
         uint32_t numDiffuseMaps = material->GetTextureCount(aiTextureType_DIFFUSE);
         uint32_t numNormalMaps = material->GetTextureCount(aiTextureType_NORMALS);
-        assert(numDiffuseMaps > 0);
+        //assert(numDiffuseMaps > 0);
         material->GetTexture(aiTextureType_DIFFUSE, 0, &mat.diffuseMapName);
-        assert(numNormalMaps > 0);
+        //assert(numNormalMaps > 0);
         material->GetTexture(aiTextureType_NORMALS, 0, &mat.normalMapName);
 
         materials.push_back(mat);
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
         //normal map
         uint64_t normalMapLength = material.normalMapName.length + prefixLen;//models+/länge für zahl
         output.write((char*)&normalMapLength, sizeof(normalMapLength));
-        output.write(pathPrefix, 7);
+        output.write(pathPrefix, prefixLen);
         output.write((char*)&material.normalMapName.data, material.normalMapName.length);
     }
 

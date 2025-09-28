@@ -2,8 +2,8 @@
 
 #define jumpSpeed 5.0f
 #define walkSpeed 4.2f
-//#define zoomSpeed 5.7f
-#define zoomSpeed 50.0f
+#define zoomSpeed 5.7f
+//#define zoomSpeed 50.0f
 
 class Control {
 public:
@@ -58,7 +58,7 @@ public:
             }
         }
         if(sBool) {
-            if(camera->getPosition().z < 1300.0f) {
+            if(camera->getPosition().z < 13.0f) {
                 camera->translate(glm::vec3(0.0f, 0.0f, zoomSpeed * delta));
             }
         }
