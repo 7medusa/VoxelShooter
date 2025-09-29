@@ -1,9 +1,10 @@
 #include "includes.h"
 #include "camera.h"
 
-void setVariables(glm::mat4 modelViewProj, glm::mat4 projection, glm::mat4 model, const int modelViewProjLocation, int64_t numIndices, const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, int modelViewLocation, int invModelViewLocation, glm::mat4 modelView, glm::mat4 invModelView, Camera* camera) {
+void setVariables(glm::mat4 modelViewProj, glm::mat4 projection, glm::mat4 model, const int modelViewProjLocation, const VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer, int modelViewLocation, int invModelViewLocation, glm::mat4 modelView, glm::mat4 invModelView, Camera* camera, float time=0) {
     vertexBuffer->bind();
     indexBuffer->bind();
+    model = glm::rotate(model, time, glm::vec3(0.0f, 1.0f, 0.0f));
     projection = camera->getViewProjection();
     modelViewProj = projection * model;
     modelView = camera->getView() * model;

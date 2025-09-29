@@ -7,8 +7,8 @@
 
 using namespace std;
 
-#define cameraSpeed 6.0f
-#define mouseSens 0.4f
+#define ground -1.3f
+#define cameraFov 90.0f
 
 #define GLCALL(call) call;
 

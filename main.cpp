@@ -6,10 +6,8 @@
 #include <fstream>
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
-
 #include "control.cpp"
 #include "model.cpp"
-#include "character.cpp"
 #include "mesh.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
@@ -70,7 +68,7 @@ int main(int argc, char** argv) {
     shader.bind();
 
     //kamera
-    Camera camera(90.0f, windowWidth, windowHeight);
+    Camera camera(cameraFov, windowWidth, windowHeight);
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
@@ -81,19 +79,23 @@ int main(int argc, char** argv) {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
-    Model character(characterModelDir, &camera, 0.0f, glm::vec3(0.0f, -130.0f, 0.0f));
+
+    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(0.011f, 0.011f, 0.011f));
     ModelRead characterMesh(characterModelDir, &shader);
 
-    Model shop1(shop1ModelDir, &camera, 3.1415926536f, glm::vec3(0.0f, 1.5f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
+    Model shop1(&camera, 3.1415926536f, glm::vec3(6.0f, ground+2.7f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
     ModelRead shop1Mesh(shop1ModelDir, &shader);
+
+    Model shop2(&camera, 3.1415926536f, glm::vec3(-6.0f, ground+2.5f, 2.5f), glm::vec3(0.7f, 0.7f, 0.7f));
+    ModelRead shop2Mesh(shop2ModelDir, &shader);
+
+    Model bodenStreet(&camera, 3.1415926536f, glm::vec3(0.0f, ground-0.15f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f));
+    ModelRead bodenStreetMesh(bodenStreetModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
-
-    //objekte
-    Character player;
 
     while(!close) {
         SDL_Event event;
@@ -105,7 +107,7 @@ int main(int argc, char** argv) {
             control.handle(&event, &camera);
         }
 
-        control.control(&event, &camera, &character.model, &projection, &character.modelViewProj, delta);
+        control.control(&camera, &character.model, &projection, &character.modelViewProj, delta);
         camera.update();
         projection = camera.getViewProjection();
 
@@ -114,10 +116,14 @@ int main(int argc, char** argv) {
 
         time += delta;
 
-        player.setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, character.numIndices, &character.vertexBuffer, &character.indexBuffer, time, &camera, &shader, character.modelView, character.invModelView, modelViewLocation, invModelViewLocation);
+        setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera, time);
         characterMesh.render();
-        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, shop1.numIndices, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
+        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
         shop1Mesh.render();
+        setVariables(shop2.modelViewProj, projection, shop2.model, modelViewProjLocation, &shop2.vertexBuffer, &shop2.indexBuffer, modelViewLocation, invModelViewLocation, shop2.modelView, shop2.invModelView, &camera);
+        shop2Mesh.render();
+        setVariables(bodenStreet.modelViewProj, projection, bodenStreet.model, modelViewProjLocation, &bodenStreet.vertexBuffer, &bodenStreet.indexBuffer, modelViewLocation, invModelViewLocation, bodenStreet.modelView, bodenStreet.invModelView, &camera);
+        bodenStreetMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

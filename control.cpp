@@ -1,9 +1,10 @@
 #include "includes.h"
 
-#define jumpSpeed 5.0f
-#define walkSpeed 4.2f
+#define jumpSpeed 450.0f
+#define walkSpeed 2.5f
 #define zoomSpeed 5.7f
-//#define zoomSpeed 50.0f
+#define jumpHeight 0.0f
+
 
 class Control {
 public:
@@ -50,7 +51,7 @@ public:
             }
         }
     }
-    void control(SDL_Event* event, Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta, int borderLeft=-10, int borderRight=10) {
+    void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta, int borderLeft=-10, int borderRight=10) {
         static glm::vec3 characterPosition;
         if(wBool) {
             if(camera->getPosition().z > 1.7f) {
@@ -58,7 +59,7 @@ public:
             }
         }
         if(sBool) {
-            if(camera->getPosition().z < 13.0f) {
+            if(camera->getPosition().z < 15.0f) {
                 camera->translate(glm::vec3(0.0f, 0.0f, zoomSpeed * delta));
             }
         }
@@ -71,7 +72,7 @@ public:
         if(jumpOnProgress) {
             characterPosition = glm::vec3((*characterModel)[3]);
             if(up) {
-                if(characterPosition.y < 1.2f) {
+                if(characterPosition.y < jumpHeight) {
                     *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, jumpSpeed * delta, 0.0f));
                 }
                 else {
@@ -79,12 +80,13 @@ public:
                 }
             }
             else {
-                if(characterPosition.y > 0.0f) {
+                if(characterPosition.y > -1.2f) {
                     *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, -jumpSpeed * delta, 0.0f));
                 }
                 else {
                     *characterModel = glm::mat4(1.0f);
-                    *characterModel = glm::translate(*characterModel, glm::vec3(characterPosition.x, 0.0f, characterPosition.x));//reseten der position auf genau 0
+                    *characterModel = glm::translate(*characterModel, glm::vec3(characterPosition.x, ground, characterPosition.z));
+                    *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
                     up = true;
                     jumpOnProgress = false;
                 }
