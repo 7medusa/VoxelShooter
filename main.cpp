@@ -83,13 +83,13 @@ int main(int argc, char** argv) {
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(0.011f, 0.011f, 0.011f));
     ModelRead characterMesh(characterModelDir, &shader);
 
-    Model shop1(&camera, 3.1415926536f, glm::vec3(6.0f, ground+2.7f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
+    Model shop1(&camera, 3.1415926536f, glm::vec3(6.0f, ground+2.6f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
     ModelRead shop1Mesh(shop1ModelDir, &shader);
 
-    Model shop2(&camera, 3.1415926536f, glm::vec3(-6.0f, ground+2.5f, 2.5f), glm::vec3(0.7f, 0.7f, 0.7f));
+    Model shop2(&camera, 3.1415926536f, glm::vec3(-6.0f, ground+2.4f, 2.5f), glm::vec3(0.7f, 0.7f, 0.7f));
     ModelRead shop2Mesh(shop2ModelDir, &shader);
 
-    Model bodenStreet(&camera, 3.1415926536f, glm::vec3(0.0f, ground-0.15f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f));
+    Model bodenStreet(&camera, 3.1415926536f, glm::vec3(0.0f, ground-0.25f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f));
     ModelRead bodenStreetMesh(bodenStreetModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
@@ -126,6 +126,7 @@ int main(int argc, char** argv) {
         bodenStreetMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
+        cout << "character: " << character.model[3].y << endl;
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
 

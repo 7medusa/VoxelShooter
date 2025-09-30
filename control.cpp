@@ -52,7 +52,8 @@ public:
         }
     }
     void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta, int borderLeft=-10, int borderRight=10) {
-        static glm::vec3 characterPosition;
+        glm::vec3 characterPosition = glm::vec3((*characterModel)[3]);
+        cout << "character control: " << characterPosition.y << endl;
         if(wBool) {
             if(camera->getPosition().z > 1.7f) {
                 camera->translate(glm::vec3(0.0f, 0.0f, -zoomSpeed * delta));
@@ -65,9 +66,15 @@ public:
         }
         if(aBool && camera->getPosition().x > borderLeft) {
             camera->translate(glm::vec3(-walkSpeed * delta, 0.0f, 0.0f));
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
         }
         if(dBool && camera->getPosition().x < borderRight) {
             camera->translate(glm::vec3(walkSpeed * delta, 0.0f, 0.0f));
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
         }
         if(jumpOnProgress) {
             characterPosition = glm::vec3((*characterModel)[3]);
@@ -80,7 +87,7 @@ public:
                 }
             }
             else {
-                if(characterPosition.y > -1.2f) {
+                if(characterPosition.y > -1.2333f) {
                     *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, -jumpSpeed * delta, 0.0f));
                 }
                 else {
