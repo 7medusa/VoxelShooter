@@ -1,11 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
 
+using namespace std;
+
 //defines
 //#define Release
-//#define orthoMode
-
-using namespace std;
 
 #define ground -1.3f
 #define cameraFov 90.0f

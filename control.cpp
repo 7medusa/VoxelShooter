@@ -53,7 +53,6 @@ public:
     }
     void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta, int borderLeft=-10, int borderRight=10) {
         glm::vec3 characterPosition = glm::vec3((*characterModel)[3]);
-        cout << "character control: " << characterPosition.y << endl;
         if(wBool) {
             if(camera->getPosition().z > 1.7f) {
                 camera->translate(glm::vec3(0.0f, 0.0f, -zoomSpeed * delta));

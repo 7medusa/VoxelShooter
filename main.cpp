@@ -7,8 +7,9 @@
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
 #include "control.cpp"
-#include "model.cpp"
 #include "mesh.h"
+#include "level.cpp"
+#include <GLFW/glfw3.h>
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Release
@@ -38,13 +39,13 @@ int main(int argc, char** argv) {
     static int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_GL_SetSwapInterval(1);//vsync
     SDL_ShowCursor(SDL_DISABLE);//versteckt den cursor
-    constexpr int windowWidth = 2560.0f;
-    constexpr int windowHeight = 1440.0f;
+    unsigned int windowWidth = 2560;
+    unsigned int windowHeight = 1440;
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     static int flags = SDL_WINDOW_OPENGL;
-    float windowWidth = 800.0f;
-    float windowHeight = 600.0f;
+    unsigned int windowWidth = 800.0f;
+    unsigned int windowHeight = 600.0f;
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
@@ -63,7 +64,6 @@ int main(int argc, char** argv) {
     Control control;
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
-    //GLCALL(glEnable(GL_FRAMEBUFFER_SRGB));//aktiviert srgb
     Shader shader(vertexShaderDir, fragmentShaderDir);
     shader.bind();
 
@@ -83,21 +83,17 @@ int main(int argc, char** argv) {
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(0.011f, 0.011f, 0.011f));
     ModelRead characterMesh(characterModelDir, &shader);
 
-    Model shop1(&camera, 3.1415926536f, glm::vec3(6.0f, ground+2.6f, 2.0f), glm::vec3(0.7f, 0.7f, 0.7f));
-    ModelRead shop1Mesh(shop1ModelDir, &shader);
-
-    Model shop2(&camera, 3.1415926536f, glm::vec3(-6.0f, ground+2.4f, 2.5f), glm::vec3(0.7f, 0.7f, 0.7f));
-    ModelRead shop2Mesh(shop2ModelDir, &shader);
-
-    Model bodenStreet(&camera, 3.1415926536f, glm::vec3(0.0f, ground-0.25f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f));
-    ModelRead bodenStreetMesh(bodenStreetModelDir, &shader);
+    //level
+    level1 level1(&shader, &camera);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
+    int x = 1;
 
     while(!close) {
+        x++;
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
@@ -118,15 +114,9 @@ int main(int argc, char** argv) {
 
         setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera, time);
         characterMesh.render();
-        setVariables(shop1.modelViewProj, projection, shop1.model, modelViewProjLocation, &shop1.vertexBuffer, &shop1.indexBuffer, modelViewLocation, invModelViewLocation, shop1.modelView, shop1.invModelView, &camera);
-        shop1Mesh.render();
-        setVariables(shop2.modelViewProj, projection, shop2.model, modelViewProjLocation, &shop2.vertexBuffer, &shop2.indexBuffer, modelViewLocation, invModelViewLocation, shop2.modelView, shop2.invModelView, &camera);
-        shop2Mesh.render();
-        setVariables(bodenStreet.modelViewProj, projection, bodenStreet.model, modelViewProjLocation, &bodenStreet.vertexBuffer, &bodenStreet.indexBuffer, modelViewLocation, invModelViewLocation, bodenStreet.modelView, bodenStreet.invModelView, &camera);
-        bodenStreetMesh.render();
+        level1.render(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
-        cout << "character: " << character.model[3].y << endl;
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
 
