@@ -110,31 +110,32 @@ void processMaterials(const aiScene* scene) {
 
         aiColor3D diffuse(0.0f, 0.0f, 0.0f);
         if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse)) {
-            //no diffuse
+            cout << "no diffuse" << endl;
         }
         mat.diffuse = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
 
         aiColor3D specular(0.0f, 0.0f, 0.0f);
         if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_SPECULAR, specular)) {
-            //no specular
+            cout << "no specular" << endl;
         }
         mat.specular = glm::vec3(specular.r, specular.g, specular.b);
 
         aiColor3D emissive(0.0f, 0.0f, 0.0f);
         if(AI_SUCCESS != material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive)) {
-            //no diffuse
+            cout << "no emissive" << endl;
         }
         mat.emissive = glm::vec3(emissive.r, emissive.g, emissive.b);
 
         float shininess = 0.0f;
         if(AI_SUCCESS != material->Get(AI_MATKEY_SHININESS, shininess)) {
-            //no diffuse
+            cout << "no shininess" << endl;
+
         }
         mat.shininess = shininess;
 
         float shininessStrength = 0.0f;
         if(AI_SUCCESS != material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength)) {
-            //no diffuse
+            cout << "no shininess strength" << endl;
         }
         mat.specular = glm::vec3(shininessStrength);
 

@@ -6,6 +6,14 @@ using namespace std;
 //defines
 //#define Release
 
+#define jumpSpeed 450.0f
+#define walkSpeed 2.6f
+#define zoomSpeed 5.7f
+#define jumpHeight 0.0f
+#define borderLeft -8.0f
+#define borderRight 23.0f
+#define zoomOut 9.75f
+#define zoomIn 1.7f
 #define ground -1.3f
 #define cameraFov 90.0f
 
@@ -19,12 +27,3 @@ struct Vertex {
     //texturkoordinaten
     glm::vec2 textureCoord;
 };
-
-/*
-textur koordinaten mit 4 vertices
-(0, 1) ---------------------- (1, 1)
-   |                              |
-   |                              |
-   |                              |
-(0, 0) ---------------------- (1, 0)
-*/

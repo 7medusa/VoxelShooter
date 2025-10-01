@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include "model.cpp"
 #include "includes.h"
@@ -20,7 +21,7 @@ public:
         setVariables(shop2.modelViewProj, projection, shop2.model, modelViewProjLocation, &shop2.vertexBuffer, &shop2.indexBuffer, modelViewLocation, invModelViewLocation, shop2.modelView, shop2.invModelView, camera);
         shop2Mesh.render();
         setVariables(bodenStreet.modelViewProj, projection, bodenStreet.model, modelViewProjLocation, &bodenStreet.vertexBuffer, &bodenStreet.indexBuffer, modelViewLocation, invModelViewLocation, bodenStreet.modelView, bodenStreet.invModelView, camera);
-        bodenStreetMesh.render();
+        //bodenStreetMesh.render();
     }
 
 private:
@@ -33,3 +34,4 @@ private:
     Model bodenStreet;
     ModelRead bodenStreetMesh;
 };
+*/

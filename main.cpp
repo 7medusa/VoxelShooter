@@ -8,7 +8,7 @@
 #include <bits/locale_facets_nonio.h>
 #include "control.cpp"
 #include "mesh.h"
-#include "level.cpp"
+#include "model.cpp"
 #include <GLFW/glfw3.h>
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     static int flags = SDL_WINDOW_OPENGL;
-    unsigned int windowWidth = 800.0f;
-    unsigned int windowHeight = 600.0f;
+    unsigned int windowWidth = 1920.0f;
+    unsigned int windowHeight = 1080.0f;
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
@@ -82,9 +82,8 @@ int main(int argc, char** argv) {
 
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(0.011f, 0.011f, 0.011f));
     ModelRead characterMesh(characterModelDir, &shader);
-
-    //level
-    level1 level1(&shader, &camera);
+    Model level(&camera, 3.1415926535897932384626433f, glm::vec3(0.0f, ground-0.2, 2.3f), glm::vec3(0.73f, 0.73f, 0.73f));
+    ModelRead levelMesh(level1ModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -107,14 +106,15 @@ int main(int argc, char** argv) {
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
 
         time += delta;
 
         setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera, time);
         characterMesh.render();
-        level1.render(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera);
+        setVariables(level.modelViewProj, projection, level.model, modelViewProjLocation, &level.vertexBuffer, &level.indexBuffer, modelViewLocation, invModelViewLocation, level.modelView, level.invModelView, &camera);
+        levelMesh.render();
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 

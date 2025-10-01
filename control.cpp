@@ -1,11 +1,5 @@
 #include "includes.h"
 
-#define jumpSpeed 450.0f
-#define walkSpeed 2.5f
-#define zoomSpeed 5.7f
-#define jumpHeight 0.0f
-
-
 class Control {
 public:
     bool wBool = false;
@@ -15,7 +9,6 @@ public:
     bool jumpOnProgress = false;
     bool up = true;
     void handle(SDL_Event* event, Camera* camera) {
-        static glm::vec3 characterPosition;
         if(event->type == SDL_KEYDOWN) {
             if(event->key.keysym.sym == SDLK_w) {
                 wBool = true;
@@ -51,15 +44,15 @@ public:
             }
         }
     }
-    void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta, int borderLeft=-10, int borderRight=10) {
+    void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta) {
         glm::vec3 characterPosition = glm::vec3((*characterModel)[3]);
         if(wBool) {
-            if(camera->getPosition().z > 1.7f) {
+            if(camera->getPosition().z > zoomIn) {
                 camera->translate(glm::vec3(0.0f, 0.0f, -zoomSpeed * delta));
             }
         }
         if(sBool) {
-            if(camera->getPosition().z < 15.0f) {
+            if(camera->getPosition().z < zoomOut) {
                 camera->translate(glm::vec3(0.0f, 0.0f, zoomSpeed * delta));
             }
         }
@@ -86,7 +79,7 @@ public:
                 }
             }
             else {
-                if(characterPosition.y > -1.2333f) {
+                if(characterPosition.y > ground) {
                     *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, -jumpSpeed * delta, 0.0f));
                 }
                 else {
