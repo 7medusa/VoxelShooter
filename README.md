@@ -1,7 +1,7 @@
 # Voxel Shooter
 
 ![Screenshot](titelbild.png)
-![Screenshot](screenshot)
+![Screenshot](screenshot.png)
 
 ## Features
 - 2D side-view with 3D/voxel-flavored assets and lighting

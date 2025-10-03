@@ -2,7 +2,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb_image.h"
 #undef STB_IMAGE_IMPLEMENTATION
-#include "text.h"
 #include <fstream>
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
@@ -10,7 +9,7 @@
 #include "mesh.h"
 #include "setVariables.cpp"
 #include <vector>
-#include "text.h"
+#include "model.cpp"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Debug
@@ -57,7 +56,6 @@ int main(int argc, char** argv) {
 #endif
 
     //allgemeines
-    EnsureTTFInit();
     unsigned int levelWorld = 1;
     bool close = false;
     Control control;
@@ -83,7 +81,7 @@ int main(int argc, char** argv) {
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
     Model level1(&camera, 0, glm::vec3(11.2f, ground, 0.0f), glm::vec3(1.0f));
-    ModelRead level1Mesh(level1ModelDir, &shader);
+    ModelRead level1Mesh(debugModelDir, &shader);
     cout << "loading done" << endl;
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());

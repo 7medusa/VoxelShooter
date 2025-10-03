@@ -1,6 +1,5 @@
 #pragma once
 #include "includes.h"
-#include "level.cpp"
 
 class Control {
 public:
