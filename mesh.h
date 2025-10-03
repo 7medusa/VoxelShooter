@@ -1,6 +1,6 @@
 #pragma once
 #include "includes.h"
-#include "setVariables.cpp"
+#include <vector>
 #include "libs/stb_image.h"
 #ifndef OPENGL_MESH_H
 #define OPENGL_MESH_H
@@ -95,7 +95,6 @@ public:
             string normalMapName(normalMapLength, '\0');
             input.read((char*)&normalMapName[0], normalMapLength);
             assert(diffuseMapLength > 0);
-            //assert(normalMapLength > 0);
 
             int textureWidth = 0;
             int textureHeight = 0;
@@ -105,13 +104,12 @@ public:
 
             {
                 auto textureBuffer = stbi_load(diffuseMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-                //assert(textureBuffer);
                 assert(material.diffuseMap);
 
                 GLCALL(glBindTexture(GL_TEXTURE_2D, material.diffuseMap));
 
-                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+                GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
                 GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
@@ -128,8 +126,6 @@ public:
 
             {
                 auto textureBuffer = stbi_load(normalMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-                //assert(textureBuffer);
-                //assert(material.normalMap);
 
                 GLCALL(glBindTexture(GL_TEXTURE_2D, material.normalMap));
 

@@ -34,6 +34,9 @@ public:
     glm::mat4 getView() {
         return view;
     }
+    void resetMatrix() {
+        view = glm::mat4(1.0f);
+    }
 protected:
     glm::mat4 projection{};//matrix zur abbildung der objekte
     glm::mat4 view{};//position der kamera

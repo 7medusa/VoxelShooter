@@ -1,4 +1,6 @@
+#pragma once
 #include "includes.h"
+#include "level.cpp"
 
 class Control {
 public:
@@ -6,8 +8,10 @@ public:
     bool sBool = false;
     bool aBool = false;
     bool dBool = false;
+    bool shieldBool = false;
     bool jumpOnProgress = false;
     bool up = true;
+
     void handle(SDL_Event* event, Camera* camera) {
         if(event->type == SDL_KEYDOWN) {
             if(event->key.keysym.sym == SDLK_w) {
@@ -22,11 +26,17 @@ public:
             if(event->key.keysym.sym == SDLK_d) {
                 dBool = true;
             }
-            if(event->key.keysym.sym == SDLK_SPACE) {
+            if(event->key.keysym.sym == SDLK_f) {
+                shieldBool = true;
+            }
+            if(event->key.keysym.sym == SDLK_x) {
+                camera->reset();
+            }
+            if(event->key.keysym.sym == SDLK_SPACE && !shieldBool) {
                 jumpOnProgress = true;
             }
         }
-        else if(event->type == SDL_KEYUP) {
+        if(event->type == SDL_KEYUP) {
             if(event->key.keysym.sym == SDLK_w) {
                 wBool = false;
             }
@@ -39,12 +49,23 @@ public:
             if(event->key.keysym.sym == SDLK_d) {
                 dBool = false;
             }
-            if(event->key.keysym.sym == SDLK_x) {
-                camera->reset();
+            if(event->key.keysym.sym == SDLK_f) {
+                shieldBool = false;
             }
         }
     }
-    void control(Camera* camera, glm::mat4* characterModel, glm::mat4* projection, glm::mat4* characterModelViewProj, float delta) {
+    void control(Camera* camera, glm::mat4* characterModel, glm::mat4 projection, glm::mat4* characterModelViewProj, float delta, unsigned int* level, SDL_Event* event, Shader* shader, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, glm::mat4* projectionPointer) {
+        float rightBorder;
+        float leftBorder;
+        switch(*level) {
+            case 1:
+                rightBorder = borderRightLevel1;
+                leftBorder = borderLeftLevel1;
+                break;
+            default:
+                cout << "level not found" << endl;
+                break;
+        }
         glm::vec3 characterPosition = glm::vec3((*characterModel)[3]);
         if(wBool) {
             if(camera->getPosition().z > zoomIn) {
@@ -56,17 +77,43 @@ public:
                 camera->translate(glm::vec3(0.0f, 0.0f, zoomSpeed * delta));
             }
         }
-        if(aBool && camera->getPosition().x > borderLeft) {
+        if(aBool && camera->getPosition().x > leftBorder && !shieldBool) {
             camera->translate(glm::vec3(-walkSpeed * delta, 0.0f, 0.0f));
             *characterModel = glm::mat4(1.0f);
             *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-            *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
+            *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
         }
-        if(dBool && camera->getPosition().x < borderRight) {
+        else if(!aBool) {
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        }
+        if(dBool && camera->getPosition().x < rightBorder && !shieldBool) {
             camera->translate(glm::vec3(walkSpeed * delta, 0.0f, 0.0f));
             *characterModel = glm::mat4(1.0f);
             *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-            *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
+            *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        }
+        else if(!dBool && !aBool) {
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        }
+        if(shieldBool && aBool) {//schild links
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+            cout << "schild links" << endl;
+        }
+        if(shieldBool && dBool && !aBool) {//schild rechts
+            *characterModel = glm::mat4(1.0f);
+            *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+            *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+            cout << "schild rechts" << endl;
         }
         if(jumpOnProgress) {
             characterPosition = glm::vec3((*characterModel)[3]);
@@ -85,12 +132,18 @@ public:
                 else {
                     *characterModel = glm::mat4(1.0f);
                     *characterModel = glm::translate(*characterModel, glm::vec3(characterPosition.x, ground, characterPosition.z));
-                    *characterModel = glm::scale(*characterModel, glm::vec3(0.011f));
+                    if(aBool) {
+                        *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    }
+                    else if(dBool) {
+                        *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    }
+                    *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
                     up = true;
                     jumpOnProgress = false;
                 }
             }
-            *characterModelViewProj = *projection * *characterModel;
+            *characterModelViewProj = *projectionPointer * *characterModel;
         }
     }
 };

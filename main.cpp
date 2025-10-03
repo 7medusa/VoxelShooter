@@ -2,21 +2,18 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb_image.h"
 #undef STB_IMAGE_IMPLEMENTATION
-#include <vector>
+#include "text.h"
 #include <fstream>
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
 #include "control.cpp"
 #include "mesh.h"
-#include "model.cpp"
-#include <GLFW/glfw3.h>
+#include "setVariables.cpp"
+#include <vector>
+#include "text.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
-#ifdef Release
-    if(severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM) {
-        cout << "opengl error message: " << message << endl;
-    }
-#else
+#ifdef Debug
     cout << "opengl debug message: " << message << endl;
 #endif
 }
@@ -44,8 +41,8 @@ int main(int argc, char** argv) {
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);//debug modus
     static int flags = SDL_WINDOW_OPENGL;
-    unsigned int windowWidth = 1920.0f;
-    unsigned int windowHeight = 1080.0f;
+    unsigned int windowWidth = 800.0f;
+    unsigned int windowHeight = 600.0f;
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
@@ -60,6 +57,8 @@ int main(int argc, char** argv) {
 #endif
 
     //allgemeines
+    EnsureTTFInit();
+    unsigned int levelWorld = 1;
     bool close = false;
     Control control;
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
@@ -80,19 +79,19 @@ int main(int argc, char** argv) {
     //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(0.011f, 0.011f, 0.011f));
+    cout << "loading..." << endl;
+    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
-    Model level(&camera, 3.1415926535897932384626433f, glm::vec3(0.0f, ground-0.2, 2.3f), glm::vec3(0.73f, 0.73f, 0.73f));
-    ModelRead levelMesh(level1ModelDir, &shader);
+    Model level1(&camera, 0, glm::vec3(11.2f, ground, 0.0f), glm::vec3(1.0f));
+    ModelRead level1Mesh(level1ModelDir, &shader);
+    cout << "loading done" << endl;
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
-    int x = 1;
 
     while(!close) {
-        x++;
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
@@ -102,21 +101,31 @@ int main(int argc, char** argv) {
             control.handle(&event, &camera);
         }
 
-        control.control(&camera, &character.model, &projection, &character.modelViewProj, delta);
         camera.update();
         projection = camera.getViewProjection();
 
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        float farbe = 0.0f;
+        glClearColor(farbe, farbe, farbe, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
 
         time += delta;
 
-        setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera, time);
+        control.control(&camera, &character.model, projection, &character.modelViewProj, delta, &levelWorld, &event, &shader, modelViewProjLocation, modelViewLocation, invModelViewLocation, &projection);
+
+        setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera);
         characterMesh.render();
-        setVariables(level.modelViewProj, projection, level.model, modelViewProjLocation, &level.vertexBuffer, &level.indexBuffer, modelViewLocation, invModelViewLocation, level.modelView, level.invModelView, &camera);
-        levelMesh.render();
+        switch(levelWorld) {
+            case 1:
+                setVariables(level1.modelViewProj, projection, level1.model, modelViewProjLocation, &level1.vertexBuffer, &level1.indexBuffer, modelViewLocation, invModelViewLocation, level1.modelView, level1.invModelView, &camera);
+                level1Mesh.render();
+                break;
+            default:
+                cout << "level not found" << endl;
+                break;
+        }
 
         SDL_GL_SwapWindow(window);//switcht die buffer
+        //cout << "character: " << character.model[3].x << endl;
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
 

@@ -27,6 +27,7 @@ target_link_libraries(opengl
         ${GLEW_LIBRARIES}
         glfw
         assimp::assimp
+        SDL2_ttf
 )
 
 target_link_libraries(modelexporter

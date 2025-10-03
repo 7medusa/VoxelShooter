@@ -12,7 +12,7 @@ uniform vec3 u_emissive;
 uniform float u_shininess;
 uniform sampler2D u_diffuse_map;
 
-float lightStrength = 2.0;
+float lightStrength = 4.0;
 
 void main() {
     vec4 diffuseColor = texture(u_diffuse_map, out_tex_coord);
@@ -21,7 +21,7 @@ void main() {
     }
 
     vec3 view = normalize(-out_position);
-    vec3 light = normalize(vec3(-10.0, -10.0, 10.0));//lichtrichtung
+    vec3 light = normalize(vec3(10.0, 10.0, 10.0));//lichtrichtung
     //vec3 light = normalize(vec3(0.0, 0.0, 0.0));//licht aus
     vec3 normal = normalize(out_normal);
     vec3 reflection = reflect(-light, normal);
