@@ -19,7 +19,7 @@ using namespace std;
 #define pauseTime 7.5f
 
 //level1
-#define borderLeftLevel1 0.3f
+#define borderLeftLevel1 0.0f
 #define borderRightLevel1 20.75f
 
 #define GLCALL(call) call;

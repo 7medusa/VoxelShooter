@@ -84,12 +84,11 @@ int main(int argc, char** argv) {
     //modele
     glm::mat4 projection = camera.getViewProjection();
 
-    cout << "loading..." << endl;
+    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
     Model level1(&camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
-    ModelRead level1Mesh(debugModelDir, &shader);
-    cout << "loading done" << endl;
+    ModelRead level1Mesh(level1ModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -132,14 +131,13 @@ int main(int argc, char** argv) {
         shader.unbind();
 
         //pause function
-        SDL_PollEvent(&event);
         if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && time > prevTime + pauseTime) {
             control.wBool = false;
             control.sBool = false;
             control.aBool = false;
             control.dBool = false;
             pause = true;
-            fontDraw(&fontShader, window, font, "pause", windowWidth / 2 - measureTextWidth("pause", font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
+            font.fontDraw(&fontShader, window, font, "pause", windowWidth / 2 - font.measureTextWidth("pause", font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
             SDL_GL_SwapWindow(window);
         }
         while(pause) {

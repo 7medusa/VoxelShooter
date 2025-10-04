@@ -74,6 +74,43 @@ struct Font {
         GLCALL(glDrawArrays(GL_TRIANGLES, 0, numVertices));
     }
 
+    void fontDraw(Shader* fontShader, SDL_Window* window, Font font, string text, float x, float y) {
+        fontShader->bind();
+        int w;
+        int h;
+        SDL_GetWindowSize(window, &w, &h);
+        glm::mat4 ortho = glm::ortho(0.0f, (float)w, (float)h, 0.0f);
+        GLCALL(glUniformMatrix4fv(glGetUniformLocation(fontShader->getShaderId(), "u_matrix"), 1, GL_FALSE, &ortho[0][0]));
+        GLCALL(glDisable(GL_CULL_FACE));
+        GLCALL(glEnable(GL_BLEND));
+        GLCALL(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GLCALL(glDisable(GL_DEPTH_TEST));
+
+        const char* convertetText = text.c_str();
+        font.drawText(x, y, convertetText, fontShader);
+
+        GLCALL(glEnable(GL_CULL_FACE));
+        GLCALL(glEnable(GL_DEPTH_TEST));
+        fontShader->unbind();
+    }
+
+    float measureTextWidth(const char* text, const stbtt_bakedchar* cdata) {
+        float w = 0.0f;
+        for (const char* p = text; *p; ++p) {
+            if (*p >= 32 && *p < 128) {
+                w += cdata[*p - 32].xadvance; // Pixel
+            }
+        }
+        return w;
+    }
+
+    void loading(Shader* fontShader, SDL_Window* window, Font font, unsigned int windowWidth, unsigned int windowHeight, const char* text) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fontDraw(fontShader, window, font, text, windowWidth / 2 - measureTextWidth(text, font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
+        SDL_GL_SwapWindow(window);
+    }
+
     stbtt_bakedchar cdata[96];
     GLuint fontTexture;
     GLuint fontVao;
@@ -81,32 +118,3 @@ struct Font {
     FontVertex* fontVertexBufferData = 0;
     int fontVertexBufferCapacity;
 };
-
-void fontDraw(Shader* fontShader, SDL_Window* window, Font font, string text, float x, float y) {
-    fontShader->bind();
-    int w;
-    int h;
-    SDL_GetWindowSize(window, &w, &h);
-    glm::mat4 ortho = glm::ortho(0.0f, (float)w, (float)h, 0.0f);
-    GLCALL(glUniformMatrix4fv(glGetUniformLocation(fontShader->getShaderId(), "u_matrix"), 1, GL_FALSE, &ortho[0][0]));
-    GLCALL(glDisable(GL_CULL_FACE));
-    GLCALL(glEnable(GL_BLEND));
-    GLCALL(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    GLCALL(glDisable(GL_DEPTH_TEST));
-
-    const char* convertetText = text.c_str();
-    font.drawText(x, y, convertetText, fontShader);
-
-    GLCALL(glEnable(GL_CULL_FACE));
-    GLCALL(glEnable(GL_DEPTH_TEST));
-    fontShader->unbind();
-}
-float measureTextWidth(const char* text, const stbtt_bakedchar* cdata) {
-    float w = 0.0f;
-    for (const char* p = text; *p; ++p) {
-        if (*p >= 32 && *p < 128) {
-            w += cdata[*p - 32].xadvance; // Pixel
-        }
-    }
-    return w;
-}
