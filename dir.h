@@ -1,8 +1,12 @@
 #pragma once
 
+#define fontDir "../font/JetBrainsMono-Regular.ttf"
+
 //shader
 #define vertexShaderDir "../shaders/basic.vs"
 #define fragmentShaderDir "../shaders/basic.fs"
+#define vertexShaderFontDir "../shaders/font.vs"
+#define fragmentShaderFontDir "../shaders/font.fs"
 
 //3d models
 #define characterModelDir "../mds/level1/CyberpunkChar_0.mds"

@@ -4,7 +4,7 @@
 using namespace std;
 
 //defines
-//#define Release
+#define Release
 //#define Debug
 
 #define jumpSpeed 450.0f
@@ -16,6 +16,7 @@ using namespace std;
 #define ground -1.3f
 #define cameraFov 90.0f
 #define characterScale 0.011f
+#define pauseTime 7.5f
 
 //level1
 #define borderLeftLevel1 0.3f

@@ -16,6 +16,7 @@
 - W / S: Zoom camera in / out
 - SPACE: Jump
 - F: Hold shield (directional; affects character facing)
+- E: Interact
 - X: Reset camera
 - Close window: Quit
 
@@ -72,9 +73,9 @@ Behavior:
 - Place the resulting .mds file under the mds/ directory and update dir.h to point to it.
 
 ## Project layout (selected)
-- main.cpp, control.cpp, level.cpp: runtime/game loop, input, level logic
+- main.cpp, control.cpp: runtime/game loop, input, level logic
 - shader.h/.cpp, shaders/basic.vs, shaders/basic.fs: shader system and GLSL programs
-- mesh.h, buffer.h, index_buffer.h, vertex_buffer.h: rendering buffers and mesh loading (.mds)
+- mesh.h, index_buffer.h, vertex_buffer.h: rendering buffers and mesh loading (.mds)
 - model.cpp: Model rendering glue
 - tools/modelexporter.cpp: Assimp-based converter to .mds
 - texture/, assets/, mds/: textures, source assets, and exported meshes
@@ -109,7 +110,3 @@ Level:
 - Level 1: World
   - Model: mds/level1/level1.mds
   - Notes: Mainlevel with doors and NPCs for the further levels.
-
-- Level 2: Shop
-  - Model: mds/level2/level2.mds
-  - Notes: Here you can buy things like weapons, health stuff or skins.

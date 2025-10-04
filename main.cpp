@@ -10,6 +10,7 @@
 #include "setVariables.cpp"
 #include <vector>
 #include "model.cpp"
+#include "font.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Debug
@@ -58,11 +59,17 @@ int main(int argc, char** argv) {
     //allgemeines
     unsigned int levelWorld = 1;
     bool close = false;
+    bool pause = false;
+    float prevTime = pauseTime - 2 * pauseTime;
     Control control;
+    Font font;
+    font.initFont(fontDir, 80.0f);
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
+    Shader fontShader(vertexShaderFontDir, fragmentShaderFontDir);
     Shader shader(vertexShaderDir, fragmentShaderDir);
-    shader.bind();
+    fontShader.unbind();
+    shader.unbind();
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
@@ -80,7 +87,7 @@ int main(int argc, char** argv) {
     cout << "loading..." << endl;
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
-    Model level1(&camera, 0, glm::vec3(11.2f, ground, 0.0f), glm::vec3(1.0f));
+    Model level1(&camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
     ModelRead level1Mesh(debugModelDir, &shader);
     cout << "loading done" << endl;
 
@@ -110,6 +117,7 @@ int main(int argc, char** argv) {
 
         control.control(&camera, &character.model, projection, &character.modelViewProj, delta, &levelWorld, &event, &shader, modelViewProjLocation, modelViewLocation, invModelViewLocation, &projection);
 
+        shader.bind();
         setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera);
         characterMesh.render();
         switch(levelWorld) {
@@ -120,6 +128,27 @@ int main(int argc, char** argv) {
             default:
                 cout << "level not found" << endl;
                 break;
+        }
+        shader.unbind();
+
+        //pause function
+        SDL_PollEvent(&event);
+        if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && time > prevTime + pauseTime) {
+            control.wBool = false;
+            control.sBool = false;
+            control.aBool = false;
+            control.dBool = false;
+            pause = true;
+            fontDraw(&fontShader, window, font, "pause", windowWidth / 2 - measureTextWidth("pause", font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
+            SDL_GL_SwapWindow(window);
+        }
+        while(pause) {
+            if(SDL_PollEvent(&event)) {
+                if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
+                    pause = false;
+                }
+            }
+            prevTime = time;
         }
 
         SDL_GL_SwapWindow(window);//switcht die buffer
