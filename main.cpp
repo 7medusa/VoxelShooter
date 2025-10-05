@@ -1,16 +1,36 @@
-#include "includes.h"
+#include <iostream>
+#define GLEW_STATIC
+#include <GL/glew.h>
+#ifdef _WIN32
+#include <SDL.h>
+#pragma comment( lib, "SDL2.lib" )
+#pragma comment( lib, "glew32s.lib" )
+#pragma comment( lib, "opengl32.lib" )
+#else
+#include <SDL2/SDL.h>
+#endif
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <string>
+#include <GL/gl.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb_image.h"
 #undef STB_IMAGE_IMPLEMENTATION
 #include <fstream>
-#include <iostream>
 #include <bits/locale_facets_nonio.h>
+#include <vector>
+
+#include "defines.h"
+#include "shader.h"
+#include "camera.h"
+#include "dir.h"
 #include "control.h"
 #include "mesh.h"
 #include "setVariables.h"
-#include <vector>
 #include "model.h"
 #include "font.h"
+
+#include "level.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
 #ifdef Debug
@@ -79,12 +99,13 @@ int main(int argc, char** argv) {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
-
-    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
-    Model level1(&camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
-    ModelRead level1Mesh(level1ModelDir, &shader);
+
+    //level
+    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+    Level1 level1(&camera, &shader);
+    Level2 level2(&camera, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -118,8 +139,9 @@ int main(int argc, char** argv) {
         characterMesh.render();
         switch(levelWorld) {
             case 1:
-                setVariables(level1.modelViewProj, projection, level1.model, modelViewProjLocation, &level1.vertexBuffer, &level1.indexBuffer, modelViewLocation, invModelViewLocation, level1.modelView, level1.invModelView, &camera);
-                level1Mesh.render();
+                level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &levelWorld);
+                break;
+            case 2:
                 break;
             default:
                 cout << "level not found" << endl;

@@ -32,6 +32,8 @@ add_executable(
         weapon.cpp
         model.h
         model.cpp
+        level.h
+        level.cpp
         setVariables.cpp)
 
 add_executable(

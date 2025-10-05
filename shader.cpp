@@ -1,4 +1,5 @@
-#include "includes.h"
+#include "shader.h"
+#include <iostream>
 
 Shader::Shader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
     shaderId = createShader(vertexShaderFilename, fragmentShaderFilename);
