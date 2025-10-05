@@ -159,6 +159,7 @@ void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* char
         sBool = false;
         aBool = false;
         dBool = false;
+        up = false;
         pause = true;
         font->fontDraw(fontShader, window, font, "pause", windowWidth / 2 - font->measureTextWidth("pause", font->cdata) / 2, windowHeight / 2 - windowHeight / 7);
         SDL_GL_SwapWindow(window);
