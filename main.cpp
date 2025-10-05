@@ -142,6 +142,7 @@ int main(int argc, char** argv) {
                 level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &levelWorld);
                 break;
             case 2:
+                level2.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &levelWorld);
                 break;
             default:
                 cout << "level not found" << endl;
