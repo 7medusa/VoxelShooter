@@ -74,7 +74,7 @@ struct Font {
         GLCALL(glDrawArrays(GL_TRIANGLES, 0, numVertices));
     }
 
-    void fontDraw(Shader* fontShader, SDL_Window* window, Font font, string text, float x, float y) {
+    void fontDraw(Shader* fontShader, SDL_Window* window, Font* font, string text, float x, float y) {
         fontShader->bind();
         int w;
         int h;
@@ -87,7 +87,7 @@ struct Font {
         GLCALL(glDisable(GL_DEPTH_TEST));
 
         const char* convertetText = text.c_str();
-        font.drawText(x, y, convertetText, fontShader);
+        font->drawText(x, y, convertetText, fontShader);
 
         GLCALL(glEnable(GL_CULL_FACE));
         GLCALL(glEnable(GL_DEPTH_TEST));
@@ -107,7 +107,7 @@ struct Font {
     void loading(Shader* fontShader, SDL_Window* window, Font font, unsigned int windowWidth, unsigned int windowHeight, const char* text) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        fontDraw(fontShader, window, font, text, windowWidth / 2 - measureTextWidth(text, font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
+        fontDraw(fontShader, window, &font, text, windowWidth / 2 - measureTextWidth(text, font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
         SDL_GL_SwapWindow(window);
     }
 

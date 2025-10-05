@@ -1,5 +1,6 @@
 #pragma once
 #include "includes.h"
+#include "font.h"
 
 class Control {
 public:
@@ -10,6 +11,8 @@ public:
     bool shieldBool = false;
     bool jumpOnProgress = false;
     bool up = true;
+    bool pause = false;
+    float prevTime = pauseTime - 2 * pauseTime;
 
     void handle(SDL_Event* event, Camera* camera) {
         if(event->type == SDL_KEYDOWN) {
@@ -53,7 +56,7 @@ public:
             }
         }
     }
-    void control(Camera* camera, glm::mat4* characterModel, glm::mat4 projection, glm::mat4* characterModelViewProj, float delta, unsigned int* level, SDL_Event* event, Shader* shader, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, glm::mat4* projectionPointer) {
+    void control(Camera* camera, glm::mat4* characterModel, glm::mat4* characterModelViewProj, float delta, unsigned int* level, SDL_Event* event, glm::mat4* projectionPointer, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window) {
         float rightBorder;
         float leftBorder;
         switch(*level) {
@@ -142,7 +145,25 @@ public:
                     jumpOnProgress = false;
                 }
             }
-            *characterModelViewProj = *projectionPointer * *characterModel;
         }
+        //pause function
+        if(event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE && gameTime > prevTime + pauseTime) {
+            wBool = false;
+            sBool = false;
+            aBool = false;
+            dBool = false;
+            pause = true;
+            font->fontDraw(fontShader, window, font, "pause", windowWidth / 2 - font->measureTextWidth("pause", font->cdata) / 2, windowHeight / 2 - windowHeight / 7);
+            SDL_GL_SwapWindow(window);
+        }
+        while(pause) {
+            if(SDL_PollEvent(event)) {
+                if(event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE) {
+                    pause = false;
+                }
+            }
+            prevTime = gameTime;
+        }
+        *characterModelViewProj = *projectionPointer * *characterModel;
     }
 };

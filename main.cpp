@@ -5,11 +5,11 @@
 #include <fstream>
 #include <iostream>
 #include <bits/locale_facets_nonio.h>
-#include "control.cpp"
+#include "control.h"
 #include "mesh.h"
-#include "setVariables.cpp"
+#include "setVariables.h"
 #include <vector>
-#include "model.cpp"
+#include "model.h"
 #include "font.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
@@ -59,8 +59,6 @@ int main(int argc, char** argv) {
     //allgemeines
     unsigned int levelWorld = 1;
     bool close = false;
-    bool pause = false;
-    float prevTime = pauseTime - 2 * pauseTime;
     Control control;
     Font font;
     font.initFont(fontDir, 80.0f);
@@ -94,7 +92,7 @@ int main(int argc, char** argv) {
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
-    float fps = 0.0f;
+    int fps = 0;
 
     while(!close) {
         SDL_Event event;
@@ -115,7 +113,7 @@ int main(int argc, char** argv) {
 
         time += delta;
 
-        control.control(&camera, &character.model, projection, &character.modelViewProj, delta, &levelWorld, &event, &shader, modelViewProjLocation, modelViewLocation, invModelViewLocation, &projection);
+        control.control(&camera, &character.model, &character.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
 
         shader.bind();
         setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera);
@@ -131,26 +129,7 @@ int main(int argc, char** argv) {
         }
         shader.unbind();
 
-        font.fontDraw(&fontShader, window, font, to_string(fps), 100, 100);
-
-        //pause function
-        if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && time > prevTime + pauseTime) {
-            control.wBool = false;
-            control.sBool = false;
-            control.aBool = false;
-            control.dBool = false;
-            pause = true;
-            font.fontDraw(&fontShader, window, font, "pause", windowWidth / 2 - font.measureTextWidth("pause", font.cdata) / 2, windowHeight / 2 - windowHeight / 7);
-            SDL_GL_SwapWindow(window);
-        }
-        while(pause) {
-            if(SDL_PollEvent(&event)) {
-                if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
-                    pause = false;
-                }
-            }
-            prevTime = time;
-        }
+        font.fontDraw(&fontShader, window, &font, to_string(fps), 100, 100);
 
         SDL_GL_SwapWindow(window);//switcht die buffer
         //cout << "character: " << character.model[3].x << endl;
