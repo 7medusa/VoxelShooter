@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
+    float fps = 0.0f;
 
     while(!close) {
         SDL_Event event;
@@ -130,6 +131,8 @@ int main(int argc, char** argv) {
         }
         shader.unbind();
 
+        font.fontDraw(&fontShader, window, font, to_string(fps), 100, 100);
+
         //pause function
         if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && time > prevTime + pauseTime) {
             control.wBool = false;
@@ -159,5 +162,6 @@ int main(int argc, char** argv) {
         const double counterElapsed = endCounter - lastCounter;
         delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);
         lastCounter = endCounter;
+        fps = 1.0f / delta;
     }
 }

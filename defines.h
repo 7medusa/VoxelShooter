@@ -15,7 +15,7 @@ using namespace std;
 #define zoomIn 1.7f
 #define ground -1.3f
 #define cameraFov 90.0f
-#define characterScale 0.011f
+#define characterScale 0.01f
 #define pauseTime 7.5f
 
 //level1
