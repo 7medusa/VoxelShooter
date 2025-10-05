@@ -1,6 +1,7 @@
 #pragma once
 
-using namespace std;
+#include <GL/glew.h>
+#include <string>
 
 class Shader final {
 public:
@@ -12,9 +13,9 @@ public:
     GLuint getShaderId() const {return shaderId;}
 
 private:
-    static string parse(const char* filename);
+    static std::string parse(const char* filename);
     static GLuint createShader(const char* vertexShaderFilename, const char* fragmentShaderFilename);
-    static GLuint compile(const string& shaderSource, GLenum type);
+    static GLuint compile(const std::string& shaderSource, GLenum type);
 
     GLuint shaderId;
 };

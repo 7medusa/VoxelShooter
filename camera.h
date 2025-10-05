@@ -4,42 +4,19 @@
 
 class Camera {
 public:
-    Camera(float fov, float width, float height) {
-        projection = glm::perspective(fov/2.0f, width/height, 0.1f, 1000.0f);//perspektive
-        view = glm::mat4(1.0f);
-        position = glm::vec3(0.0f, 0.0f, 0.0f);
-        viewProj = projection * view;
-    }
-
-    virtual ~Camera() = default;
-
-    virtual void update() {//updatet die kamera
-        viewProj = projection * view;
-    }
-    virtual void translate(glm::vec3 v) {//bewegt die kamera
-        position += v;
-        view = glm::translate(view, v * -1.0f);
-    }
-    glm::mat4 getViewProjection() const {
-        return viewProj;
-    }
-    glm::vec3 getPosition() const {
-        return position;
-    }
-    void reset() {
-        float difference = position.z - 5.0f;
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, difference));
-        position.z = 5.0f;
-    }
-    glm::mat4 getView() {
-        return view;
-    }
-    void resetMatrix() {
-        view = glm::mat4(1.0f);
-    }
-protected:
+    Camera(float fov, float width, float height);
+    ~Camera();
+    void update();//updatet die kamera
+    void translate(glm::vec3 v);//bewegt die kamera
+    glm::mat4 getViewProjection() const;
+    glm::vec3 getPosition() const;
+    void reset();//reset the zoom
+    glm::mat4 getView();
+    void resetMatrix();
+private:
     glm::mat4 projection{};//matrix zur abbildung der objekte
     glm::mat4 view{};//position der kamera
     glm::mat4 viewProj{};//kombinierte matrix
     glm::vec3 position{};//position der kamera
+    struct FontVertex;
 };

@@ -1,31 +1,27 @@
-#include "includes.h"
+#pragma once
 #include <vector>
 #include <fstream>
-#include "camera.h"
+#include <glm/glm.hpp>
+#include "vertex_buffer.h"
+#include "index_buffer.h"
+#include "defines.h"
+
+class Camera;
 
 class Model {
 public:
-    Model(Camera* camera, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale=glm::vec3(1.0f, 1.0f, 1.0f)) : vertexBuffer(vertices.data(), numVertices), indexBuffer(indices.data(), numIndices, sizeof(indices[0])) {
-        model = glm::mat4(1.0f);
-        model = glm::rotate(model, rotate, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::translate(model, set);
-        model = glm::scale(model, scale);
-        projection = camera->getViewProjection();
-        modelViewProj = projection * model;
-        modelView = camera->getView() * model;
-        invModelView = glm::transpose(glm::inverse(modelView));
-    }
+    Model(Camera* camera, float rotate=0.0f, glm::vec3 set=glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale=glm::vec3(1.0f, 1.0f, 1.0f));
 
-    vector<Vertex> vertices{};
+    std::vector<Vertex> vertices;
     uint64_t numVertices{};
-    vector<uint32_t> indices{};
+    std::vector<uint32_t> indices;
     int64_t numIndices{};
-    ifstream input{};
+    std::ifstream input;
     glm::mat4 model{};
     glm::mat4 modelViewProj{};
     glm::mat4 modelView{};
     glm::mat4 invModelView{};
     glm::mat4 projection{};
-    const VertexBuffer vertexBuffer;
-    const IndexBuffer indexBuffer;
+    VertexBuffer vertexBuffer;
+    IndexBuffer indexBuffer;
 };

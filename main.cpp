@@ -60,14 +60,12 @@ int main(int argc, char** argv) {
     unsigned int levelWorld = 1;
     bool close = false;
     Control control;
-    Font font;
-    font.initFont(fontDir, 80.0f);
+    Font font(fontDir, 80.0f);
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
     Shader fontShader(vertexShaderFontDir, fragmentShaderFontDir);
     Shader shader(vertexShaderDir, fragmentShaderDir);
-    fontShader.unbind();
-    shader.unbind();
+    Shader::unbind();
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
@@ -127,7 +125,7 @@ int main(int argc, char** argv) {
                 cout << "level not found" << endl;
                 break;
         }
-        shader.unbind();
+        Shader::unbind();
 
         font.fontDraw(&fontShader, window, &font, to_string(fps), 100, 100);
 

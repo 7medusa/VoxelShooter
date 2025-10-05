@@ -14,9 +14,25 @@ include_directories(${SDL2_INCLUDE_DIRS})
 add_executable(
         opengl main.cpp
         vertex_buffer.h
+        vertex_buffer.cpp
+        index_buffer.h
+        index_buffer.cpp
         defines.h
         shader.h
-        shader.cpp)
+        shader.cpp
+        font.h
+        font.cpp
+        camera.h
+        camera.cpp
+        mesh.h
+        mesh.cpp
+        control.h
+        control.cpp
+        weapon.h
+        weapon.cpp
+        model.h
+        model.cpp
+        setVariables.cpp)
 
 add_executable(
         modelexporter tools/modelexporter.cpp)
