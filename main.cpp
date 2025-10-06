@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 #endif
 
     //erstellt und definiert eigenschaften für ein fenster
-    window = SDL_CreateWindow("main", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
+    window = SDL_CreateWindow("VoxelShooter 0.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
     glewInit();
 
@@ -77,6 +77,7 @@ int main(int argc, char** argv) {
 #endif
 
     //allgemeines
+    SDL_Event event;
     unsigned int levelWorld = 1;
     bool close = false;
     Control control;
@@ -89,7 +90,7 @@ int main(int argc, char** argv) {
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
-    camera.translate(glm::vec3(16.5f, 0.0f, 5.0f));
+    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
@@ -114,7 +115,6 @@ int main(int argc, char** argv) {
     int fps = 0;
 
     while(!close) {
-        SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 close = true;

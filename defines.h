@@ -4,7 +4,7 @@
 using namespace std;
 
 //defines
-//#define Release
+#define Release
 //#define Debug
 
 #define jumpSpeed 450.0f
