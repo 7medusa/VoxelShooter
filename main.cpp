@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
-    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera.translate(glm::vec3(16.5f, 0.0f, 5.0f));
     camera.update();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
@@ -104,8 +104,8 @@ int main(int argc, char** argv) {
 
     //level
     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-    Level1 level1(&camera, &shader);
-    Level2 level2(&camera, &shader);
+    Level1 level1(&camera, &shader, &character.model);
+    Level2 level2(&camera, &shader, &character.model);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -128,8 +128,7 @@ int main(int argc, char** argv) {
 
         float farbe = 0.0f;
         glClearColor(farbe, farbe, farbe, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//cleart den zu bearbeitenden buffer
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time += delta;
 
         control.control(&camera, &character.model, &character.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
@@ -139,10 +138,10 @@ int main(int argc, char** argv) {
         characterMesh.render();
         switch(levelWorld) {
             case 1:
-                level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &levelWorld);
+                level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
-                level2.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &levelWorld);
+                level2.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             default:
                 cout << "level not found" << endl;
@@ -151,9 +150,11 @@ int main(int argc, char** argv) {
         Shader::unbind();
 
         font.fontDraw(&fontShader, window, &font, to_string(fps), 100, 100);
+#ifndef Release
+        font.fontDraw(&fontShader, window, &font, to_string(character.model[3].x), 200, 200);
+#endif
 
         SDL_GL_SwapWindow(window);//switcht die buffer
-        //cout << "character: " << character.model[3].x << endl;
 
         GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
 

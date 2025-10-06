@@ -17,3 +17,5 @@ void setVariables(glm::mat4 modelViewProj,
                   glm::mat4 invModelView,
                   Camera* camera,
                   float time = 0.0f);
+
+void resetPosition(Camera* camera);

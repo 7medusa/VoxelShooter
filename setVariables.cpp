@@ -20,3 +20,7 @@ void setVariables(glm::mat4 modelViewProj, glm::mat4 projection, glm::mat4 model
     VertexBuffer::unbind();
     IndexBuffer::unbind();
 }
+
+void resetPosition(Camera* camera) {
+    camera->translate(glm::vec3(-camera->getPosition().x, 0.0f, 0.0f));
+}

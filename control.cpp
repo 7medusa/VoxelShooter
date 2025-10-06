@@ -36,6 +36,9 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_f) {
             shieldBool = true;
         }
+        if(event->key.keysym.sym == SDLK_e) {
+            eBool = true;
+        }
         if(event->key.keysym.sym == SDLK_x) {
             camera->reset();
         }
@@ -59,13 +62,21 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_f) {
             shieldBool = false;
         }
+        if(event->key.keysym.sym == SDLK_e) {
+            eBool = false;
+        }
     }
 }
+
 void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* characterModelViewProj, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projectionPointer, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window) {
     float rightBorder;
     float leftBorder;
     switch(*level) {
         case 1:
+            rightBorder = borderRightLevel1;
+            leftBorder = borderLeftLevel1;
+            break;
+        case 2:
             rightBorder = borderRightLevel1;
             leftBorder = borderLeftLevel1;
             break;
