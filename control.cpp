@@ -12,6 +12,7 @@ Control::Control() {
     sBool = false;
     aBool = false;
     dBool = false;
+    eBool = false;
     shieldBool = false;
     jumpOnProgress = false;
     up = true;

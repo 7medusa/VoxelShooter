@@ -1,0 +1,572 @@
+# Blender 4.5.3 LTS MTL File: 'level1.blend'
+# www.blender.org
+
+newmtl Cyberpunk_Streets_-_BASE
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.003
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.004
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.005
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.006
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.007
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.008
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.010
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.011
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.013
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.014
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.015
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.016
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.017
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.018
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.019
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.020
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.021
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.022
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.023
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.024
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.025
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.026
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.027
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.028
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.029
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.030
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.031
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.032
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.034
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.036
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.037
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.038
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.039
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.040
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.041
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.042
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_BASE.043
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.004
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.005
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.007
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.008
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.009
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.010
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.011
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.012
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.013
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Cyberpunk_Streets_-_GLOSSY.014
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd TX_Cyberpunk Streets.png
+map_d TX_Cyberpunk Streets.png
+
+newmtl Material.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd GreenPalatte.png
+
+newmtl Material.002
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd PurplePalatte.png
+
+newmtl Material.003
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd AquaPalatte.png
+
+newmtl Material.004
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd BluePalatte.png

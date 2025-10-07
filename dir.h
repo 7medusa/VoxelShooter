@@ -11,5 +11,5 @@
 //3d models
 #define characterModelDir "../mds/main.mds"
 #define level1ModelDir "../mds/level1/level1.mds"
-#define level2ModelDir "../mds/level1/level1.mds"
+#define level2ModelDir "../mds/level2/level2.mds"
 #define debugModelDir "../mds/debug/debug.mds"

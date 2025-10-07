@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
-    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera.translate(glm::vec3(16.5f, 0.0f, 5.0f));
     camera.update();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
@@ -102,11 +102,6 @@ int main(int argc, char** argv) {
     glm::mat4 projection = camera.getViewProjection();
     Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
     ModelRead characterMesh(characterModelDir, &shader);
-
-    //level
-    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-    Level1 level1(&camera, &shader, &character.model);
-    Level2 level2(&camera, &shader, &character.model);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -138,12 +133,19 @@ int main(int argc, char** argv) {
         characterMesh.render();
         switch(levelWorld) {
             case 1:
+                //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                Level1 level1(&camera, &shader, &character.model);
                 level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
+                //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading level 2");
+                level1.~Level1();
+                static Level2 level2(&camera, &shader, &character.model);
                 level2.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             default:
+                level1.~Level1();
+                level2.~Level2();
                 cout << "level not found" << endl;
                 break;
         }
