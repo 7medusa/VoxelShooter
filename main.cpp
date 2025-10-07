@@ -29,13 +29,11 @@
 #include "setVariables.h"
 #include "model.h"
 #include "font.h"
-
 #include "level.h"
+#include <memory>
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
-#ifdef Debug
     cout << "opengl debug message: " << message << endl;
-#endif
 }
 
 int main(int argc, char** argv) {
@@ -70,13 +68,15 @@ int main(int argc, char** argv) {
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
     glewInit();
 
-#ifndef Release
+#ifndef Debug
     glEnable(GL_DEBUG_OUTPUT);//aktiviert debug output
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);//aktiviert die sofortige benachrichtigung
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
 #endif
 
     //allgemeines
+    unique_ptr<Level1> level1;
+    unique_ptr<Level2> level2;
     SDL_Event event;
     unsigned int levelWorld = 1;
     bool close = false;
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 
     //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
-    camera.translate(glm::vec3(16.5f, 0.0f, 5.0f));
+    camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
 
     //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
@@ -100,8 +100,7 @@ int main(int argc, char** argv) {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
-    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
-    ModelRead characterMesh(characterModelDir, &shader);
+    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));ModelRead characterMesh(characterModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -118,34 +117,37 @@ int main(int argc, char** argv) {
             control.handle(&event, &camera);
         }
 
-        camera.update();
-        projection = camera.getViewProjection();
-
         float farbe = 0.0f;
         glClearColor(farbe, farbe, farbe, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time += delta;
 
         control.control(&camera, &character.model, &character.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
+        camera.update();
+        projection = camera.getViewProjection();
 
         shader.bind();
         setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera);
         characterMesh.render();
         switch(levelWorld) {
             case 1:
-                //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                Level1 level1(&camera, &shader, &character.model);
-                level1.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                if (!level1) {
+                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    level1 = std::make_unique<Level1>(&camera, &shader, &character.model);
+                }
+                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
-                //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading level 2");
-                level1.~Level1();
-                static Level2 level2(&camera, &shader, &character.model);
-                level2.logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                if (level1) {level1.reset();}
+                if (!level2) {
+                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    level2 = std::make_unique<Level2>(&camera, &shader, &character.model);
+                }
+                level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             default:
-                level1.~Level1();
-                level2.~Level2();
+                level1.reset();
+                level2.reset();
                 cout << "level not found" << endl;
                 break;
         }
