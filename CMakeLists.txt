@@ -34,6 +34,12 @@ add_executable(
         model.cpp
         level.h
         level.cpp
+        enemy.h
+        enemy.cpp
+        projektil.h
+        projektil.h
+        character.h
+        character.cpp
         setVariables.cpp)
 
 add_executable(

@@ -30,4 +30,5 @@ public:
     Model level2Model;
     ModelRead level2Mesh;
     glm::mat4* characterPosition;
+    int floor;
 };

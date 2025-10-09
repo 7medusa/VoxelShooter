@@ -24,7 +24,7 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int numVertices) {
     //vao speichert wie die daten gelesen werden und an den shader übergeben werden
 }
 VertexBuffer::~VertexBuffer() {
-    glDeleteBuffers(1, &bufferId);
+    //glDeleteBuffers(1, &bufferId);
 }
 void VertexBuffer::bind() const {
     glBindVertexArray(vao);//bindet den vao, indem der vertex buffer und index buffer zusammengefasst werden, damit opengl sie als ein objekt behandeln kann

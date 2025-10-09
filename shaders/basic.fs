@@ -12,12 +12,12 @@ uniform vec3 u_emissive;
 uniform float u_shininess;
 uniform sampler2D u_diffuse_map;
 
-float lightStrength = 4.0;
+float lightStrength = 3.0;
 
 void main() {
     vec4 diffuseColor = texture(u_diffuse_map, out_tex_coord);
     if(diffuseColor.w < 0.9) {
-        discard;
+        //discard;
     }
 
     vec3 view = normalize(-out_position);

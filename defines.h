@@ -9,6 +9,7 @@ using namespace std;
 
 #define jumpSpeed 450.0f
 #define walkSpeed 2.6f
+#define porjectilSpeed 2.6f
 #define zoomSpeed 5.7f
 #define jumpHeight 0.0f
 #define zoomOut 9.75f

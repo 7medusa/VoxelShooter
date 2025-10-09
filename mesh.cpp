@@ -28,8 +28,7 @@ void Mesh::bindBuffers() {
 
 void Mesh::render() {
     shader->bind();
-    vertexBuffer->bind();
-    indexBuffer->bind();
+    bindBuffers();
     glUniform3fv(diffuseLocation, 1, &material.material.diffuse[0]);
     glUniform3fv(specularLocation, 1, &material.material.specular[0]);
     glUniform3fv(emissiveLocation, 1, &material.material.emissive[0]);

@@ -19,6 +19,7 @@
 #include <fstream>
 #include <bits/locale_facets_nonio.h>
 #include <vector>
+#include <memory>
 
 #include "defines.h"
 #include "shader.h"
@@ -30,7 +31,7 @@
 #include "model.h"
 #include "font.h"
 #include "level.h"
-#include <memory>
+#include "character.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
     cout << "opengl debug message: " << message << endl;
@@ -68,7 +69,7 @@ int main(int argc, char** argv) {
     SDL_GLContext glContext = SDL_GL_CreateContext(window);//setzt ein kontext damit opengl mit dem window manager sdl kommunizieren kann
     glewInit();
 
-#ifndef Debug
+#ifdef Debug
     glEnable(GL_DEBUG_OUTPUT);//aktiviert debug output
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);//aktiviert die sofortige benachrichtigung
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
@@ -100,7 +101,9 @@ int main(int argc, char** argv) {
 
     //modele
     glm::mat4 projection = camera.getViewProjection();
-    Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));ModelRead characterMesh(characterModelDir, &shader);
+    Character player(&shader, &camera);
+    //Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
+    //ModelRead characterMesh(characterModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
@@ -122,18 +125,18 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time += delta;
 
-        control.control(&camera, &character.model, &character.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
+        control.control(&camera, &player.characterModel.model, &player.characterModel.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
         camera.update();
         projection = camera.getViewProjection();
 
         shader.bind();
-        setVariables(character.modelViewProj, projection, character.model, modelViewProjLocation, &character.vertexBuffer, &character.indexBuffer, modelViewLocation, invModelViewLocation, character.modelView, character.invModelView, &camera);
-        characterMesh.render();
+        setVariables(player.characterModel.modelViewProj, projection, player.characterModel.model, modelViewProjLocation, &player.characterModel.vertexBuffer, &player.characterModel.indexBuffer, modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
+        player.characterMesh.render();
         switch(levelWorld) {
             case 1:
                 if (!level1) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level1 = std::make_unique<Level1>(&camera, &shader, &character.model);
+                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model);
                 }
                 level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
@@ -141,7 +144,7 @@ int main(int argc, char** argv) {
                 if (level1) {level1.reset();}
                 if (!level2) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level2 = std::make_unique<Level2>(&camera, &shader, &character.model);
+                    level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model);
                 }
                 level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
@@ -155,7 +158,7 @@ int main(int argc, char** argv) {
 
         font.fontDraw(&fontShader, window, &font, to_string(fps), 100, 100);
 #ifndef Release
-        font.fontDraw(&fontShader, window, &font, to_string(character.model[3].x), 200, 200);
+        font.fontDraw(&fontShader, window, &font, to_string(player.characterModel.model[3].x), 200, 200);
 #endif
 
         SDL_GL_SwapWindow(window);//switcht die buffer
