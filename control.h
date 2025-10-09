@@ -18,6 +18,7 @@ private:
     bool sBool;
     bool aBool;
     bool dBool;
+    bool cBool;
     bool shieldBool;
     bool jumpOnProgress;
     bool up;

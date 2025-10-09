@@ -13,6 +13,7 @@ Control::Control() {
     aBool = false;
     dBool = false;
     eBool = false;
+    cBool = false;
     shieldBool = false;
     jumpOnProgress = false;
     up = true;
@@ -40,6 +41,9 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_e) {
             eBool = true;
         }
+        if(event->key.keysym.sym == SDLK_c) {
+            cBool = true;
+        }
         if(event->key.keysym.sym == SDLK_x) {
             camera->reset();
         }
@@ -65,6 +69,9 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         }
         if(event->key.keysym.sym == SDLK_e) {
             eBool = false;
+        }
+        if(event->key.keysym.sym == SDLK_c) {
+            cBool = false;
         }
     }
 }

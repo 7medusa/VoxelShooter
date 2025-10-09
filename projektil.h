@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
+#include <memory>
+#include "model.h"
+#include "mesh.h"
 
 using namespace std;
 
-class Model;
-class ModelRead;
 class Camera;
 class Shader;
 
@@ -14,7 +15,7 @@ public:
     ~Projektil();
     void moveRight();
     void moveLeft();
-    Model projectil;
+    Model projectilModel;
     ModelRead projectilMesh;
     bool direction;
 private:
@@ -22,4 +23,5 @@ private:
     float moveSpeed;
 };
 
-vector<Projektil>;
+static vector<unique_ptr<Projektil>> characterProjektile;
+static vector<unique_ptr<Projektil>> enemyProjektile;

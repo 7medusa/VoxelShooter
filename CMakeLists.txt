@@ -37,7 +37,7 @@ add_executable(
         enemy.h
         enemy.cpp
         projektil.h
-        projektil.h
+        projektil.cpp
         character.h
         character.cpp
         setVariables.cpp)
