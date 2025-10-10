@@ -78,7 +78,7 @@ void Control::handle(SDL_Event* event, Camera* camera) {
     }
 }
 
-void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projectionPointer, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader) {
+void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader) {
     float rightBorder;
     float leftBorder;
     switch(*level) {
@@ -150,7 +150,7 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         prevTimeShoot = gameTime;
     }
     else if(cBool && aBool && gameTime > prevTimeShoot + pistolTime) {
-        player->shoot(true, shader, camera);
+        player->shoot(false, shader, camera);
         prevTimeShoot = gameTime;
     }
     if(jumpOnProgress) {
@@ -201,5 +201,5 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         }
         prevTime = gameTime;
     }
-    player->characterModel.modelViewProj = *projectionPointer * player->characterModel.model;
+    player->characterModel.modelViewProj = *projection * player->characterModel.model;
 }

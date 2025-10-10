@@ -10,7 +10,6 @@
 #include "font.h"
 #include "control.h"
 #include <SDL2/SDL.h>
-#include "enemy.h"
 
 Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition)
 :level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader) {
