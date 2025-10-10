@@ -6,6 +6,7 @@
 #include "defines.h"
 #include "camera.h"
 #include "font.h"
+#include "character.h"
 
 Control::Control() {
     wBool = false;
@@ -19,6 +20,7 @@ Control::Control() {
     up = true;
     pause = false;
     prevTime = pauseTime - 2 * pauseTime;
+    prevTimeShoot = pistolTime - 2 * pistolTime;
 }
 
 void Control::handle(SDL_Event* event, Camera* camera) {
@@ -76,7 +78,7 @@ void Control::handle(SDL_Event* event, Camera* camera) {
     }
 }
 
-void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* characterModelViewProj, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projectionPointer, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window) {
+void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projectionPointer, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader) {
     float rightBorder;
     float leftBorder;
     switch(*level) {
@@ -94,7 +96,7 @@ void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* char
             leftBorder = 0.0f;
             break;
     }
-    glm::vec3 characterPosition = glm::vec3((*characterModel)[3]);
+    glm::vec3 characterPosition = glm::vec3((player->characterModel.model)[3]);
     if(wBool) {
         if(camera->getPosition().z > zoomIn) {
             camera->translate(glm::vec3(0.0f, 0.0f, -zoomSpeed * delta));
@@ -107,47 +109,55 @@ void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* char
     }
     if(aBool && camera->getPosition().x > leftBorder && !shieldBool) {
         camera->translate(glm::vec3(-walkSpeed * delta, 0.0f, 0.0f));
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
     }
     else if(!aBool) {
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
     }
     if(dBool && camera->getPosition().x < rightBorder && !shieldBool) {
         camera->translate(glm::vec3(walkSpeed * delta, 0.0f, 0.0f));
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
     }
     else if(!dBool && !aBool) {
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
     }
     if(shieldBool && aBool) {//schild links
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild links" << endl;
     }
     if(shieldBool && dBool && !aBool) {//schild rechts
-        *characterModel = glm::mat4(1.0f);
-        *characterModel = glm::translate(*characterModel, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
-        *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+        player->characterModel.model = glm::mat4(1.0f);
+        player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(camera->getPosition().x, characterPosition.y, characterPosition.z));
+        player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild rechts" << endl;
     }
+    if(cBool && dBool && gameTime > prevTimeShoot + pistolTime) {
+        player->shoot(true, shader, camera);
+        prevTimeShoot = gameTime;
+    }
+    else if(cBool && aBool && gameTime > prevTimeShoot + pistolTime) {
+        player->shoot(true, shader, camera);
+        prevTimeShoot = gameTime;
+    }
     if(jumpOnProgress) {
-        characterPosition = glm::vec3((*characterModel)[3]);
+        characterPosition = glm::vec3((player->characterModel.model)[3]);
         if(up) {
             if(characterPosition.y < jumpHeight) {
-                *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, jumpSpeed * delta, 0.0f));
+                player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(0.0f, jumpSpeed * delta, 0.0f));
             }
             else {
                 up = false;
@@ -155,18 +165,18 @@ void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* char
         }
         else {
             if(characterPosition.y > ground) {
-                *characterModel = glm::translate(*characterModel, glm::vec3(0.0f, -jumpSpeed * delta, 0.0f));
+                player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(0.0f, -jumpSpeed * delta, 0.0f));
             }
             else {
-                *characterModel = glm::mat4(1.0f);
-                *characterModel = glm::translate(*characterModel, glm::vec3(characterPosition.x, ground, characterPosition.z));
+                player->characterModel.model = glm::mat4(1.0f);
+                player->characterModel.model = glm::translate(player->characterModel.model, glm::vec3(characterPosition.x, ground, characterPosition.z));
                 if(aBool) {
-                    *characterModel = glm::rotate(*characterModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
                 }
                 else if(dBool) {
-                    *characterModel = glm::rotate(*characterModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    player->characterModel.model = glm::rotate(player->characterModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
                 }
-                *characterModel = glm::scale(*characterModel, glm::vec3(characterScale));
+                player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
                 up = true;
                 jumpOnProgress = false;
             }
@@ -191,5 +201,5 @@ void Control::control(Camera* camera, glm::mat4* characterModel, glm::mat4* char
         }
         prevTime = gameTime;
     }
-    *characterModelViewProj = *projectionPointer * *characterModel;
+    player->characterModel.modelViewProj = *projectionPointer * player->characterModel.model;
 }

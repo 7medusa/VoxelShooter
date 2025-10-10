@@ -38,11 +38,9 @@ void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severit
 }
 
 int main(int argc, char** argv) {
-    //initialisiert eine schnittstelle zwischen window manager sdl und opengl
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window;
 
-    //buffergrößen
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -50,7 +48,6 @@ int main(int argc, char** argv) {
     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    //fenster flag für eigenschaften wie fullscreen
 #ifdef Release
     static int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_GL_SetSwapInterval(1);//vsync
@@ -75,7 +72,6 @@ int main(int argc, char** argv) {
     glDebugMessageCallback(openGL_debug_callback, nullptr);//legt callback fest
 #endif
 
-    //allgemeines
     unique_ptr<Level1> level1;
     unique_ptr<Level2> level2;
     SDL_Event event;
@@ -89,27 +85,22 @@ int main(int argc, char** argv) {
     Shader shader(vertexShaderDir, fragmentShaderDir);
     Shader::unbind();
 
-    //kamera
     Camera camera(cameraFov, windowWidth, windowHeight);
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
+    glm::mat4 projection = camera.getViewProjection();
 
-    //holt sich variablen aus dem shader um deren speicherort zu speichern um die daten darin zu ändern
+    Character player(&shader, &camera);
+
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
     const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
-
-    //modele
-    glm::mat4 projection = camera.getViewProjection();
-    Character player(&shader, &camera);
-    //Model character(&camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale));
-    //ModelRead characterMesh(characterModelDir, &shader);
 
     const double perfCounterFrequency = static_cast<double>(SDL_GetPerformanceFrequency());
     double lastCounter = static_cast<double>(SDL_GetPerformanceCounter());
     float delta = 0.0f;
     float time = 0.0f;
-    int fps = 0;
+    int fps;
 
     while(!close) {
         while(SDL_PollEvent(&event)) {
@@ -125,7 +116,7 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time += delta;
 
-        control.control(&camera, &player.characterModel.model, &player.characterModel.modelViewProj, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window);
+        control.control(&camera, &player, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window, &shader);
         camera.update();
         projection = camera.getViewProjection();
 
@@ -163,9 +154,6 @@ int main(int argc, char** argv) {
 
         SDL_GL_SwapWindow(window);//switcht die buffer
 
-        GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
-
-        //fps
         const double endCounter = static_cast<double>(SDL_GetPerformanceCounter());
         const double counterElapsed = endCounter - lastCounter;
         delta = static_cast<float>(counterElapsed) / static_cast<float>(perfCounterFrequency);

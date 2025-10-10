@@ -18,6 +18,7 @@ using namespace std;
 #define cameraFov 90.0f
 #define characterScale 0.01f
 #define pauseTime 7.5f
+#define pistolTime 0.5f
 
 //level1
 #define borderLeftLevel1 0.0f
