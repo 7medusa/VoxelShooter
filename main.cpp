@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
 
-        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation);
+        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, delta);
         //iteratorProjektile(enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation);
 
         switch(levelWorld) {

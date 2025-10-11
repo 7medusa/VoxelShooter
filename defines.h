@@ -9,7 +9,7 @@ using namespace std;
 
 #define jumpSpeed 450.0f
 #define walkSpeed 2.6f
-#define porjectileSpeed 2.6f
+#define porjectileSpeed 12.0f
 #define zoomSpeed 5.7f
 #define jumpHeight 0.0f
 #define zoomOut 9.75f
@@ -18,7 +18,7 @@ using namespace std;
 #define cameraFov 90.0f
 #define characterScale 0.01f
 #define pauseTime 7.5f
-#define pistolTime 0.5f
+#define pistolTime 1.25f
 
 //level1
 #define borderLeftLevel1 0.0f

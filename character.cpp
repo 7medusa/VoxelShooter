@@ -14,10 +14,10 @@ Character::Character(Shader* shader, Camera* camera) :
 
 void Character::shoot(bool direction, Shader* shader, Camera* camera) {
     if(direction) {
-        characterProjektile.push_back(make_unique<Projektil>(damage, shader, camera, true));
+        characterProjektile.push_back(make_unique<Projektil>(damage, shader, camera, true, characterModel.model));
     }
     else {
-        characterProjektile.push_back(make_unique<Projektil>(damage, shader, camera, false));
+        characterProjektile.push_back(make_unique<Projektil>(damage, shader, camera, false, characterModel.model));
     }
 }
 
