@@ -7,14 +7,17 @@
 #include "camera.h"
 #include "font.h"
 #include "character.h"
+#include "weapon.h"
 
-Control::Control() {
+Control::Control(float weaponTimeMethod) {
+    pistolTime = weaponTimeMethod;
     wBool = false;
     sBool = false;
     aBool = false;
     dBool = false;
     eBool = false;
     cBool = false;
+    rBool = false;
     shieldBool = false;
     jumpOnProgress = false;
     up = true;
@@ -46,6 +49,9 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_c) {
             cBool = true;
         }
+        if(event->key.keysym.sym == SDLK_r) {
+            rBool = true;
+        }
         if(event->key.keysym.sym == SDLK_x) {
             camera->reset();
         }
@@ -75,10 +81,13 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_c) {
             cBool = false;
         }
+        if(event->key.keysym.sym == SDLK_r) {
+            rBool = false;
+        }
     }
 }
 
-void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader) {
+void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader, Weapon* weapon) {
     float rightBorder;
     float leftBorder;
     switch(*level) {
@@ -145,12 +154,19 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild rechts" << endl;
     }
-    if(cBool && dBool && gameTime > prevTimeShoot + pistolTime) {
+    if(cBool && dBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+        weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && aBool && gameTime > prevTimeShoot + pistolTime) {
+    else if(cBool && aBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+        weapon->magazine -= 1;
         player->shoot(false, shader, camera);
+        prevTimeShoot = gameTime;
+    }
+    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+        weapon->magazine -= 1;
+        player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
     if(jumpOnProgress) {
@@ -182,7 +198,6 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
             }
         }
     }
-    //pause function
     if(event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE && gameTime > prevTime + pauseTime) {
         wBool = false;
         sBool = false;

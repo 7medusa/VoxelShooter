@@ -7,12 +7,13 @@ class Shader;
 struct SDL_Window;
 union SDL_Event;
 class Character;
+class Weapon;
 
 class Control {
 public:
-    Control();
+    Control(float weaponTimeMethod);
     void handle(SDL_Event* event, Camera* camera);
-    void control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader);
+    void control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader, Weapon* weapon);
     bool eBool;
 private:
     bool wBool;
@@ -20,10 +21,12 @@ private:
     bool aBool;
     bool dBool;
     bool cBool;
+    bool rBool;
     bool shieldBool;
     bool jumpOnProgress;
     bool up;
     bool pause;
     float prevTime;
     float prevTimeShoot;
+    float pistolTime;
 };

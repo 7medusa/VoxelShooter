@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(opengl)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 23)
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)

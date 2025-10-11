@@ -1,7 +1,15 @@
 #pragma once
+#include "string"
 
-class Weapon {};
+using namespace std;
 
-class Pistol : public Weapon {};
-
-class Ar : public Weapon {};
+class Weapon {
+public:
+    Weapon();
+    void reload();
+    int magazine;
+    const int maxMagazine = 7;
+    const float reloadTime = 1.25f;
+    const float shootTime = 0.8f;
+    const string type = "pistol";
+};

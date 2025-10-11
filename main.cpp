@@ -33,6 +33,7 @@
 #include "level.h"
 #include "character.h"
 #include "projektil.h"
+#include "weapon.h"
 
 void openGL_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam=nullptr) {
     cout << "opengl debug message: " << message << endl;
@@ -78,20 +79,19 @@ int main(int argc, char** argv) {
     SDL_Event event;
     unsigned int levelWorld = 1;
     bool close = false;
-    Control control;
-    Font font(fontDir, 80.0f);
     GLCALL(glEnable(GL_CULL_FACE));//lässt nicht sichtbare dreiecke nicht zeichnen
     GLCALL(glEnable(GL_DEPTH_TEST));//lässt nur die korrekten vertices laden und jene dich nicht zu sehen sind nicht
+    Font font(fontDir, 80.0f);
     Shader fontShader(vertexShaderFontDir, fragmentShaderFontDir);
     Shader shader(vertexShaderDir, fragmentShaderDir);
     Shader::unbind();
-
     Camera camera(cameraFov, windowWidth, windowHeight);
     camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.update();
     glm::mat4 projection = camera.getViewProjection();
-
     Character player(&shader, &camera);
+    Weapon weaponPlayer;//spätere waffenauswahlfunktion
+    Control control(weaponPlayer.shootTime);
 
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
     const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
@@ -117,17 +117,19 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time += delta;
 
-        control.control(&camera, &player, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window, &shader);
+        control.control(&camera, &player, delta, &levelWorld, &event, &projection, time, &font, &fontShader, windowWidth, windowHeight, window, &shader, &weaponPlayer);
         camera.update();
         projection = camera.getViewProjection();
 
         shader.bind();
+
         setVariables(player.characterModel.modelViewProj, projection, player.characterModel.model, modelViewProjLocation, &player.characterModel.vertexBuffer, &player.characterModel.indexBuffer,
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
 
-        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, delta);
+        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, delta);//bewegt die patrone
         //iteratorProjektile(enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation);
+        cout << weaponPlayer.magazine << endl;
 
         switch(levelWorld) {
             case 1:
