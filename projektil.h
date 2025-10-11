@@ -27,5 +27,3 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
 
 extern vector<unique_ptr<Projektil>> characterProjektile;
 extern vector<unique_ptr<Projektil>> enemyProjektile;
-
-//i->move(camera, projection, modelViewProjection, modelViewLocation, invModelViewLocation);
