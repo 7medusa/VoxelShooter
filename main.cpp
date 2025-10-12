@@ -129,7 +129,6 @@ int main(int argc, char** argv) {
 
         iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, delta);//bewegt die patrone
         //iteratorProjektile(enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation);
-        cout << weaponPlayer.magazine << endl;
 
         switch(levelWorld) {
             case 1:
@@ -155,9 +154,10 @@ int main(int argc, char** argv) {
         }
         Shader::unbind();
 
-        font.fontDraw(&fontShader, window, &font, to_string(fps), 100, 100);
+        font.fontDraw(&fontShader, window, &font, to_string(fps), 50, 100);
+        font.fontDraw(&fontShader, window, &font, to_string(weaponPlayer.magazine), 50, 200);
 #ifndef Release
-        font.fontDraw(&fontShader, window, &font, to_string(player.characterModel.model[3].x), 200, 200);
+        font.fontDraw(&fontShader, window, &font, to_string(player.characterModel.model[3].x), 300, 300);
 #endif
 
         SDL_GL_SwapWindow(window);//switcht die buffer
