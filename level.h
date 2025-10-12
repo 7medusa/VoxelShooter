@@ -3,6 +3,7 @@
 #include "mesh.h"
 #include "model.h"
 #include <SDL2/SDL.h>
+#include <memory>
 
 using namespace std;
 
@@ -32,3 +33,6 @@ public:
     glm::mat4* characterPosition;
     int floor;
 };
+
+extern unique_ptr<Level1> level1;
+extern unique_ptr<Level2> level2;

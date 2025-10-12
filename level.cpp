@@ -52,3 +52,6 @@ void Level2::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
     setVariables(level2Model.modelViewProj, projection, level2Model.model, modelViewProjLocation, &level2Model.vertexBuffer, &level2Model.indexBuffer, modelViewLocation, invModelViewLocation, level2Model.modelView, level2Model.invModelView, camera);
     level2Mesh.render();
 }
+
+unique_ptr<Level1> level1;
+unique_ptr<Level2> level2;

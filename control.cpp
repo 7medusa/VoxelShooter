@@ -9,8 +9,7 @@
 #include "character.h"
 #include "weapon.h"
 
-Control::Control(float weaponTimeMethod) {
-    pistolTime = weaponTimeMethod;
+Control::Control() {
     wBool = false;
     sBool = false;
     aBool = false;
@@ -23,7 +22,7 @@ Control::Control(float weaponTimeMethod) {
     up = true;
     pause = false;
     prevTime = pauseTime - 2 * pauseTime;
-    prevTimeShoot = pistolTime - 2 * pistolTime;
+    prevTimeShoot = pistolShootTime - 2 * pistolShootTime;
 }
 
 void Control::handle(SDL_Event* event, Camera* camera) {
@@ -154,17 +153,17 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild rechts" << endl;
     }
-    if(cBool && dBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+    if(cBool && dBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && aBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+    else if(cBool && aBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(false, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolTime && weapon->magazine > 0) {
+    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;

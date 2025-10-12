@@ -11,7 +11,7 @@ class Weapon;
 
 class Control {
 public:
-    Control(float weaponTimeMethod);
+    Control();
     void handle(SDL_Event* event, Camera* camera);
     void control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader, Weapon* weapon);
     bool eBool;
@@ -28,5 +28,4 @@ private:
     bool pause;
     float prevTime;
     float prevTimeShoot;
-    float pistolTime;
 };

@@ -40,6 +40,10 @@ add_executable(
         projektil.cpp
         character.h
         character.cpp
+        init.h
+        init.cpp
+        time.h
+        time.cpp
         setVariables.h
         setVariables.cpp)
 
