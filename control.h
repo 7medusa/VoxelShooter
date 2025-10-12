@@ -26,6 +26,8 @@ private:
     bool jumpOnProgress;
     bool up;
     bool pause;
-    float prevTime;
+    float prevTimePause;
     float prevTimeShoot;
+    float prevTimeReload;
+    bool blockFunction;
 };

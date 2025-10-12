@@ -44,6 +44,8 @@ add_executable(
         init.cpp
         time.h
         time.cpp
+        error.h
+        error.cpp
         setVariables.h
         setVariables.cpp)
 

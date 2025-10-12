@@ -21,8 +21,10 @@ Control::Control() {
     jumpOnProgress = false;
     up = true;
     pause = false;
-    prevTime = pauseTime - 2 * pauseTime;
+    blockFunction = false;
+    prevTimePause = pauseTime - 2 * pauseTime;
     prevTimeShoot = pistolShootTime - 2 * pistolShootTime;
+    prevTimeReload = reloadTime - 2 * reloadTime;
 }
 
 void Control::handle(SDL_Event* event, Camera* camera) {
@@ -50,6 +52,7 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         }
         if(event->key.keysym.sym == SDLK_r) {
             rBool = true;
+            blockFunction = true;
         }
         if(event->key.keysym.sym == SDLK_x) {
             camera->reset();
@@ -79,9 +82,6 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         }
         if(event->key.keysym.sym == SDLK_c) {
             cBool = false;
-        }
-        if(event->key.keysym.sym == SDLK_r) {
-            rBool = false;
         }
     }
 }
@@ -168,6 +168,17 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
+    if(rBool) {
+        if(blockFunction) {
+            prevTimeReload = gameTime;
+            blockFunction = false;
+        }
+        else if(!blockFunction && gameTime < prevTimeReload + reloadTime) {}//nachlade animation
+        else if(!blockFunction && gameTime > prevTimeReload + reloadTime) {
+            weapon->magazine = weapon->maxMagazine;
+            rBool = false;
+        }
+    }
     if(jumpOnProgress) {
         characterPosition = glm::vec3((player->characterModel.model)[3]);
         if(up) {
@@ -197,7 +208,7 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
             }
         }
     }
-    if(event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE && gameTime > prevTime + pauseTime) {
+    if(event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE && gameTime > prevTimePause + pauseTime) {
         wBool = false;
         sBool = false;
         aBool = false;
@@ -213,7 +224,7 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
                 pause = false;
             }
         }
-        prevTime = gameTime;
+        prevTimePause = gameTime;
     }
     player->characterModel.modelViewProj = *projection * player->characterModel.model;
 }
