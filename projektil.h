@@ -24,6 +24,7 @@ private:
 };
 
 void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta);
+void killProjektile(vector<unique_ptr<Projektil>>* vec, vector<unique_ptr<Projektil>>* vec2);
 
 extern vector<unique_ptr<Projektil>> characterProjektile;
 extern vector<unique_ptr<Projektil>> enemyProjektile;

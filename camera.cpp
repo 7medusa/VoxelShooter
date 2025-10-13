@@ -7,7 +7,7 @@ Camera::Camera(float fov, float width, float height) {
     view = glm::mat4(1.0f);
     position = glm::vec3(0.0f, 0.0f, 0.0f);
     viewProj = projection * view;
-    translate(glm::vec3(0.0f, 0.0f, 5.0f));
+    translate(glm::vec3(20.0f, 0.0f, 5.0f));
     update();
 }
 

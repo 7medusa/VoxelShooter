@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
         player.characterMesh.render();
 
         iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta);//bewegt die patrone
-        //iteratorProjektile(enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation);
+        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta);//bewegt gegnerische patrone
 
         switch(levelWorld) {
             case 1:
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
                 level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
-                if (level1) {level1.reset();}
+                if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
                 if (!level2) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
                     level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model);

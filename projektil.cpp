@@ -41,5 +41,16 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
     }
 }
 
+void killProjektile(vector<unique_ptr<Projektil>>* vec, vector<unique_ptr<Projektil>>* vec2) {
+    for(auto& i : *vec) {
+        i.reset();
+    }
+    for(auto& i : *vec2) {
+        i.reset();
+    }
+    vec->clear();
+    vec2->clear();
+}
+
 vector<unique_ptr<Projektil>> characterProjektile;
 vector<unique_ptr<Projektil>> enemyProjektile;
