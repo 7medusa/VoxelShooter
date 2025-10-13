@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include "libs/stb_image.h"
 #include <fstream>
+#include "error.h"
 
 Mesh::Mesh(vector<Vertex>& vertices, vector<uint32_t>& indices, Material material, Shader* shader) {
     this->shader = shader;
@@ -59,7 +60,6 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
         input.read((char*)&normalMapLength, sizeof(uint64_t));
         string normalMapName(normalMapLength, '\0');
         input.read((char*)&normalMapName[0], normalMapLength);
-        assert(diffuseMapLength > 0);
 
         int textureWidth = 0;
         int textureHeight = 0;
@@ -69,7 +69,6 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
 
         {
             auto textureBuffer = stbi_load(diffuseMapName.c_str(), &textureWidth, &textureHeight, &bitsPerPixel, 4);
-            assert(material.diffuseMap);
 
             GLCALL(glBindTexture(GL_TEXTURE_2D, material.diffuseMap));
 
@@ -144,6 +143,9 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
             indices.push_back(index);
         }
         Mesh* mesh = new Mesh(vertices, indices, materials[materialIndex], shader);
+        if(mesh == nullptr) {
+            Error::meshError();
+        }
         meshes.push_back(mesh);
     }
 }

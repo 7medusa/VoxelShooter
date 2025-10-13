@@ -35,6 +35,7 @@
 #include "weapon.h"
 #include "init.h"
 #include "time.h"
+#include "error.h"
 
 int main(int argc, char** argv) {
     init();
@@ -52,7 +53,9 @@ int main(int argc, char** argv) {
 
     window = SDL_CreateWindow("VoxelShooter 0.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, flags);
     SDL_GLContext glContext = SDL_GL_CreateContext(window);
-    glewInit();
+    if(glewInit()) {
+        Error::initError();
+    }
 
     SDL_Event event;
     Time time;
@@ -116,6 +119,7 @@ int main(int argc, char** argv) {
                 level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             default:
+                Error::runtimeError();
                 level1.reset();
                 level2.reset();
                 cout << "level not found" << endl;
