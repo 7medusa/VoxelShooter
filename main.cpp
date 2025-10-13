@@ -12,7 +12,6 @@
 #include "libs/stb_image.h"
 #undef STB_IMAGE_IMPLEMENTATION
 #include <fstream>
-#include <bits/locale_facets_nonio.h>
 #include <memory>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -74,6 +73,9 @@ int main(int argc, char** argv) {
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
     const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
+    if(invModelViewLocation == -1 || modelViewLocation == -1 || modelViewProjLocation == -1) {
+        Error::shaderError();
+    }
 
     while(!close) {
         while(SDL_PollEvent(&event)) {
@@ -122,7 +124,6 @@ int main(int argc, char** argv) {
                 Error::runtimeError();
                 level1.reset();
                 level2.reset();
-                cout << "level not found" << endl;
                 break;
         }
         Shader::unbind();

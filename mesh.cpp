@@ -2,6 +2,7 @@
 #include "libs/stb_image.h"
 #include <fstream>
 #include "error.h"
+#include <iostream>
 
 Mesh::Mesh(vector<Vertex>& vertices, vector<uint32_t>& indices, Material material, Shader* shader) {
     this->shader = shader;
@@ -42,11 +43,18 @@ void Mesh::render() {
 
 ModelRead::ModelRead(const char* filename, Shader* shader) {
     ifstream input = ifstream(filename, ios::in | ios::binary);
+    if(input.fail()) {
+        Error::modelNotFound();
+    }
     int numMeshes = 0;
     uint64_t numMaterials = 0;
 
     //materials
     input.read((char*)&numMaterials, sizeof(uint64_t));
+    if(numMaterials == 0) {
+        clog << filename << endl;
+        Error::materialError();
+    }
     for(unsigned int i = 0; i < numMaterials; i++) {
         Material material = {};
         input.read((char*)&material, sizeof(MDSMaterial));
@@ -114,6 +122,10 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
 
     //mesh
     input.read((char*)&numMeshes, sizeof(int));
+    if(numMeshes == 0) {
+        clog << filename << endl;
+        Error::meshError();
+    }
     for(unsigned int i = 0; i < numMeshes; i++) {
         vector<Vertex> vertices;
         vector<uint32_t> indices;
@@ -143,9 +155,6 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
             indices.push_back(index);
         }
         Mesh* mesh = new Mesh(vertices, indices, materials[materialIndex], shader);
-        if(mesh == nullptr) {
-            Error::meshError();
-        }
         meshes.push_back(mesh);
     }
 }

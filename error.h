@@ -13,4 +13,6 @@ public:
     static void fatalError();
     static void initError();
     static void runtimeError();
+    static void shaderError();
+    static void materialError();
 };

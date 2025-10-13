@@ -40,3 +40,11 @@ void Error::initError() {
 void Error::runtimeError() {
     cerr << "runtimeError" << endl;
 }
+
+void Error::shaderError() {
+    cerr << "shaderError" << endl;
+}
+
+void Error::materialError() {
+    cerr << "materialError" << endl;
+}
