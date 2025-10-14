@@ -101,8 +101,8 @@ int main(int argc, char** argv) {
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
 
-        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta);//bewegt die patrone
-        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta);//bewegt gegnerische patrone
+        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt die patrone
+        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt gegnerische patrone
 
         switch(levelWorld) {
             case 1:
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
                 Error::runtimeError();
                 level1.reset();
                 level2.reset();
-                break;
+                assert(false);
         }
         Shader::unbind();
 

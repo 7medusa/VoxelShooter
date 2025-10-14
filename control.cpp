@@ -54,6 +54,11 @@ void Control::handle(SDL_Event* event, Camera* camera) {
             rBool = true;
             blockFunction = true;
         }
+#ifndef Release
+        if(event->key.keysym.sym == SDLK_b) {
+            clog << "breakpoint" << endl;
+        }
+#endif
         if(event->key.keysym.sym == SDLK_x) {
             camera->reset();
         }

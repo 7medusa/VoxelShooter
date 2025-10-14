@@ -6,6 +6,7 @@
 #include "dir.h"
 #include "camera.h"
 #include "setVariables.h"
+#include "error.h"
 
 Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 playerPosition) :
     projectilModel(camera, 0.0f, glm::vec3(playerPosition[3].x, ground+1.0f, playerPosition[3].z), glm::vec3(0.5f)),
@@ -35,9 +36,30 @@ void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjecti
     }
 }
 
-void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta) {
-    for(auto& i : *vec) {
-        i->move(camera, projection, modelViewProjection, modelViewLocation, invModelViewLocation, delta);
+void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level) {
+    float rightBorder = 0.0f;
+    float leftBorder = 0.0f;
+    switch(level) {
+        case 1:
+            rightBorder = borderRightLevel1;
+            leftBorder = borderLeftLevel1;
+            break;
+        case 2:
+            rightBorder = borderRightLevel1;
+            leftBorder = borderLeftLevel1;
+            break;
+        default:
+            Error::runtimeError();
+            break;
+    }
+    for(auto i = vec->begin(); i != vec->end();) {
+        if((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1) {
+            i = vec->erase(i);
+        }
+        else {
+            (*i)->move(camera, projection, modelViewProjection, modelViewLocation, invModelViewLocation, delta);
+            ++i;
+        }
     }
 }
 
