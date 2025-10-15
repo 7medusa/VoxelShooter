@@ -113,10 +113,10 @@ int main(int argc, char** argv) {
         switch(levelWorld) {
             case 1:
                 if (!level1) {
-                    //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    //level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model);
+                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model);
                 }
-                //level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
                 if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
