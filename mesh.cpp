@@ -45,6 +45,7 @@ ModelRead::ModelRead(const char* filename, Shader* shader) {
     ifstream input = ifstream(filename, ios::in | ios::binary);
     if(input.fail()) {
         Error::modelNotFound();
+        return;
     }
     int numMeshes = 0;
     uint64_t numMaterials = 0;

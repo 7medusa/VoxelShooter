@@ -218,6 +218,9 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         sBool = false;
         aBool = false;
         dBool = false;
+        cBool = false;
+        rBool = false;
+        shieldBool = false;
         up = false;
         pause = true;
         font->fontDraw(fontShader, window, font, "pause", windowWidth / 2 - font->measureTextWidth("pause", font->cdata) / 2, windowHeight / 2 - windowHeight / 7);

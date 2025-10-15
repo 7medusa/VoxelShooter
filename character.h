@@ -12,7 +12,6 @@ public:
     void shoot(bool direction, Shader* shader, Camera* camera);
     void getDamage(int damage);
     void walkAnimation();
-    static string projektilName();
     int life;
     int damage;
     Model characterModel;

@@ -8,23 +8,23 @@ Error::Error() {
 }
 
 void Error::modelError() {
-    cerr << "error modelError" << endl;
+    cerr << "modelError" << endl;
 }
 
 void Error::meshError() {
-    cerr << "error meshError" << endl;
+    cerr << "meshError" << endl;
 }
 
 void Error::vertexError() {
-    cerr << "error vertexError" << endl;
+    cerr << "vertexError" << endl;
 }
 
 void Error::indexError() {
-    cerr << "error indexError" << endl;
+    cerr << "indexError" << endl;
 }
 
 void Error::modelNotFound() {
-    cerr << "modelNotFound" << endl;
+    cerr << "error modelNotFound" << endl;
 }
 
 void Error::fatalError() {

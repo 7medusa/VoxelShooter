@@ -19,6 +19,7 @@ using namespace std;
 #define characterScale 0.01f
 #define pauseTime 7.5f
 #define pistolShootTime 0.8f
+#define tankShootTime 1.5f
 #define reloadTime 1.25f
 
 //level1

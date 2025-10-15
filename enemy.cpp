@@ -12,7 +12,8 @@ void Enemy::getDamage(int life) {}
 
 void Enemy::walkAnimation() {}
 
-Tank::Tank(glm::mat4* characterPosition) {
+Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera) : tankModel(camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale)),
+    tankMesh(tankModelDir, shader) {
     life = 4;
     damage = 2;
     position = characterPosition;
@@ -22,23 +23,22 @@ Tank::~Tank() {
     cout << "tank deleted" << endl;
 }
 
-Soldier::Soldier(glm::mat4* characterPosition) {
+char* Soldier::randomModel() {
+    srand((unsigned)time(nullptr));
+    unsigned int random = rand();
+    if(random % 2 == 0) {
+        return enemy1ModelDir;
+    }
+    return enemy2ModelDir;
+}
+
+Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera)  : soldierModel(camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale)),
+    soldierMesh(randomModel(), shader){
     life = 2;
     damage = 1;
-    model = randomModel();
     position = characterPosition;
 }
 
 Soldier::~Soldier() {
     cout << "soldier deleted" << endl;
-}
-
-string Soldier::randomModel() {
-    srand((unsigned)time(nullptr));
-    if(rand() % 2 == 0) {
-        return enemy1ModelDir;
-    }
-    else {
-        return enemy2ModelDir;
-    }
 }

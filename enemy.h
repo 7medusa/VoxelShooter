@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
+#include "mesh.h"
+#include "model.h"
 
 using namespace std;
 
@@ -14,21 +16,25 @@ protected:
 
 class Tank {
 public:
-    Tank(glm::mat4* characterPosition);
+    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera);
     ~Tank();
     int life;
     int damage;
+    Model tankModel;
+    ModelRead tankMesh;
+private:
     glm::mat4* position;
 };
 
 class Soldier {
 public:
-    Soldier(glm::mat4* characterPosition);
+    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera);
     ~Soldier();
-    static string randomModel();
+    static char* randomModel();
     int life;
     int damage;
-    glm::mat4* position;
+    Model soldierModel;
+    ModelRead soldierMesh;
 private:
-    string model;
+    glm::mat4* position;
 };

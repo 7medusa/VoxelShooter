@@ -35,6 +35,7 @@
 #include "init.h"
 #include "time.h"
 #include "error.h"
+#include "enemy.h"
 
 int main(int argc, char** argv) {
     init();
@@ -69,6 +70,7 @@ int main(int argc, char** argv) {
     Character player(&shader, &camera);
     Weapon weaponPlayer;
     Control control;
+    Soldier soldier(&player.characterModel.model, &shader, &camera);
 
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
     const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
@@ -101,16 +103,20 @@ int main(int argc, char** argv) {
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
 
+        setVariables(soldier.soldierModel.modelViewProj, projection, soldier.soldierModel.model, modelViewProjLocation, &soldier.soldierModel.vertexBuffer, &soldier.soldierModel.indexBuffer,
+        modelViewLocation, invModelViewLocation, soldier.soldierModel.modelView, soldier.soldierModel.invModelView, &camera);
+        soldier.soldierMesh.render();
+
         iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt die patrone
         iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt gegnerische patrone
 
         switch(levelWorld) {
             case 1:
                 if (!level1) {
-                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model);
+                    //font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    //level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model);
                 }
-                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                //level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
             case 2:
                 if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
