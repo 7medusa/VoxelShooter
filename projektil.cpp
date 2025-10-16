@@ -11,14 +11,14 @@
 Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 playerPosition) :
     projectilModel(camera, 0.0f, glm::vec3(playerPosition[3].x, ground+1.0f, playerPosition[3].z), glm::vec3(0.5f)),
     projectilMesh(projectilModelDir, shader) {
-    cout << "projektil created" << endl;
+    clog << "\033[34m" << "projectil created" << "\033[0m" << endl;
     this->damage = damage;
     this->direction = direction;
     moveSpeed = porjectileSpeed;
 }
 
 Projektil::~Projektil() {
-    cout << "projektil deleted" << endl;
+    clog << "\033[34m" << "projectil deleted" << "\033[0m" << endl;
 }
 
 void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta) {

@@ -4,6 +4,7 @@
 #include "model.h"
 #include <SDL2/SDL.h>
 #include <memory>
+#include "enemy.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
     Model level1Model;
     ModelRead level1Mesh;
     glm::mat4* characterPosition;
+    Soldier soldier;
 };
 
 class Level2 {

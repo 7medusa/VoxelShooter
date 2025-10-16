@@ -9,6 +9,7 @@ using namespace std;
 class Enemy {
 protected:
     void followPlayer(glm::mat4 characterPosition);
+    void waitForPlayer(glm::mat4 characterPosition);
     void shootPlayer(int damage);
     void getDamage(int life);
     void walkAnimation();
@@ -16,7 +17,7 @@ protected:
 
 class Tank {
 public:
-    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera);
+    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn);
     ~Tank();
     int life;
     int damage;
@@ -29,7 +30,7 @@ private:
 
 class Soldier {
 public:
-    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera);
+    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn);
     ~Soldier();
     static char* randomModel();
     int life;

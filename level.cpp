@@ -1,7 +1,5 @@
 #include "level.h"
-
 #include <iostream>
-
 #include "camera.h"
 #include "setVariables.h"
 #include "mesh.h"
@@ -12,7 +10,8 @@
 #include <SDL2/SDL.h>
 
 Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition)
-:level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader) {
+:level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader),
+soldier(characterPosition, shader, camera, glm::vec3(15.0f, ground, 0.0f)) {
     this->characterPosition = characterPosition;
 }
 
@@ -24,6 +23,9 @@ Level1::~Level1() {
 void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event) {
     setVariables(level1Model.modelViewProj, projection, level1Model.model, modelViewProjLocation, &level1Model.vertexBuffer, &level1Model.indexBuffer, modelViewLocation, invModelViewLocation, level1Model.modelView, level1Model.invModelView, camera);
     level1Mesh.render();
+
+    setVariables(soldier.soldierModel.modelViewProj, projection, soldier.soldierModel.model, modelViewProjLocation, &soldier.soldierModel.vertexBuffer, &soldier.soldierModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier.soldierModel.modelView, soldier.soldierModel.invModelView, camera);
+    soldier.soldierMesh.render();
 
     //talk with NPC1
     if((*characterPosition)[3].x >= 18.5f && (*characterPosition)[3].x < 20.9f) {
