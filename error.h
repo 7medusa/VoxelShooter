@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 using namespace std;
 
@@ -13,6 +14,7 @@ public:
     static void fatalError();
     static void initError();
     static void runtimeError();
-    static void shaderError();
+    static void shaderError(string source);
     static void materialError();
+    static void uniformError();
 };

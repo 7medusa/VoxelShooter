@@ -22,8 +22,9 @@ public:
     int damage;
     Model tankModel;
     ModelRead tankMesh;
+    glm::mat4* enemyPosition;
 private:
-    glm::mat4* position;
+    glm::mat4* playerPosition;
 };
 
 class Soldier {
@@ -35,6 +36,7 @@ public:
     int damage;
     Model soldierModel;
     ModelRead soldierMesh;
+    glm::mat4* enemyPosition;
 private:
-    glm::mat4* position;
+    glm::mat4* playerPosition;
 };

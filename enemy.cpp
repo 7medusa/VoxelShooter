@@ -16,11 +16,12 @@ Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera) : tankM
     tankMesh(tankModelDir, shader) {
     life = 4;
     damage = 2;
-    position = characterPosition;
+    playerPosition = characterPosition;
+    enemyPosition = &tankModel.model;
 }
 
 Tank::~Tank() {
-    cout << "tank deleted" << endl;
+    clog << "tank deleted" << endl;
 }
 
 char* Soldier::randomModel() {
@@ -36,9 +37,8 @@ Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera)  
     soldierMesh(randomModel(), shader){
     life = 2;
     damage = 1;
-    position = characterPosition;
+    playerPosition = characterPosition;
+    enemyPosition = &soldierModel.model;
 }
 
-Soldier::~Soldier() {
-    cout << "soldier deleted" << endl;
-}
+Soldier::~Soldier() {}

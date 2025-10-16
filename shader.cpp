@@ -1,5 +1,6 @@
 #include "shader.h"
 #include <iostream>
+#include "error.h"
 
 Shader::Shader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
     shaderId = createShader(vertexShaderFilename, fragmentShaderFilename);
@@ -25,11 +26,10 @@ GLuint Shader::compile(const string& shaderSource, GLenum type) {
     int result = 0;
     glGetShaderiv(id, GL_COMPILE_STATUS, &result);
     if(result == GL_FALSE) {
-        cout << "shader compile error" << endl;
-        return 0;
+        return -1;
     }
 #ifndef Release
-    cout << "shader compile success" << endl;
+    clog << "\033[34m" << "shader compile success" << "\033[0m" << endl;
 #endif
     return id;
 }
@@ -55,6 +55,12 @@ GLuint Shader::createShader(const char* vertexShaderFilename, const char* fragme
     const GLuint program = glCreateProgram();
     const GLuint vs = compile(vertexShaderSource, GL_VERTEX_SHADER);
     const GLuint fs = compile(fragmentShaderSource, GL_FRAGMENT_SHADER);
+    if(vs == -1) {
+        Error::shaderError(vertexShaderFilename);
+    }
+    else if(fs == -1) {
+        Error::shaderError(fragmentShaderFilename);
+    }
 
     glAttachShader(program, vs);
     glAttachShader(program, fs);

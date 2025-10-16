@@ -41,10 +41,14 @@ void Error::runtimeError() {
     cerr << "runtimeError" << endl;
 }
 
-void Error::shaderError() {
-    cerr << "shaderError" << endl;
+void Error::shaderError(string source) {
+    cerr << "shaderError in: " << source << endl;
 }
 
 void Error::materialError() {
     cerr << "materialError" << endl;
+}
+
+void Error::uniformError() {
+    cerr << "uniformError" << endl;
 }

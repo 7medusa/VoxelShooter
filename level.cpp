@@ -17,9 +17,7 @@ Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition)
 }
 
 Level1::~Level1() {
-#ifndef Release
-    cout << "level1 deleted" << endl;
-#endif
+    clog << "\033[34m" << "level1 deleted" << "\033[0m" << endl;
 }
 
 
@@ -43,9 +41,7 @@ Level2::Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition)
 }
 
 Level2::~Level2() {
-#ifndef Release
-    cout << "level2 deleted" << endl;
-#endif
+    clog << "\033[34m" << "level2 deleted" << "\033[0m" << endl;
 }
 
 void Level2::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event) {

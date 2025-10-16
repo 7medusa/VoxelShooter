@@ -70,13 +70,12 @@ int main(int argc, char** argv) {
     Character player(&shader, &camera);
     Weapon weaponPlayer;
     Control control;
-    Soldier soldier(&player.characterModel.model, &shader, &camera);
 
     const int invModelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_invModelView");
     const int modelViewLocation = glGetUniformLocation(shader.getShaderId(), "u_modelView");
     const int modelViewProjLocation = glGetUniformLocation(shader.getShaderId(), "u_in_model_view_proj");
     if(invModelViewLocation == -1 || modelViewLocation == -1 || modelViewProjLocation == -1) {
-        Error::shaderError();
+        Error::uniformError();
     }
 
     while(!close) {
@@ -102,10 +101,6 @@ int main(int argc, char** argv) {
         setVariables(player.characterModel.modelViewProj, projection, player.characterModel.model, modelViewProjLocation, &player.characterModel.vertexBuffer, &player.characterModel.indexBuffer,
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
-
-        setVariables(soldier.soldierModel.modelViewProj, projection, soldier.soldierModel.model, modelViewProjLocation, &soldier.soldierModel.vertexBuffer, &soldier.soldierModel.indexBuffer,
-        modelViewLocation, invModelViewLocation, soldier.soldierModel.modelView, soldier.soldierModel.invModelView, &camera);
-        soldier.soldierMesh.render();
 
         iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt die patrone
         iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt gegnerische patrone
