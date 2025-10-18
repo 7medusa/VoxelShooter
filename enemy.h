@@ -19,6 +19,8 @@ class Tank {
 public:
     Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn);
     ~Tank();
+    void followPlayer(glm::mat4 characterPosition);
+    bool isPlayer(glm::mat4 characterPosition);
     int life;
     int damage;
     Model tankModel;
@@ -32,6 +34,8 @@ class Soldier {
 public:
     Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn);
     ~Soldier();
+    void followPlayer(glm::mat4 characterPosition);
+    bool isPlayer(glm::mat4 characterPosition);
     static char* randomModel();
     int life;
     int damage;

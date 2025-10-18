@@ -127,6 +127,7 @@ int main(int argc, char** argv) {
                 level2.reset();
                 assert(false);
         }
+
         Shader::unbind();
 
         font.fontDraw(&fontShader, window, &font, to_string(time.fps), 50, 100);

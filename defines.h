@@ -21,6 +21,8 @@ using namespace std;
 #define pistolShootTime 0.8f
 #define tankShootTime 1.5f
 #define reloadTime 1.25f
+#define soldierRange 5
+#define tankRange 7
 
 //level1
 #define borderLeftLevel1 0.0f
