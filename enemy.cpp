@@ -12,15 +12,6 @@ Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::ve
     enemyPosition = &tankModel.model;
 }
 
-bool Tank::isPlayer(glm::mat4 characterPosition) {
-    if(characterPosition[3].x <= tankModel.model[3].x - soldierRange || characterPosition[3].x >= tankModel.model[3].x + soldierRange) {
-        return true;
-    }
-    return false;
-}
-
-void Tank::followPlayer(glm::mat4 characterPosition) {}
-
 Tank::~Tank() {
     clog << "\033[34m" << "enemy died" << "\033[0m" << endl;
 }
@@ -44,19 +35,37 @@ Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, g
 
 bool Soldier::isPlayer(glm::mat4 characterPosition) {
     if(characterPosition[3].x <= soldierModel.model[3].x - soldierRange || characterPosition[3].x >= soldierModel.model[3].x + soldierRange) {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 void Soldier::followPlayer(glm::mat4 characterPosition) {
+    int value = characterPosition[3].x - soldierModel.model[3].x;
+    cout << value << endl;
     if(isPlayer(characterPosition)) {
-        if(characterPosition[3].x <= soldierModel.model[3].x) {
-            if(characterPosition[3].x ) {}
+        if(characterPosition[3].x <= soldierModel.model[3].x) {//player is left from the enemy
+            if(value < -soldierShootRange && value > -soldierRange) {
+                walk(false);
+            }
+            else if(value >=-soldierShootRange && value < 0) {
+                shoot(false);
+            }
         }
-        else if(characterPosition[3].x > soldierModel.model[3].x) {}
+        else if(characterPosition[3].x > soldierModel.model[3].x) {//player is right from the enemy
+            if(value > soldierShootRange && value < soldierRange) {
+                walk(true);
+            }
+            else if(value <=soldierShootRange && value >= 0) {
+                shoot(true);
+            }
+        }
     }
 }
+
+void Soldier::walk(bool direction) {}
+
+void Soldier::shoot(bool direction) {}
 
 Soldier::~Soldier() {
     clog << "\033[34m" << "enemy died" << "\033[0m" << endl;

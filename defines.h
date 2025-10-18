@@ -9,20 +9,24 @@ using namespace std;
 
 #define jumpSpeed 450.0f
 #define walkSpeed 2.6f
-#define porjectileSpeed 12.0f
 #define zoomSpeed 5.7f
 #define jumpHeight 0.0f
 #define zoomOut 9.75f
 #define zoomIn 1.7f
+#define characterScale 0.01f
+
+#define pistolShootTime 0.8f
+#define porjectileSpeed 12.0f
+#define reloadTime 1.25f
+#define tankShootTime 1.5f
+
 #define ground -1.3f
 #define cameraFov 90.0f
-#define characterScale 0.01f
 #define pauseTime 7.5f
-#define pistolShootTime 0.8f
-#define tankShootTime 1.5f
-#define reloadTime 1.25f
-#define soldierRange 5
-#define tankRange 7
+
+#define soldierRange 7
+#define soldierShootRange 5
+#define tankRange 5
 
 //level1
 #define borderLeftLevel1 0.0f

@@ -11,7 +11,7 @@
 
 Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition)
 :level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader),
-soldier(characterPosition, shader, camera, glm::vec3(15.0f, ground, 0.0f)) {
+soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f)) {
     this->characterPosition = characterPosition;
 }
 
@@ -26,6 +26,8 @@ void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
 
     setVariables(soldier.soldierModel.modelViewProj, projection, soldier.soldierModel.model, modelViewProjLocation, &soldier.soldierModel.vertexBuffer, &soldier.soldierModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier.soldierModel.modelView, soldier.soldierModel.invModelView, camera);
     soldier.soldierMesh.render();
+
+    soldier.followPlayer(*characterPosition);
 
     //talk with NPC1
     if((*characterPosition)[3].x >= 18.5f && (*characterPosition)[3].x < 20.9f) {
