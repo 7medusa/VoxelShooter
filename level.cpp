@@ -9,9 +9,9 @@
 #include "control.h"
 #include <SDL2/SDL.h>
 
-Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition)
+Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta)
 :level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader),
-soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f)) {
+soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta) {
     this->characterPosition = characterPosition;
 }
 
@@ -39,7 +39,7 @@ void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
     }
 }
 
-Level2::Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition)
+Level2::Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta)
 :level2Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level2Mesh(level2ModelDir, shader) {
     this->characterPosition = characterPosition;
 }

@@ -22,3 +22,7 @@ void Time::end() {
     lastCounter = endCounter;
     fps = 1.0f / delta;
 }
+
+float* Time::returnDelta() {
+    return &delta;
+}

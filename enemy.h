@@ -21,7 +21,7 @@ private:
 
 class Soldier {
 public:
-    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn);
+    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta);
     ~Soldier();
     void followPlayer(glm::mat4 characterPosition);
     bool isPlayer(glm::mat4 characterPosition);
@@ -33,6 +33,7 @@ public:
     Model soldierModel;
     ModelRead soldierMesh;
     glm::mat4* enemyPosition;
+    float* delta;
 private:
     glm::mat4* playerPosition;
 };

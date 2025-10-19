@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <glm/ext/matrix_transform.hpp>
+
 #include "dir.h"
 
 Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn) : tankModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
@@ -25,12 +27,13 @@ char* Soldier::randomModel() {
     return enemy2ModelDir;
 }
 
-Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn)  : soldierModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
+Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta)  : soldierModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
     soldierMesh(randomModel(), shader){
     life = 2;
     damage = 1;
     playerPosition = characterPosition;
     enemyPosition = &soldierModel.model;
+    this->delta = delta;
 }
 
 bool Soldier::isPlayer(glm::mat4 characterPosition) {
@@ -63,7 +66,15 @@ void Soldier::followPlayer(glm::mat4 characterPosition) {
     }
 }
 
-void Soldier::walk(bool direction) {}
+void Soldier::walk(bool direction) {
+    cout << "walk" << endl;
+    if(direction) {
+        soldierModel.model = glm::translate(soldierModel.model, glm::vec3(walkSpeedSoldier * *delta, 0.0f, 0.0f));
+    }
+    else {
+        soldierModel.model = glm::translate(soldierModel.model, glm::vec3(-walkSpeedSoldier * *delta, 0.0f, 0.0f));
+    }
+}
 
 void Soldier::shoot(bool direction) {}
 

@@ -19,13 +19,15 @@ using namespace std;
 #define porjectileSpeed 12.0f
 #define reloadTime 1.25f
 #define tankShootTime 1.5f
+#define walkSpeedSoldier 2.3f * 100
+#define walkSpeedTank 1.5f
 
 #define ground -1.3f
 #define cameraFov 90.0f
 #define pauseTime 7.5f
 
-#define soldierRange 7
-#define soldierShootRange 5
+#define soldierRange 8
+#define soldierShootRange 3.5f
 #define tankRange 5
 
 //level1

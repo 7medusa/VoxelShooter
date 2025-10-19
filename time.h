@@ -5,6 +5,7 @@ public:
     Time();
     void update();
     void end();
+    float* returnDelta();
 
     int fps;
     float time;
