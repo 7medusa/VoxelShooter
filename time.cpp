@@ -26,3 +26,7 @@ void Time::end() {
 float* Time::returnDelta() {
     return &delta;
 }
+
+float* Time::returnTime() {
+    return &time;
+}

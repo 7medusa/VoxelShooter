@@ -6,6 +6,7 @@ public:
     void update();
     void end();
     float* returnDelta();
+    float* returnTime();
 
     int fps;
     float time;

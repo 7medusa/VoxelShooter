@@ -8,7 +8,7 @@ using namespace std;
 
 class Tank {
 public:
-    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta);
+    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time);
     void followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera);
     bool isPlayer(glm::mat4 characterPosition);
     void walk(bool direction);
@@ -20,13 +20,15 @@ public:
     ModelRead tankMesh;
     glm::mat4* enemyPosition;
 private:
+    float* time;
+    float prevTimeShoot;
     float* delta;
     glm::mat4* playerPosition;
 };
 
 class Soldier {
 public:
-    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta);
+    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time);
     void followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera);
     bool isPlayer(glm::mat4 characterPosition);
     void walk(bool direction);
@@ -39,6 +41,8 @@ public:
     ModelRead soldierMesh;
     glm::mat4* enemyPosition;
 private:
+    float* time;
+    float prevTimeShoot;
     float* delta;
     glm::mat4* playerPosition;
 };

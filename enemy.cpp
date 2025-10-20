@@ -6,17 +6,18 @@
 #include "dir.h"
 #include "projektil.h"
 
-Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta) : tankModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
+Tank::Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time) : tankModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
     tankMesh(tankModelDir, shader) {
     life = tankLife;
     damage = tankDamage;
     playerPosition = characterPosition;
     enemyPosition = &tankModel.model;
     this->delta = delta;
+    this->time = time;
 }
 
 bool Tank::isPlayer(glm::mat4 characterPosition) {
-    if(characterPosition[3].x <= tankModel.model[3].x - soldierRange || characterPosition[3].x >= tankModel.model[3].x + soldierRange) {
+    if(characterPosition[3].x <= tankModel.model[3].x - tankRange || characterPosition[3].x >= tankModel.model[3].x + tankRange) {
         return false;
     }
     return true;
@@ -33,20 +34,20 @@ void Tank::followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* cam
     if(isPlayer(characterPosition)) {
         //left
         if(characterPosition[3].x <= tankModel.model[3].x) {
-            if(value < -soldierShootRange && value > -soldierRange) {
+            if(value < -tankShootRange && value > -tankRange) {
                 walk(false);
             }
-            else if(value >=-soldierShootRange && value < 0) {
+            else if(value >=-tankShootRange && value < 0) {
                 shoot(false, shader, camera);
             }
         }
 
         //right
         else if(characterPosition[3].x > tankModel.model[3].x) {
-            if(value > soldierShootRange && value < soldierRange) {
+            if(value > tankShootRange && value < tankRange) {
                 walk(true);
             }
-            else if(value <=soldierShootRange && value >= 0) {
+            else if(value <=tankShootRange && value >= 0) {
                 shoot(true, shader, camera);
             }
         }
@@ -57,26 +58,36 @@ void Tank::walk(bool direction) {
     glm::vec3 prevPosition = tankModel.model[3];
     if(direction) {
         tankModel.model = glm::mat4(1.0f);
-        tankModel.model = glm::translate(tankModel.model, glm::vec3((walkSpeedSoldier * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
+        tankModel.model = glm::translate(tankModel.model, glm::vec3((walkSpeedTank * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
         tankModel.model = glm::rotate(tankModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         tankModel.model = glm::scale(tankModel.model, glm::vec3(characterScale));
     }
     else {
         tankModel.model = glm::mat4(1.0f);
-        tankModel.model = glm::translate(tankModel.model, glm::vec3((-walkSpeedSoldier * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
+        tankModel.model = glm::translate(tankModel.model, glm::vec3((-walkSpeedTank * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
         tankModel.model = glm::rotate(tankModel.model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         tankModel.model = glm::scale(tankModel.model, glm::vec3(characterScale));
     }
 }
 
-void Tank::shoot(bool direction, Shader* shader, Camera* camera) {}
+void Tank::shoot(bool direction, Shader* shader, Camera* camera) {
+    if(*time > prevTimeShoot + pistolShootTimeTank) {
+        if(direction) {
+            enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, true, tankModel.model));
+        }
+        else {
+            enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, false, tankModel.model));
+        }
+        prevTimeShoot = *time;
+    }
+}
 
 Tank::~Tank() {
     clog << "\033[34m" << "enemy died" << "\033[0m" << endl;
 }
 
 char* Soldier::randomModel() {
-    srand((unsigned)time(nullptr));
+    srand((unsigned)std::time(nullptr));
     unsigned int random = rand();
     if(random % 2 == 0) {
         return enemy1ModelDir;
@@ -84,13 +95,14 @@ char* Soldier::randomModel() {
     return enemy2ModelDir;
 }
 
-Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta)  : soldierModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
+Soldier::Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time)  : soldierModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
     soldierMesh(randomModel(), shader){
     life = soldierLife;
     damage = soldierDamage;
     playerPosition = characterPosition;
     enemyPosition = &soldierModel.model;
     this->delta = delta;
+    this->time = time;
 }
 
 bool Soldier::isPlayer(glm::mat4 characterPosition) {
@@ -106,7 +118,6 @@ void Soldier::followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* 
     soldierModel.model = glm::mat4(1.0f);
     soldierModel.model = glm::translate(soldierModel.model, glm::vec3(prevPosition.x, prevPosition.y, prevPosition.z));
     soldierModel.model = glm::scale(soldierModel.model, glm::vec3(characterScale));
-    cout << value << endl;
 
     if(isPlayer(characterPosition)) {
         //left
@@ -148,11 +159,14 @@ void Soldier::walk(bool direction) {
 }
 
 void Soldier::shoot(bool direction, Shader* shader, Camera* camera) {
-    if(direction) {
-        enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, true, soldierModel.model));
-    }
-    else {
-        enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, false, soldierModel.model));
+    if(*time > prevTimeShoot + pistolShootTimeSoldier) {
+        if(direction) {
+            enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, true, soldierModel.model));
+        }
+        else {
+            enemyProjektile.push_back(make_unique<Projektil>(damage, shader, camera, false, soldierModel.model));
+        }
+        prevTimeShoot = *time;
     }
 }
 

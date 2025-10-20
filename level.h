@@ -16,7 +16,7 @@ class Control;
 
 class Level1 {
 public:
-    Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta);
+    Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime);
     ~Level1();
     void logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event);
     Model level1Model;
@@ -28,7 +28,7 @@ public:
 
 class Level2 {
 public:
-    Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta);
+    Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime);
     ~Level2();
     void logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event);
     Model level2Model;

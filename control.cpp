@@ -23,7 +23,7 @@ Control::Control() {
     pause = false;
     blockFunction = false;
     prevTimePause = pauseTime - 2 * pauseTime;
-    prevTimeShoot = pistolShootTime - 2 * pistolShootTime;
+    prevTimeShoot = pistolShootTimeCharacter - 2 * pistolShootTimeCharacter;
     prevTimeReload = reloadTime - 2 * reloadTime;
 }
 
@@ -158,17 +158,17 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild rechts" << endl;
     }
-    if(cBool && dBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
+    if(cBool && dBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && aBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
+    else if(cBool && aBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(false, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolShootTime && weapon->magazine > 0) {
+    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
         weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;

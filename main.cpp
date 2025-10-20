@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
             control.handle(&event, &camera);
         }
 
-        float farbe = 0.0f;
+        float farbe = 1.0f;
         glClearColor(farbe, farbe, farbe, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time.update();
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
             case 1:
                 if (!level1) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model, time.returnDelta());
+                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
                 }
                 level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
                 if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
                 if (!level2) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model, time.returnDelta());
+                    level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
                 }
                 level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
                 break;
