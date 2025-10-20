@@ -20,8 +20,9 @@ private:
     bool sBool;
     bool aBool;
     bool dBool;
-    bool cBool;
-    bool rBool;
+    bool shootRightBool;
+    bool shootLeftBool;
+    bool reloadBool;
     bool shieldBool;
     bool jumpOnProgress;
     bool up;

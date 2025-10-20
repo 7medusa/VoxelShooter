@@ -15,8 +15,9 @@ Control::Control() {
     aBool = false;
     dBool = false;
     eBool = false;
-    cBool = false;
-    rBool = false;
+    shootRightBool = false;
+    shootLeftBool = false;
+    reloadBool = false;
     shieldBool = false;
     jumpOnProgress = false;
     up = true;
@@ -47,11 +48,14 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_e) {
             eBool = true;
         }
-        if(event->key.keysym.sym == SDLK_c) {
-            cBool = true;
+        if(event->key.keysym.sym == SDLK_RIGHT) {
+            shootRightBool = true;
+        }
+        if(event->key.keysym.sym == SDLK_LEFT) {
+            shootLeftBool = true;
         }
         if(event->key.keysym.sym == SDLK_r) {
-            rBool = true;
+            reloadBool = true;
             blockFunction = true;
         }
 #ifndef Release
@@ -85,8 +89,11 @@ void Control::handle(SDL_Event* event, Camera* camera) {
         if(event->key.keysym.sym == SDLK_e) {
             eBool = false;
         }
-        if(event->key.keysym.sym == SDLK_c) {
-            cBool = false;
+        if(event->key.keysym.sym == SDLK_RIGHT) {
+            shootRightBool = false;
+        }
+        if(event->key.keysym.sym == SDLK_LEFT) {
+            shootLeftBool = false;
         }
     }
 }
@@ -158,22 +165,17 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         player->characterModel.model = glm::scale(player->characterModel.model, glm::vec3(characterScale));
         cout << "schild rechts" << endl;
     }
-    if(cBool && dBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
+    if(shootRightBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0 && !shieldBool) {
         weapon->magazine -= 1;
         player->shoot(true, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && aBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
+    else if(shootLeftBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0 && !shieldBool) {
         weapon->magazine -= 1;
         player->shoot(false, shader, camera);
         prevTimeShoot = gameTime;
     }
-    else if(cBool && !aBool && !dBool && gameTime > prevTimeShoot + pistolShootTimeCharacter && weapon->magazine > 0) {
-        weapon->magazine -= 1;
-        player->shoot(true, shader, camera);
-        prevTimeShoot = gameTime;
-    }
-    if(rBool) {
+    if(reloadBool) {
         if(blockFunction) {
             prevTimeReload = gameTime;
             blockFunction = false;
@@ -181,7 +183,7 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         else if(!blockFunction && gameTime < prevTimeReload + reloadTime) {}//nachlade animation
         else if(!blockFunction && gameTime > prevTimeReload + reloadTime) {
             weapon->magazine = weapon->maxMagazine;
-            rBool = false;
+            reloadBool = false;
         }
     }
     if(jumpOnProgress) {
@@ -218,8 +220,9 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
         sBool = false;
         aBool = false;
         dBool = false;
-        cBool = false;
-        rBool = false;
+        shootRightBool = false;
+        shootLeftBool = false;
+        reloadBool = false;
         shieldBool = false;
         up = false;
         pause = true;
