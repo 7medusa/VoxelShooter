@@ -12,7 +12,7 @@ class Character;
 
 class Projektil {
 public:
-    Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 playerPosition);
+    Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 shooterPosition);
     ~Projektil();
     void move(Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta);
     Model projectilModel;

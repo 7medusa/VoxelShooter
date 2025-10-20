@@ -100,8 +100,8 @@ void Control::control(Camera* camera, Character* player, float delta, const unsi
             leftBorder = borderLeftLevel1;
             break;
         case 2:
-            rightBorder = borderRightLevel1;
-            leftBorder = borderLeftLevel1;
+            rightBorder = borderRightLevel2;
+            leftBorder = borderLeftLevel2;
             break;
         default:
             cout << "level not found" << endl;

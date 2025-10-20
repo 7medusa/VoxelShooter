@@ -8,8 +8,8 @@
 #include "setVariables.h"
 #include "error.h"
 
-Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 playerPosition) :
-    projectilModel(camera, 0.0f, glm::vec3(playerPosition[3].x, ground+1.0f, playerPosition[3].z), glm::vec3(0.5f)),
+Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 shooterPosition) :
+    projectilModel(camera, 0.0f, glm::vec3(shooterPosition[3].x, ground+1.0f, shooterPosition[3].z), glm::vec3(0.5f)),
     projectilMesh(projectilModelDir, shader) {
     clog << "\033[34m" << "projectil created" << "\033[0m" << endl;
     this->damage = damage;
