@@ -67,12 +67,18 @@ void Soldier::followPlayer(glm::mat4 characterPosition) {
 }
 
 void Soldier::walk(bool direction) {
-    cout << "walk" << endl;
+    glm::vec3 prevPosition = soldierModel.model[3];
     if(direction) {
-        soldierModel.model = glm::translate(soldierModel.model, glm::vec3(walkSpeedSoldier * *delta, 0.0f, 0.0f));
+        soldierModel.model = glm::mat4(1.0f);
+        soldierModel.model = glm::translate(soldierModel.model, glm::vec3((walkSpeedSoldier * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
+        soldierModel.model = glm::rotate(soldierModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        soldierModel.model = glm::scale(soldierModel.model, glm::vec3(characterScale));
     }
     else {
-        soldierModel.model = glm::translate(soldierModel.model, glm::vec3(-walkSpeedSoldier * *delta, 0.0f, 0.0f));
+        soldierModel.model = glm::mat4(1.0f);
+        soldierModel.model = glm::translate(soldierModel.model, glm::vec3((-walkSpeedSoldier * *delta) + prevPosition.x, prevPosition.y, prevPosition.z));
+        soldierModel.model = glm::rotate(soldierModel.model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        soldierModel.model = glm::scale(soldierModel.model, glm::vec3(characterScale));
     }
 }
 
