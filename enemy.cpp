@@ -22,7 +22,7 @@ bool Tank::isPlayer(glm::mat4 characterPosition) {
     return true;
 }
 
-void Tank::followPlayer(glm::mat4 characterPosition) {
+void Tank::followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera) {
     int value = characterPosition[3].x - tankModel.model[3].x;
     glm::vec3 prevPosition = tankModel.model[3];
     tankModel.model = glm::mat4(1.0f);
@@ -37,7 +37,7 @@ void Tank::followPlayer(glm::mat4 characterPosition) {
                 walk(false);
             }
             else if(value >=-soldierShootRange && value < 0) {
-                shoot(false);
+                shoot(false, shader, camera);
             }
         }
 
@@ -47,7 +47,7 @@ void Tank::followPlayer(glm::mat4 characterPosition) {
                 walk(true);
             }
             else if(value <=soldierShootRange && value >= 0) {
-                shoot(true);
+                shoot(true, shader, camera);
             }
         }
     }
@@ -68,6 +68,8 @@ void Tank::walk(bool direction) {
         tankModel.model = glm::scale(tankModel.model, glm::vec3(characterScale));
     }
 }
+
+void Tank::shoot(bool direction, Shader* shader, Camera* camera) {}
 
 Tank::~Tank() {
     clog << "\033[34m" << "enemy died" << "\033[0m" << endl;
@@ -98,7 +100,7 @@ bool Soldier::isPlayer(glm::mat4 characterPosition) {
     return true;
 }
 
-void Soldier::followPlayer(glm::mat4 characterPosition) {
+void Soldier::followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera) {
     int value = characterPosition[3].x - soldierModel.model[3].x;
     glm::vec3 prevPosition = soldierModel.model[3];
     soldierModel.model = glm::mat4(1.0f);
@@ -113,7 +115,7 @@ void Soldier::followPlayer(glm::mat4 characterPosition) {
                 walk(false);
             }
             else if(value >=-soldierShootRange && value < 0) {
-                shoot(false);
+                shoot(false, shader, camera);
             }
         }
 
@@ -123,7 +125,7 @@ void Soldier::followPlayer(glm::mat4 characterPosition) {
                 walk(true);
             }
             else if(value <=soldierShootRange && value >= 0) {
-                shoot(true);
+                shoot(true, shader, camera);
             }
         }
     }

@@ -23,6 +23,7 @@ public:
     ModelRead level1Mesh;
     glm::mat4* characterPosition;
     Soldier soldier;
+    Shader* shader;
 };
 
 class Level2 {
