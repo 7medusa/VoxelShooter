@@ -11,7 +11,6 @@
 Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 shooterPosition) :
     projectilModel(camera, 0.0f, glm::vec3(shooterPosition[3].x, ground+1.0f, shooterPosition[3].z), glm::vec3(0.5f)),
     projectilMesh(projectilModelDir, shader) {
-    clog << "\033[34m" << "projectil created" << "\033[0m" << endl;
     this->damage = damage;
     this->direction = direction;
     moveSpeed = porjectileSpeed;
@@ -36,7 +35,7 @@ void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjecti
     }
 }
 
-void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level) {
+void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, glm::mat4 targetPosition) {
     float rightBorder = 0.0f;
     float leftBorder = 0.0f;
     switch(level) {
@@ -54,6 +53,9 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
     }
     for(auto i = vec->begin(); i != vec->end();) {
         if((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1) {
+            i = vec->erase(i);
+        }
+        else if((*i)->projectilModel.model[3].x > targetPosition[3].x - 0.3 && (*i)->projectilModel.model[3].x < targetPosition[3].x + 0.3) {
             i = vec->erase(i);
         }
         else {

@@ -4,7 +4,7 @@
 using namespace std;
 
 //defines
-#define Release
+//#define Release
 //#define Debug
 
 #define jumpSpeed 450
@@ -23,7 +23,7 @@ using namespace std;
 #define cameraFov 90
 #define pauseTime 7.5f
 
-#define soldierLife 2
+#define soldierLife 1
 #define soldierDamage 1
 #define walkSpeedSoldier 2.3f
 #define pistolShootTimeSoldier 2

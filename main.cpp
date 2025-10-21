@@ -35,7 +35,6 @@
 #include "init.h"
 #include "time.h"
 #include "error.h"
-#include "enemy.h"
 
 int main(int argc, char** argv) {
     init();
@@ -102,9 +101,6 @@ int main(int argc, char** argv) {
             modelViewLocation, invModelViewLocation, player.characterModel.modelView, player.characterModel.invModelView, &camera);
         player.characterMesh.render();
 
-        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt die patrone
-        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld);//bewegt gegnerische patrone
-
         switch(levelWorld) {
             case 1:
                 if (!level1) {
@@ -127,6 +123,9 @@ int main(int argc, char** argv) {
                 level2.reset();
                 assert(false);
         }
+
+        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, level1->soldier.soldierModel.model);//bewegt die spieler patrone
+        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, player.characterModel.model);//bewegt gegnerische patrone
 
         Shader::unbind();
 
