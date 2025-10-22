@@ -36,7 +36,7 @@ void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjecti
 }
 
 void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, Character* player, Enemy* enemy, string target) {
-    glm::mat4 targetPosition;
+    float targetPosition;
     if(target == "enemy") {
         targetPosition = enemy->enemyModel.model[3].x;
     }
@@ -62,7 +62,7 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
         if((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1) {
             i = vec->erase(i);
         }
-        else if((*i)->projectilModel.model[3].x > targetPosition[3].x - 0.3 && (*i)->projectilModel.model[3].x < targetPosition[3].x + 0.3 && !((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1)) {
+        else if((*i)->projectilModel.model[3].x > targetPosition - 0.3 && (*i)->projectilModel.model[3].x < targetPosition + 0.3) {
             if(target == "enemy") {
                 enemy->getDamage(characterDamage);
             }
@@ -70,7 +70,6 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
                 Projektil* ptr = (*i).get();
                 player->getDamage(ptr->damage);
             }
-            cout << "erease" << endl;
             i = vec->erase(i);
         }
         else {

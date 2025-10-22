@@ -11,7 +11,8 @@ using namespace std;
 #define walkSpeed 2.6f
 #define zoomSpeed 5.7f
 #define jumpHeight 0.0f
-#define zoomOut 9.75f
+//#define zoomOut 9.75f
+#define zoomOut 20
 #define zoomIn 1.7f
 #define characterScale 0.01f
 #define pistolShootTimeCharacter 0.8f
