@@ -9,6 +9,7 @@ using namespace std;
 class Camera;
 class Shader;
 class Character;
+class Enemy;
 
 class Projektil {
 public:
@@ -18,12 +19,12 @@ public:
     Model projectilModel;
     ModelRead projectilMesh;
     bool direction;
-private:
     int damage;
+private:
     float moveSpeed;
 };
 
-void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, glm::mat4 targetPosition);
+void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, Character* player, Enemy* enemy, string target);
 void killProjektile(vector<unique_ptr<Projektil>>* vec, vector<unique_ptr<Projektil>>* vec2);
 
 extern vector<unique_ptr<Projektil>> characterProjektile;

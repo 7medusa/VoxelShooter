@@ -1,5 +1,5 @@
 #include "projektil.h"
-#include <iostream>
+#include "character.h"
 #include "glm/glm.hpp"
 #include "model.h"
 #include "mesh.h"
@@ -7,6 +7,8 @@
 #include "camera.h"
 #include "setVariables.h"
 #include "error.h"
+#include "enemy.h"
+#include <iostream>
 
 Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 shooterPosition) :
     projectilModel(camera, 0.0f, glm::vec3(shooterPosition[3].x, ground+1.0f, shooterPosition[3].z), glm::vec3(0.5f)),
@@ -16,9 +18,7 @@ Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction,
     moveSpeed = porjectileSpeed;
 }
 
-Projektil::~Projektil() {
-    clog << "\033[34m" << "projectil deleted" << "\033[0m" << endl;
-}
+Projektil::~Projektil() {}
 
 void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta) {
     if(direction) {//rechts
@@ -35,7 +35,14 @@ void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjecti
     }
 }
 
-void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, glm::mat4 targetPosition) {
+void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, Character* player, Enemy* enemy, string target) {
+    glm::mat4 targetPosition;
+    if(target == "enemy") {
+        targetPosition = enemy->enemyModel.model[3].x;
+    }
+    else if(target == "player") {
+        targetPosition = player->characterModel.model[3].x;
+    }
     float rightBorder = 0.0f;
     float leftBorder = 0.0f;
     switch(level) {
@@ -55,7 +62,15 @@ void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm:
         if((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1) {
             i = vec->erase(i);
         }
-        else if((*i)->projectilModel.model[3].x > targetPosition[3].x - 0.3 && (*i)->projectilModel.model[3].x < targetPosition[3].x + 0.3) {
+        else if((*i)->projectilModel.model[3].x > targetPosition[3].x - 0.3 && (*i)->projectilModel.model[3].x < targetPosition[3].x + 0.3 && !((*i)->projectilModel.model[3].x > rightBorder*1.1 || (*i)->projectilModel.model[3].x < leftBorder*1.1)) {
+            if(target == "enemy") {
+                enemy->getDamage(characterDamage);
+            }
+            else if(target == "player") {
+                Projektil* ptr = (*i).get();
+                player->getDamage(ptr->damage);
+            }
+            cout << "erease" << endl;
             i = vec->erase(i);
         }
         else {

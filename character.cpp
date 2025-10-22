@@ -4,12 +4,13 @@
 #include "defines.h"
 #include "projektil.h"
 #include "shader.h"
+#include <iostream>
 
 Character::Character(Shader* shader, Camera* camera) :
     characterModel(camera, 0.0f, glm::vec3(0.0f, ground, 0.0f), glm::vec3(characterScale)),
     characterMesh(characterModelDir, shader) {
-    damage = 1;
-    life = 3;
+    damage = characterDamage;
+    life = characterLife;
 }
 
 void Character::shoot(bool direction, Shader* shader, Camera* camera) {
@@ -21,6 +22,8 @@ void Character::shoot(bool direction, Shader* shader, Camera* camera) {
     }
 }
 
-void Character::getDamage(int damage) {}
+void Character::getDamage(int damage) {
+    cout << "player gets damage: " << damage << endl;
+}
 
 void Character::walkAnimation() {}

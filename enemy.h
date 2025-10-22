@@ -6,39 +6,20 @@
 
 using namespace std;
 
-class Tank {
+class Enemy {
 public:
-    Tank(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time);
+    Enemy(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time, string enemyClass);
     void followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera);
     bool isPlayer(glm::mat4 characterPosition);
     void walk(bool direction);
-    void shoot(bool direction, Shader* shader, Camera* camera);
-    ~Tank();
-    int life;
-    int damage;
-    Model tankModel;
-    ModelRead tankMesh;
-    glm::mat4* enemyPosition;
-private:
-    float* time;
-    float prevTimeShoot;
-    float* delta;
-    glm::mat4* playerPosition;
-};
-
-class Soldier {
-public:
-    Soldier(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time);
-    void followPlayer(glm::mat4 characterPosition, Shader* shader, Camera* camera);
-    bool isPlayer(glm::mat4 characterPosition);
-    void walk(bool direction);
+    void getDamage(int damage);
     void shoot(bool direction, Shader* shader, Camera* camera);
     static char* randomModel();
-    ~Soldier();
+    ~Enemy();
     int life;
     int damage;
-    Model soldierModel;
-    ModelRead soldierMesh;
+    Model enemyModel;
+    ModelRead enemyMesh;
     glm::mat4* enemyPosition;
 private:
     float* time;

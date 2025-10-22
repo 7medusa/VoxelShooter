@@ -11,7 +11,7 @@
 
 Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime)
 :level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader),
-soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime) {
+soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier") {
     this->characterPosition = characterPosition;
     this->shader = shader;
 }
@@ -21,12 +21,12 @@ Level1::~Level1() {
 }
 
 
-void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event) {
+void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control) {
     setVariables(level1Model.modelViewProj, projection, level1Model.model, modelViewProjLocation, &level1Model.vertexBuffer, &level1Model.indexBuffer, modelViewLocation, invModelViewLocation, level1Model.modelView, level1Model.invModelView, camera);
     level1Mesh.render();
 
-    setVariables(soldier.soldierModel.modelViewProj, projection, soldier.soldierModel.model, modelViewProjLocation, &soldier.soldierModel.vertexBuffer, &soldier.soldierModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier.soldierModel.modelView, soldier.soldierModel.invModelView, camera);
-    soldier.soldierMesh.render();
+    setVariables(soldier.enemyModel.modelViewProj, projection, soldier.enemyModel.model, modelViewProjLocation, &soldier.enemyModel.vertexBuffer, &soldier.enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier.enemyModel.modelView, soldier.enemyModel.invModelView, camera);
+    soldier.enemyMesh.render();
 
     soldier.followPlayer(*characterPosition, shader, camera);
 
@@ -38,6 +38,10 @@ void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
             resetPosition(camera);
         }
     }
+}
+
+Enemy* Level1::returnEnemy() {
+    return &soldier;
 }
 
 Level2::Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime)
@@ -53,6 +57,11 @@ void Level2::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
     setVariables(level2Model.modelViewProj, projection, level2Model.model, modelViewProjLocation, &level2Model.vertexBuffer, &level2Model.indexBuffer, modelViewLocation, invModelViewLocation, level2Model.modelView, level2Model.invModelView, camera);
     level2Mesh.render();
 }
+
+Enemy *Level2::returnEnemy() {
+    return nullptr;
+}
+
 
 unique_ptr<Level1> level1;
 unique_ptr<Level2> level2;

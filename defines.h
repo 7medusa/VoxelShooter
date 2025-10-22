@@ -15,6 +15,8 @@ using namespace std;
 #define zoomIn 1.7f
 #define characterScale 0.01f
 #define pistolShootTimeCharacter 0.8f
+#define characterDamage 1
+#define characterLife 3
 
 #define porjectileSpeed 12
 #define reloadTime 1.25f

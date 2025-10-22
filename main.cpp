@@ -107,7 +107,9 @@ int main(int argc, char** argv) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
                     level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
                 }
-                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control);
+                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level1->returnEnemy(), "player");
+                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level1->returnEnemy(), "enemy");
                 break;
             case 2:
                 if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
@@ -116,6 +118,8 @@ int main(int argc, char** argv) {
                     level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
                 }
                 level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
+                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level2->returnEnemy(), "player");
+                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level2->returnEnemy(), "enemy");
                 break;
             default:
                 Error::runtimeError();
@@ -123,9 +127,6 @@ int main(int argc, char** argv) {
                 level2.reset();
                 assert(false);
         }
-
-        iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, level1->soldier.soldierModel.model);//bewegt die spieler patrone
-        iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, player.characterModel.model);//bewegt gegnerische patrone
 
         Shader::unbind();
 
