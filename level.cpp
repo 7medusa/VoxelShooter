@@ -4,16 +4,37 @@
 #include "setVariables.h"
 #include "mesh.h"
 #include "model.h"
-#include "dir.h"
 #include "font.h"
 #include "control.h"
 #include <SDL2/SDL.h>
+#include "error.h"
+#include "projektil.h"
+#include "time.h"
+#include "character.h"
 
-Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir) {
+Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir, unsigned int* level) {
     levelModel = new Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
     levelMesh = new ModelRead(levelModelDir, shader);
     this->characterPosition = characterPosition;
     this->shader = shader;
+    switch(*level) {
+        case 1:
+            levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier"));
+            break;
+        case 2:
+            for(auto & i : levelEnemy) {
+                i.reset();
+            }
+            levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier"));
+            levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(15.0f, ground, 0.0f), delta, gameTime, "soldier"));
+            break;
+        default:
+            for(auto & i : levelEnemy) {
+                i.reset();
+            }
+            Error::runtimeError();
+            break;
+    }
 }
 
 Level::~Level() {
@@ -22,14 +43,21 @@ Level::~Level() {
     clog << "\033[34m" << "level1 deleted" << "\033[0m" << endl;
 }
 
-void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control) {
+void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, Time time, Character* player) {
     setVariables(levelModel->modelViewProj, projection, levelModel->model, modelViewProjLocation, &levelModel->vertexBuffer, &levelModel->indexBuffer, modelViewLocation, invModelViewLocation, levelModel->modelView, levelModel->invModelView, camera);
     levelMesh->render();
 
-    if(soldier->life != 0) {
-        setVariables(soldier->enemyModel.modelViewProj, projection, soldier->enemyModel.model, modelViewProjLocation, &soldier->enemyModel.vertexBuffer, &soldier->enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier->enemyModel.modelView, soldier->enemyModel.invModelView, camera);
-        soldier->enemyMesh.render();
-        soldier->followPlayer(*characterPosition, shader, camera);
+    for(auto & i : levelEnemy) {
+        if(i->life > 0) {
+            setVariables(i->enemyModel.modelViewProj, projection, i->enemyModel.model, modelViewProjLocation, &i->enemyModel.vertexBuffer, &i->enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, i->enemyModel.modelView, i->enemyModel.invModelView, camera);
+            i->enemyMesh.render();
+            i->followPlayer(*characterPosition, shader, camera);
+            iteratorProjektile(&enemyProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player");
+            iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player", i.get());
+        }
+        if(i->life <= 0) {
+            i.reset();
+        }
     }
 
     //talk with NPC1
@@ -42,8 +70,5 @@ void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelView
     }
 }
 
-Enemy* Level::returnEnemy() {
-    return soldier;
-}
-
+vector<unique_ptr<Enemy>> levelEnemy;
 unique_ptr<Level> level;

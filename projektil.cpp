@@ -8,7 +8,6 @@
 #include "setVariables.h"
 #include "error.h"
 #include "enemy.h"
-#include <iostream>
 
 Projektil::Projektil(int damage, Shader* shader, Camera* camera, bool direction, glm::mat4 shooterPosition) :
     projectilModel(camera, 0.0f, glm::vec3(shooterPosition[3].x, ground+1.0f, shooterPosition[3].z), glm::vec3(0.5f)),
@@ -35,13 +34,13 @@ void Projektil::move(Camera* camera, glm::mat4 projection, int modelViewProjecti
     }
 }
 
-void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, Character* player, Enemy* enemy, string target) {
+void iteratorProjektile(vector<unique_ptr<Projektil>>* vec, Camera* camera, glm::mat4 projection, int modelViewProjection, int modelViewLocation, int invModelViewLocation, float delta, unsigned int level, Character* player, const string target, Enemy* enemy) {
     float targetPosition;
     if(target == "enemy") {
-        targetPosition = enemy->enemyModel.model[3].x;
+        //targetPosition = enemy->enemyModel.model[3].x;
     }
     else if(target == "player") {
-        targetPosition = player->characterModel.model[3].x;
+        //targetPosition = player->characterModel.model[3].x;
     }
     float rightBorder = 0.0f;
     float leftBorder = 0.0f;

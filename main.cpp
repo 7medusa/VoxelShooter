@@ -105,11 +105,9 @@ int main(int argc, char** argv) {
             case 1:
                 if (!level) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level1ModelDir);
+                    level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level1ModelDir, &levelWorld);
                 }
-                level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control);
-                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level->returnEnemy(), "player");
-                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level->returnEnemy(), "enemy");
+                level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
                 break;
             case 2:
                 break;
