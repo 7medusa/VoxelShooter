@@ -16,7 +16,8 @@ char* Enemy::randomModel() {
 }
 
 Enemy::Enemy(glm::mat4* characterPosition, Shader* shader, Camera* camera, glm::vec3 spawn, float* delta, float* time, string enemyClass)  : enemyModel(camera, 0.0f, spawn, glm::vec3(characterScale)),
-    enemyMesh(randomModel(), shader){
+    enemyMesh(randomModel(), shader) {
+    prevTimeShoot = 0;
     if(enemyClass == "soldier") {
         life = soldierLife;
         damage = soldierDamage;
@@ -86,7 +87,7 @@ void Enemy::walk(bool direction) {
 }
 
 void Enemy::getDamage(int damage) {
-    cout << "enemy gets damage: " << damage << endl;
+    life -= damage;
 }
 
 void Enemy::shoot(bool direction, Shader* shader, Camera* camera) {

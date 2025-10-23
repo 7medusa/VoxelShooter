@@ -23,7 +23,14 @@ void Character::shoot(bool direction, Shader* shader, Camera* camera) {
 }
 
 void Character::getDamage(int damage) {
-    cout << "player gets damage: " << damage << endl;
+    life -= damage;
+    if(life == 0) {
+        dead();
+    }
+}
+
+void Character::dead() {
+    clog << "\033[34m" << "character died" << "\033[0m" << endl;
 }
 
 void Character::walkAnimation() {}

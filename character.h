@@ -11,6 +11,7 @@ public:
     Character(Shader* shader, Camera* camera);
     void shoot(bool direction, Shader* shader, Camera* camera);
     void getDamage(int damage);
+    void dead();
     void walkAnimation();
     int life;
     int damage;

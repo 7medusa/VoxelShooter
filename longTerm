@@ -1,6 +1,7 @@
 texture for shield and projectile
 waffenauswahl
 character tot
-hitboxen
+enemy ab level 2 im heap erzeugen und in einem vector speichern
+level überarbeiten
 
 clog << "\033[34m" << "projectil deleted" << "\033[0m" << endl;

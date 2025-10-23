@@ -103,28 +103,18 @@ int main(int argc, char** argv) {
 
         switch(levelWorld) {
             case 1:
-                if (!level1) {
+                if (!level) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level1 = make_unique<Level1>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
+                    level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level1ModelDir);
                 }
-                level1->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control);
-                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level1->returnEnemy(), "player");
-                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level1->returnEnemy(), "enemy");
+                level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control);
+                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level->returnEnemy(), "player");
+                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level->returnEnemy(), "enemy");
                 break;
             case 2:
-                if (level1) {level1.reset();killProjektile(&characterProjektile, &enemyProjektile);}
-                if (!level2) {
-                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                    level2 = make_unique<Level2>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime());
-                }
-                level2->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, &event);
-                iteratorProjektile(&enemyProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level2->returnEnemy(), "player");
-                iteratorProjektile(&characterProjektile, &camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, levelWorld, &player, level2->returnEnemy(), "enemy");
                 break;
             default:
                 Error::runtimeError();
-                level1.reset();
-                level2.reset();
                 assert(false);
         }
 

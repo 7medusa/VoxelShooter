@@ -9,26 +9,28 @@
 #include "control.h"
 #include <SDL2/SDL.h>
 
-Level1::Level1(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime)
-:level1Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level1Mesh(level1ModelDir, shader),
-soldier(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier") {
+Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir) {
+    levelModel = new Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
+    levelMesh = new ModelRead(levelModelDir, shader);
     this->characterPosition = characterPosition;
     this->shader = shader;
 }
 
-Level1::~Level1() {
+Level::~Level() {
+    delete levelModel;
+    delete levelMesh;
     clog << "\033[34m" << "level1 deleted" << "\033[0m" << endl;
 }
 
+void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control) {
+    setVariables(levelModel->modelViewProj, projection, levelModel->model, modelViewProjLocation, &levelModel->vertexBuffer, &levelModel->indexBuffer, modelViewLocation, invModelViewLocation, levelModel->modelView, levelModel->invModelView, camera);
+    levelMesh->render();
 
-void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control) {
-    setVariables(level1Model.modelViewProj, projection, level1Model.model, modelViewProjLocation, &level1Model.vertexBuffer, &level1Model.indexBuffer, modelViewLocation, invModelViewLocation, level1Model.modelView, level1Model.invModelView, camera);
-    level1Mesh.render();
-
-    setVariables(soldier.enemyModel.modelViewProj, projection, soldier.enemyModel.model, modelViewProjLocation, &soldier.enemyModel.vertexBuffer, &soldier.enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier.enemyModel.modelView, soldier.enemyModel.invModelView, camera);
-    soldier.enemyMesh.render();
-
-    soldier.followPlayer(*characterPosition, shader, camera);
+    if(soldier->life != 0) {
+        setVariables(soldier->enemyModel.modelViewProj, projection, soldier->enemyModel.model, modelViewProjLocation, &soldier->enemyModel.vertexBuffer, &soldier->enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, soldier->enemyModel.modelView, soldier->enemyModel.invModelView, camera);
+        soldier->enemyMesh.render();
+        soldier->followPlayer(*characterPosition, shader, camera);
+    }
 
     //talk with NPC1
     if((*characterPosition)[3].x >= 18.5f && (*characterPosition)[3].x < 20.9f) {
@@ -40,28 +42,8 @@ void Level1::logic(glm::mat4 projection, int modelViewProjLocation, int modelVie
     }
 }
 
-Enemy* Level1::returnEnemy() {
-    return &soldier;
+Enemy* Level::returnEnemy() {
+    return soldier;
 }
 
-Level2::Level2(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime)
-:level2Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f)), level2Mesh(level2ModelDir, shader) {
-    this->characterPosition = characterPosition;
-}
-
-Level2::~Level2() {
-    clog << "\033[34m" << "level2 deleted" << "\033[0m" << endl;
-}
-
-void Level2::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, SDL_Event* event) {
-    setVariables(level2Model.modelViewProj, projection, level2Model.model, modelViewProjLocation, &level2Model.vertexBuffer, &level2Model.indexBuffer, modelViewLocation, invModelViewLocation, level2Model.modelView, level2Model.invModelView, camera);
-    level2Mesh.render();
-}
-
-Enemy *Level2::returnEnemy() {
-    return nullptr;
-}
-
-
-unique_ptr<Level1> level1;
-unique_ptr<Level2> level2;
+unique_ptr<Level> level;
