@@ -26,6 +26,7 @@ public:
     ModelRead* levelMesh{};
     glm::mat4* characterPosition;
     Shader* shader;
+    unsigned int* level;
 };
 
 extern vector<unique_ptr<Enemy>> levelEnemy;

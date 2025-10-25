@@ -60,6 +60,7 @@ int main(int argc, char** argv) {
     Time time;
     unsigned int levelWorld = 1;
     bool close = false;
+    bool switchLevel = false;
     Font font(fontDir, 80.0f);
     Shader fontShader(vertexShaderFontDir, fragmentShaderFontDir);
     Shader shader(vertexShaderDir, fragmentShaderDir);
@@ -103,16 +104,27 @@ int main(int argc, char** argv) {
 
         switch(levelWorld) {
             case 1:
-                if (!level) {
+                if(!level) {
                     font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
                     level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level1ModelDir, &levelWorld);
                 }
                 level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
+                switchLevel = true;
                 break;
             case 2:
-                level.reset();
-                font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
-                level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level2ModelDir, &levelWorld);
+                if(switchLevel == true) {
+                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level2ModelDir, &levelWorld);
+                    switchLevel = false;
+                }
+                level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
+                break;
+            case 3:
+                if(switchLevel == false) {
+                    font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                    level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level2ModelDir, &levelWorld);
+                    switchLevel = true;
+                }
                 level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
                 break;
             default:

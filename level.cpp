@@ -13,6 +13,7 @@
 #include "character.h"
 
 Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir, unsigned int* level) {
+    this->level = level;
     levelModel = new Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
     levelMesh = new ModelRead(levelModelDir, shader);
     this->characterPosition = characterPosition;
@@ -22,8 +23,8 @@ Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float
             levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier"));
             break;
         case 2:
-            for(auto & i : levelEnemy) {
-                i.reset();
+            for(auto i = levelEnemy.begin(); i != levelEnemy.end(); i++) {
+                levelEnemy.erase(i);
             }
             levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier"));
             levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(15.0f, ground, 0.0f), delta, gameTime, "soldier"));
@@ -73,7 +74,7 @@ void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelView
     if((*characterPosition)[3].x >= 18.5f && (*characterPosition)[3].x < 20.9f) {
         font->fontDraw(fontShader, window, font, "press e for talk", windowWidth / 2 - font->measureTextWidth("press e for talk", font->cdata) / 2, windowHeight / 2 - windowHeight / 7);
         if(control->eBool) {
-            *level = 2;
+            *level += 1;
             resetPosition(camera);
         }
     }
