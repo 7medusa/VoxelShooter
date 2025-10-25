@@ -87,6 +87,7 @@ void Enemy::walk(bool direction) {
 }
 
 void Enemy::getDamage(int damage) {
+    clog << "\033[34m" << "enemy damage" << "\033[0m" << endl;
     life -= damage;
 }
 

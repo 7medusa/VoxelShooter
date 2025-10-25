@@ -47,17 +47,26 @@ void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelView
     setVariables(levelModel->modelViewProj, projection, levelModel->model, modelViewProjLocation, &levelModel->vertexBuffer, &levelModel->indexBuffer, modelViewLocation, invModelViewLocation, levelModel->modelView, levelModel->invModelView, camera);
     levelMesh->render();
 
-    for(auto & i : levelEnemy) {
-        if(i->life > 0) {
-            setVariables(i->enemyModel.modelViewProj, projection, i->enemyModel.model, modelViewProjLocation, &i->enemyModel.vertexBuffer, &i->enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, i->enemyModel.modelView, i->enemyModel.invModelView, camera);
-            i->enemyMesh.render();
-            i->followPlayer(*characterPosition, shader, camera);
-            iteratorProjektile(&enemyProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player");
-            iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "enemy", i.get());
+    iteratorProjektile(&enemyProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player");
+
+    for(auto it = levelEnemy.begin(); it!= levelEnemy.end(); it++) {
+        auto& i = *it;
+        if(i != nullptr) {
+            if(i->life > 0) {
+                setVariables(i->enemyModel.modelViewProj, projection, i->enemyModel.model, modelViewProjLocation, &i->enemyModel.vertexBuffer, &i->enemyModel.indexBuffer, modelViewLocation, invModelViewLocation, i->enemyModel.modelView, i->enemyModel.invModelView, camera);
+                i->enemyMesh.render();
+                i->followPlayer(*characterPosition, shader, camera);
+                iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "enemy", i.get());
+            }
+            else if(i->life <= 0) {
+                levelEnemy.erase(it);
+                iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "enemy");
+                return;
+            }
         }
-        if(i->life <= 0) {
-            i.reset();
-        }
+    }
+    if(levelEnemy.size() == 0) {
+        iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "enemy");
     }
 
     //talk with NPC1

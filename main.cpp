@@ -86,8 +86,8 @@ int main(int argc, char** argv) {
             control.handle(&event, &camera);
         }
 
-        float farbe = 1.0f;
-        glClearColor(farbe, farbe, farbe, 0.0f);
+        float color = 1.0f;
+        glClearColor(color, color, color, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         time.update();
 
@@ -110,6 +110,10 @@ int main(int argc, char** argv) {
                 level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
                 break;
             case 2:
+                level.reset();
+                font.loading(&fontShader, window, font, windowWidth, windowHeight, "loading data...");
+                level = make_unique<Level>(&camera, &shader, &player.characterModel.model, time.returnDelta(), time.returnTime(), (char*)level2ModelDir, &levelWorld);
+                level->logic(projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, &camera, &font, &fontShader, window, &levelWorld, windowWidth, windowHeight, &control, time, &player);
                 break;
             default:
                 Error::runtimeError();
