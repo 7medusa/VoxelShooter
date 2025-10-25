@@ -53,7 +53,7 @@ void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelView
             i->enemyMesh.render();
             i->followPlayer(*characterPosition, shader, camera);
             iteratorProjektile(&enemyProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player");
-            iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "player", i.get());
+            iteratorProjektile(&characterProjektile, camera, projection, modelViewProjLocation, modelViewLocation, invModelViewLocation, time.delta, *level, player, "enemy", i.get());
         }
         if(i->life <= 0) {
             i.reset();
