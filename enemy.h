@@ -15,6 +15,7 @@ public:
     void getDamage(int damage);
     void shoot(bool direction, Shader* shader, Camera* camera);
     static char* randomModel();
+    void avoidOtherEnemys();
     ~Enemy();
     int life;
     int damage;

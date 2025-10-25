@@ -98,7 +98,7 @@ void Control::handle(SDL_Event* event, Camera* camera) {
     }
 }
 
-void Control::control(Camera* camera, Character* player, float delta, const unsigned int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader, Weapon* weapon) {
+void Control::control(Camera* camera, Character* player, float delta, const int* level, SDL_Event* event, glm::mat4* projection, float gameTime, Font* font, Shader* fontShader, float windowWidth, float windowHeight, SDL_Window* window, Shader* shader, Weapon* weapon) {
     float rightBorder;
     float leftBorder;
     switch(*level) {

@@ -12,7 +12,7 @@
 #include "time.h"
 #include "character.h"
 
-Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir, unsigned int* level) {
+Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float* delta, float* gameTime, char* levelModelDir, int* level) {
     this->level = level;
     levelModel = new Model(camera, 0, glm::vec3(11.2f, ground-0.09, 0.0f), glm::vec3(1.0f));
     levelMesh = new ModelRead(levelModelDir, shader);
@@ -21,6 +21,7 @@ Level::Level(Camera* camera, Shader* shader, glm::mat4* characterPosition, float
     switch(*level) {
         case 1:
             levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(12.0f, ground, 0.0f), delta, gameTime, "soldier"));
+            levelEnemy.push_back(make_unique<Enemy>(characterPosition, shader, camera, glm::vec3(15.0f, ground, 0.0f), delta, gameTime, "soldier"));//kommt weg
             break;
         case 2:
             for(auto i = levelEnemy.begin(); i != levelEnemy.end(); i++) {
@@ -44,7 +45,7 @@ Level::~Level() {
     clog << "\033[34m" << "level1 deleted" << "\033[0m" << endl;
 }
 
-void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, unsigned int* level, int windowWidth, int windowHeight, Control* control, Time time, Character* player) {
+void Level::logic(glm::mat4 projection, int modelViewProjLocation, int modelViewLocation, int invModelViewLocation, Camera* camera, Font* font, Shader* fontShader, SDL_Window* window, int* level, int windowWidth, int windowHeight, Control* control, Time time, Character* player) {
     setVariables(levelModel->modelViewProj, projection, levelModel->model, modelViewProjLocation, &levelModel->vertexBuffer, &levelModel->indexBuffer, modelViewLocation, invModelViewLocation, levelModel->modelView, levelModel->invModelView, camera);
     levelMesh->render();
 

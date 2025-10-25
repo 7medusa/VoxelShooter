@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 
     SDL_Event event;
     Time time;
-    unsigned int levelWorld = 1;
+    int levelWorld = 1;
     bool close = false;
     bool switchLevel = false;
     Font font(fontDir, 80.0f);

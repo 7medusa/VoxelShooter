@@ -103,6 +103,8 @@ void Enemy::shoot(bool direction, Shader* shader, Camera* camera) {
     }
 }
 
+void Enemy::avoidOtherEnemys() {}
+
 Enemy::~Enemy() {
     clog << "\033[34m" << "enemy died" << "\033[0m" << endl;
 }
